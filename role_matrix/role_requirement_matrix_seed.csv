@@ -1,0 +1,155 @@
+requirement_id,role,department,requirement_text,mandatory,priority,due_stage,source_document_id,source_section_id,competency,assessment_requirement
+R001,All Roles,Company-wide,Read and acknowledge the Employee Handbook,TRUE,High,Day 1,HANDBOOK-01,1.1,Policy Awareness,Signed acknowledgment form
+R002,All Roles,Company-wide,Understand standard work hours and mandatory core hours,TRUE,High,Day 1,HANDBOOK-01,2.1,Policy Awareness,Manager confirmation
+R003,All Roles,Company-wide,Complete Workplace Conduct training,TRUE,High,First 30 Days,POL-04,1.1,Conduct Compliance,Training completion certificate
+R004,All Roles,Company-wide,Understand harassment and discrimination policy,TRUE,High,Week 1,POL-04,1.2,Conduct Compliance,Quiz pass ≥80%
+R005,All Roles,Company-wide,Know how to report a conduct violation,TRUE,Medium,Week 1,POL-04,2.1,Conduct Compliance,Verbal confirmation in 1:1
+R006,All Roles,Company-wide,Be aware of the anonymous ethics hotline option,FALSE,Low,First 30 Days,POL-04,2.2,Conduct Compliance,None
+R007,All Roles,Company-wide,Understand vacation accrual policy,FALSE,Medium,Week 1,POL-02,1.1,Benefits Literacy,None
+R008,All Roles,Company-wide,Understand sick leave policy and notification process,TRUE,Medium,Week 1,POL-02,2.1,Benefits Literacy,Manager confirmation
+R009,All Roles,Company-wide,Understand parental leave eligibility,FALSE,Low,First 90 Days,POL-02,4.1,Benefits Literacy,None
+R010,All Roles,Company-wide,Complete 90-day probationary review with manager,TRUE,High,First 90 Days,POL-01,3.1,Performance Readiness,Signed review form
+R011,All Roles,Company-wide,Understand remote work request process,FALSE,Low,First 30 Days,POL-01,4.1,Policy Awareness,None
+R012,All Roles,Company-wide,Understand definition of confidential employee data,TRUE,Medium,Week 1,POL-01,5.1,Confidentiality,Quiz pass ≥80%
+R013,All Roles,Company-wide,Know the compliance escalation reporting path,TRUE,Medium,Week 2,COMP-01,1.1,Compliance Awareness,Verbal confirmation in 1:1
+R014,All Roles,Company-wide,Be aware of the anonymous compliance hotline,FALSE,Low,First 30 Days,COMP-01,2.1,Compliance Awareness,None
+R015,All Roles,Company-wide,Complete new-hire onboarding checklist items,TRUE,High,Week 1,FAQ-01,1.3,Onboarding,Checklist sign-off
+R016,All Roles,Company-wide,Schedule a welcome chat with immediate team,FALSE,Low,Week 1,FAQ-01,1.2,Team Integration,None
+R017,All Roles,Company-wide,Review bereavement leave provisions,FALSE,Low,First 90 Days,POL-02,3.1,Benefits Literacy,None
+R018,All Roles,Company-wide,Understand consequences of confirmed conduct violations,TRUE,Medium,First 30 Days,POL-04,4.1,Conduct Compliance,Quiz pass ≥80%
+R019,All Roles,Company-wide,Understand employee records confidentiality expectations,FALSE,Low,First 30 Days,POL-01,2.1,Confidentiality,None
+R020,All Roles,Company-wide,Understand standard company holidays and business-day definitions,FALSE,Low,Week 1,SOP-02,3.1,Policy Awareness,None
+R021,All Roles,Company-wide,Understand contractor-specific conduct briefing exception,FALSE,Low,Week 1,HANDBOOK-01,3.2,Policy Awareness,None
+R022,Software Engineer,Engineering,Understand core Software Engineer responsibilities,TRUE,High,Day 1,ROLE-01,1.1,Role Readiness,Manager confirmation
+R023,Software Engineer,Engineering,Complete peer code review process training,TRUE,High,Week 1,ROLE-01,1.2,Engineering Process,Practical exercise
+R024,Software Engineer,Engineering,Demonstrate proficiency in team's primary language/tooling,TRUE,Medium,First 30 Days,ROLE-01,2.1,Technical Competency,Code review by lead
+R025,Software Engineer,Engineering,Understand deployment SOP peer-review requirement,TRUE,High,Week 1,SOP-01,1.1,Engineering Process,Practical exercise
+R026,Software Engineer,Engineering,Understand hotfix exception process during Critical Incidents,TRUE,Medium,First 30 Days,SOP-01,1.1,Incident Response,Tabletop exercise
+R027,Software Engineer,Engineering,Understand Critical Incident definition (production outage),TRUE,Medium,Week 2,SOP-01,2.1,Incident Response,Quiz pass ≥80%
+R028,Software Engineer,Engineering,Understand production access MFA requirement,TRUE,High,Week 1,POL-03,2.1,Security Compliance,MFA setup confirmation
+R029,Software Engineer,Engineering,Understand break-glass emergency access exception,FALSE,Low,First 30 Days,POL-03,2.1,Security Compliance,None
+R030,Software Engineer,Engineering,Understand rollback procedure for Critical Incidents,TRUE,High,First 30 Days,SOP-01,4.1,Incident Response,Tabletop exercise
+R031,Software Engineer,Engineering,Document rollback steps in postmortem template,FALSE,Low,First 60 Days,SOP-01,4.2,Documentation,None
+R032,Software Engineer,Engineering,Complete Information Security Policy overview,TRUE,High,Week 1,POL-03,1.1,Security Compliance,Quiz pass ≥80%
+R033,Software Engineer,Engineering,Attend Security team quarterly threat briefing,FALSE,Low,First 90 Days,POL-03,4.2,Security Awareness,None
+R034,Software Engineer,Engineering,Understand escalation path for Critical Incidents (direct to on-call SRE),TRUE,High,Week 2,SOP-01,3.1,Incident Response,Tabletop exercise
+R035,Software Engineer,Engineering,Set up version control and CI access,TRUE,High,Day 1,ROLE-01,2.1,Technical Setup,IT confirmation
+R036,DevOps/Infrastructure Engineer,Engineering,Understand core DevOps/Infrastructure responsibilities,TRUE,High,Day 1,ROLE-02,1.1,Role Readiness,Manager confirmation
+R037,DevOps/Infrastructure Engineer,Engineering,Join on-call rotation for production systems,TRUE,High,First 30 Days,ROLE-02,1.2,Operational Readiness,Rotation schedule sign-off
+R038,DevOps/Infrastructure Engineer,Engineering,Understand discretionary working-hours provision during on-call weeks,FALSE,Low,First 30 Days,ROLE-02,2.1,Operational Readiness,None
+R039,DevOps/Infrastructure Engineer,Engineering,Complete security training within 7 days of deploy access grant,TRUE,High,Week 1,POL-03,2.2,Security Compliance,Training completion certificate
+R040,DevOps/Infrastructure Engineer,Engineering,Complete security training per role description,TRUE,High,Week 1,ROLE-02,3.1,Security Compliance,Training completion certificate
+R041,DevOps/Infrastructure Engineer,Engineering,Understand production deploy execution requirements,TRUE,High,Week 1,SOP-01,1.3,Engineering Process,Practical exercise
+R042,DevOps/Infrastructure Engineer,Engineering,Report suspected security breaches within 1 hour,TRUE,High,Week 2,POL-03,3.1,Incident Response,Tabletop exercise
+R043,DevOps/Infrastructure Engineer,Engineering,Understand payment-data system access approval process (manager + Security),TRUE,Medium,First 30 Days,POL-03,2.3,Security Compliance,Quiz pass ≥80%
+R044,DevOps/Infrastructure Engineer,Engineering,Understand MFA requirement for production access,TRUE,High,Week 1,POL-03,2.1,Security Compliance,MFA setup confirmation
+R045,DevOps/Infrastructure Engineer,Engineering,Understand Critical Incident escalation path,TRUE,High,Week 2,SOP-01,3.1,Incident Response,Tabletop exercise
+R046,DevOps/Infrastructure Engineer,Engineering,Understand rollback procedure timing (30 minutes),TRUE,High,First 30 Days,SOP-01,4.1,Incident Response,Tabletop exercise
+R047,DevOps/Infrastructure Engineer,Engineering,Complete infrastructure access provisioning,TRUE,High,Day 1,ROLE-02,1.1,Technical Setup,IT confirmation
+R048,DevOps/Infrastructure Engineer,Engineering,Attend Security team quarterly threat briefing,FALSE,Low,First 90 Days,POL-03,4.2,Security Awareness,None
+R049,DevOps/Infrastructure Engineer,Engineering,Review postmortem template and escalation documentation norms,FALSE,Low,First 60 Days,SOP-01,5.1,Documentation,None
+R050,QA Engineer,Engineering,Understand core QA Engineer responsibilities,TRUE,High,Day 1,ROLE-03,1.1,Role Readiness,Manager confirmation
+R051,QA Engineer,Engineering,Complete QA sign-off training for production deployment gate,TRUE,High,Week 1,ROLE-03,1.2,Engineering Process,Practical exercise
+R052,QA Engineer,Engineering,Understand QA sign-off requirement in deployment SOP,TRUE,High,Week 1,SOP-01,1.2,Engineering Process,Practical exercise
+R053,QA Engineer,Engineering,Gain familiarity with automated testing frameworks,FALSE,Low,First 60 Days,ROLE-03,2.1,Technical Competency,None
+R054,QA Engineer,Engineering,Understand Critical Incident definition and QA's role in verification,TRUE,Medium,Week 2,SOP-01,2.1,Incident Response,Quiz pass ≥80%
+R055,QA Engineer,Engineering,Understand rollback verification responsibilities,TRUE,Medium,First 30 Days,SOP-01,4.1,Incident Response,Tabletop exercise
+R056,QA Engineer,Engineering,Complete Information Security Policy overview,TRUE,Medium,Week 1,POL-03,1.1,Security Compliance,Quiz pass ≥80%
+R057,QA Engineer,Engineering,Set up test environment and tooling access,TRUE,High,Day 1,ROLE-03,1.1,Technical Setup,IT confirmation
+R058,QA Engineer,Engineering,Understand escalation path for Critical Incidents,TRUE,Medium,Week 2,SOP-01,3.1,Incident Response,Tabletop exercise
+R059,QA Engineer,Engineering,Document test coverage expectations for release sign-off,FALSE,Low,First 60 Days,ROLE-03,1.2,Documentation,None
+R060,Customer Support Representative,Customer Operations,Understand core Customer Support Representative responsibilities,TRUE,High,Day 1,ROLE-04,1.1,Role Readiness,Manager confirmation
+R061,Customer Support Representative,Customer Operations,Complete refund verification process training,TRUE,High,Week 1,ROLE-04,1.2,Support Process,Practical exercise
+R062,Customer Support Representative,Customer Operations,Understand standard refund window (30 days),TRUE,High,Week 1,SOP-02,1.2,Support Process,Quiz pass ≥80%
+R063,Customer Support Representative,Customer Operations,Understand promotional/holiday refund window exception (45 days),TRUE,Medium,Week 2,SOP-02,1.2,Support Process,Quiz pass ≥80%
+R064,Customer Support Representative,Customer Operations,Understand $200 refund co-sign escalation threshold,TRUE,High,Week 1,SOP-02,2.1,Support Process,Practical exercise
+R065,Customer Support Representative,Customer Operations,Escalate refunds requiring Payments Ops co-sign per role description,TRUE,High,Week 1,ROLE-04,2.1,Support Process,Practical exercise
+R066,Customer Support Representative,Customer Operations,Complete PCI awareness training (conditional on refund processing),TRUE,High,First 30 Days,ROLE-04,2.1,Payment Security,Training completion certificate
+R067,Customer Support Representative,Customer Operations,Complete PCI-DSS awareness training per Data Privacy Policy,TRUE,High,First 30 Days,POL-05,3.1,Payment Security,Training completion certificate
+R068,Customer Support Representative,Customer Operations,Shadow a Payments Operations Specialist during first month,FALSE,Low,First 30 Days,ROLE-04,2.2,Team Integration,None
+R069,Customer Support Representative,Customer Operations,Understand Business Day definition for refund SLAs,FALSE,Low,Week 1,SOP-02,3.1,Support Process,None
+R070,Customer Support Representative,Customer Operations,Understand third-party data sharing restrictions,TRUE,Medium,First 30 Days,POL-05,4.1,Data Privacy,Quiz pass ≥80%
+R071,Customer Support Representative,Customer Operations,Complete ticketing system training,TRUE,High,Day 1,ROLE-04,1.1,Technical Setup,IT confirmation
+R072,Customer Support Representative,Customer Operations,Understand data retention/deletion request handling,TRUE,Medium,First 60 Days,POL-05,2.1,Data Privacy,Quiz pass ≥80%
+R073,Customer Support Representative,Customer Operations,Review refund approval FAQ for common scenarios,FALSE,Low,Week 1,FAQ-02,2.1,Support Process,None
+R074,Payments Operations Specialist,Customer Operations,Understand core Payments Operations Specialist responsibilities,TRUE,High,Day 1,ROLE-05,1.1,Role Readiness,Manager confirmation
+R075,Payments Operations Specialist,Customer Operations,Complete payment gateway admin console access training,TRUE,High,Week 1,ROLE-05,1.2,Payment Operations,Practical exercise
+R076,Payments Operations Specialist,Customer Operations,Understand exclusive console access restriction,TRUE,High,Week 1,SOP-03,1.1,Payment Operations,Quiz pass ≥80%
+R077,Payments Operations Specialist,Customer Operations,Complete refund co-sign review process within 2 business days,TRUE,High,Week 2,SOP-03,2.1,Payment Operations,Practical exercise
+R078,Payments Operations Specialist,Customer Operations,Understand refund co-sign role per role description,TRUE,High,Week 2,ROLE-05,1.2,Payment Operations,Practical exercise
+R079,Payments Operations Specialist,Customer Operations,Complete PCI awareness training before system access is granted,TRUE,High,Day 1,SOP-03,3.1,Payment Security,Training completion certificate
+R080,Payments Operations Specialist,Customer Operations,Complete PCI-DSS awareness training within 30 days,TRUE,High,First 30 Days,POL-05,3.1,Payment Security,Training completion certificate
+R081,Payments Operations Specialist,Customer Operations,Understand payment-data access approval requirements (manager approval per SOP-03),TRUE,Medium,First 30 Days,SOP-03,1.2,Payment Security,Quiz pass ≥80%
+R082,Payments Operations Specialist,Customer Operations,Understand updated payment-data access approval requirement (manager + Security per POL-03 v2),TRUE,Medium,First 30 Days,POL-03,2.3,Payment Security,Quiz pass ≥80%
+R083,Payments Operations Specialist,Customer Operations,Flag ambiguous approval cases to manager rather than proceeding unilaterally,FALSE,Low,First 30 Days,ROLE-05,2.2,Payment Security,None
+R084,Payments Operations Specialist,Customer Operations,Complete optional annual PCI refresher training,FALSE,Low,First 90 Days,SOP-03,3.2,Payment Security,None
+R085,Payments Operations Specialist,Customer Operations,Understand MFA requirement for payment systems access,TRUE,High,Week 1,POL-03,2.1,Security Compliance,MFA setup confirmation
+R086,Payments Operations Specialist,Customer Operations,Review refund co-sign cross-reference process with Support team,FALSE,Low,Week 2,SOP-02,2.1,Payment Operations,None
+R087,Payments Operations Specialist,Customer Operations,Complete data retention/deletion policy overview,TRUE,Medium,First 60 Days,POL-05,2.1,Data Privacy,Quiz pass ≥80%
+R088,HR Generalist,People & Culture,Understand core HR Generalist responsibilities,TRUE,High,Day 1,ROLE-06,1.1,Role Readiness,Manager confirmation
+R089,HR Generalist,People & Culture,Complete HRIS system-of-record training,TRUE,High,Week 1,ROLE-06,1.2,HR Operations,Practical exercise
+R090,HR Generalist,People & Culture,Understand employee records storage requirement (HRIS only),TRUE,High,Week 1,POL-01,2.1,HR Operations,Quiz pass ≥80%
+R091,HR Generalist,People & Culture,Understand confidentiality definition governing HR data,TRUE,High,Week 1,ROLE-06,2.1,Confidentiality,Quiz pass ≥80%
+R092,HR Generalist,People & Culture,Understand confidentiality definition per HR Policy,TRUE,High,Week 1,POL-01,5.1,Confidentiality,Quiz pass ≥80%
+R093,HR Generalist,People & Culture,Complete annual confidentiality refresher,FALSE,Low,First 90 Days,ROLE-06,2.2,Confidentiality,None
+R094,HR Generalist,People & Culture,Understand initial conduct-violation review timeline (10 business days),TRUE,Medium,First 30 Days,POL-04,3.1,Compliance Awareness,Quiz pass ≥80%
+R095,HR Generalist,People & Culture,Understand candidate PII access restriction to Recruiters/HR Generalists,TRUE,Medium,Week 1,POL-01,1.2,Confidentiality,Quiz pass ≥80%
+R096,HR Generalist,People & Culture,Understand 90-day probationary review process,TRUE,High,First 30 Days,POL-01,3.1,HR Operations,Practical exercise
+R097,HR Generalist,People & Culture,Understand bereavement leave ambiguity and escalation to Legal when unclear,FALSE,Low,First 60 Days,POL-02,3.1,HR Operations,None
+R098,HR Generalist,People & Culture,Understand updated remote work approval delegation to managers,TRUE,Medium,First 30 Days,POL-01,4.1,HR Operations,Quiz pass ≥80%
+R099,HR Generalist,People & Culture,Conduct quarterly record-completeness audit,FALSE,Low,First 90 Days,POL-01,2.2,HR Operations,None
+R100,Recruiter,People & Culture,Complete background-check-handling and confidentiality briefing,TRUE,High,Week 1,POL-01,1.1,Confidentiality,Training completion certificate
+R101,Recruiter,People & Culture,Understand candidate PII access restriction,TRUE,High,Week 1,POL-01,1.2,Confidentiality,Quiz pass ≥80%
+R102,Recruiter,People & Culture,Understand applicant tracking system access controls,TRUE,Medium,Week 1,POL-01,1.2,Technical Setup,IT confirmation
+R103,Recruiter,People & Culture,Complete Workplace Conduct training,TRUE,High,First 30 Days,POL-04,1.1,Conduct Compliance,Training completion certificate
+R104,Recruiter,People & Culture,Understand employee records confidentiality obligations,TRUE,Medium,Week 1,POL-01,5.1,Confidentiality,Quiz pass ≥80%
+R105,Recruiter,People & Culture,Review company handbook for candidate-facing policy questions,FALSE,Low,Week 1,HANDBOOK-01,1.1,Policy Awareness,None
+R106,Recruiter,People & Culture,Understand 90-day probationary review process for context on offer letters,FALSE,Low,First 30 Days,POL-01,3.1,HR Operations,None
+R107,Recruiter,People & Culture,Understand remote work approval process to advise candidates accurately,FALSE,Low,First 30 Days,POL-01,4.1,HR Operations,None
+R108,Recruiter,People & Culture,Complete recruiting systems and email templates setup,TRUE,High,Day 1,POL-01,1.1,Technical Setup,IT confirmation
+R109,Recruiter,People & Culture,Understand compliance escalation path for hiring-related complaints,TRUE,Medium,Week 2,COMP-01,1.1,Compliance Awareness,Quiz pass ≥80%
+R110,Financial Analyst,Finance,Understand invoice approval requirement for all vendor invoices,TRUE,High,Week 1,SOP-05,1.1,Finance Operations,Practical exercise
+R111,Financial Analyst,Finance,"Understand high-value invoice dual-approval requirement (>$5,000)",TRUE,High,Week 1,SOP-05,2.1,Finance Operations,Practical exercise
+R112,Financial Analyst,Finance,"Understand Accounts Payable Clerk self-approval exception (up to $1,000)",TRUE,Medium,Week 2,SOP-05,1.3,Finance Operations,Quiz pass ≥80%
+R113,Financial Analyst,Finance,Complete finance system access and approval workflow setup,TRUE,High,Day 1,SOP-05,1.1,Technical Setup,IT confirmation
+R114,Financial Analyst,Finance,Understand budgeting and forecasting review cadence,FALSE,Low,First 60 Days,SOP-05,3.1,Finance Operations,None
+R115,Financial Analyst,Finance,Complete Workplace Conduct training,TRUE,High,First 30 Days,POL-04,1.1,Conduct Compliance,Training completion certificate
+R116,Financial Analyst,Finance,Understand compliance escalation path for financial irregularities,TRUE,High,Week 2,COMP-01,1.1,Compliance Awareness,Quiz pass ≥80%
+R117,Financial Analyst,Finance,Understand data confidentiality obligations for financial records,TRUE,Medium,Week 1,POL-03,1.1,Confidentiality,Quiz pass ≥80%
+R118,Financial Analyst,Finance,Review vendor invoice recordkeeping timeline expectations,FALSE,Low,First 30 Days,SOP-05,3.1,Documentation,None
+R119,Financial Analyst,Finance,Complete 90-day probationary review,TRUE,High,First 90 Days,POL-01,3.1,Performance Readiness,Signed review form
+R120,Accounts Payable Clerk,Finance,"Understand self-approval authority up to $1,000",TRUE,High,Week 1,SOP-05,1.3,Finance Operations,Quiz pass ≥80%
+R121,Accounts Payable Clerk,Finance,Understand invoice logging requirement (within 3 business days),TRUE,High,Week 1,SOP-05,3.1,Finance Operations,Practical exercise
+R122,Accounts Payable Clerk,Finance,Understand updated all-invoices-require-approval requirement (v2),TRUE,Medium,Week 2,SOP-05,1.1,Finance Operations,Quiz pass ≥80%
+R123,Accounts Payable Clerk,Finance,"Understand high-value invoice dual-approval requirement (>$5,000)",TRUE,Medium,Week 2,SOP-05,2.1,Finance Operations,Quiz pass ≥80%
+R124,Accounts Payable Clerk,Finance,Complete finance system access setup,TRUE,High,Day 1,SOP-05,1.1,Technical Setup,IT confirmation
+R125,Accounts Payable Clerk,Finance,Complete Workplace Conduct training,TRUE,High,First 30 Days,POL-04,1.1,Conduct Compliance,Training completion certificate
+R126,Accounts Payable Clerk,Finance,Understand vendor invoice recordkeeping best practices,FALSE,Low,First 30 Days,SOP-05,3.1,Documentation,None
+R127,Accounts Payable Clerk,Finance,Understand escalation path for suspected invoice fraud,TRUE,Medium,Week 2,COMP-01,1.1,Compliance Awareness,Quiz pass ≥80%
+R128,Accounts Payable Clerk,Finance,Complete 90-day probationary review,TRUE,High,First 90 Days,POL-01,3.1,Performance Readiness,Signed review form
+R129,Accounts Payable Clerk,Finance,Review invoice approval FAQ / policy revision history for context,FALSE,Low,Week 2,SOP-05,1.2,Finance Operations,None
+R130,Warehouse Operations Coordinator,Operations,Complete safety certification before first shift,TRUE,High,Day 1,SOP-04,2.2,Safety Compliance,Certification exam
+R131,Warehouse Operations Coordinator,Operations,"Understand Critical Incident definition (safety-related, any duration)",TRUE,High,Week 1,SOP-04,1.1,Safety Compliance,Quiz pass ≥80%
+R132,Warehouse Operations Coordinator,Operations,Understand incident reporting requirement to Operations Manager,TRUE,High,Week 1,SOP-04,2.1,Safety Compliance,Practical exercise
+R133,Warehouse Operations Coordinator,Operations,Attach photo documentation to incident reports where practical,FALSE,Low,First 30 Days,SOP-04,3.1,Documentation,None
+R134,Warehouse Operations Coordinator,Operations,Understand enhanced sick leave allotment (12 days) for warehouse role,FALSE,Low,Week 1,POL-02,2.4,Benefits Literacy,None
+R135,Warehouse Operations Coordinator,Operations,Complete Workplace Conduct training,TRUE,High,First 30 Days,POL-04,1.1,Conduct Compliance,Training completion certificate
+R136,Warehouse Operations Coordinator,Operations,Understand warehouse floor safety equipment and protocols,TRUE,High,Day 1,SOP-04,2.2,Safety Compliance,Certification exam
+R137,Warehouse Operations Coordinator,Operations,Complete 90-day probationary review,TRUE,High,First 90 Days,POL-01,3.1,Performance Readiness,Signed review form
+R138,Warehouse Operations Coordinator,Operations,Understand escalation path for compliance concerns,TRUE,Medium,Week 2,COMP-01,1.1,Compliance Awareness,Quiz pass ≥80%
+R139,Warehouse Operations Coordinator,Operations,Review logistics coordination process with fulfillment partners,FALSE,Low,First 60 Days,SOP-04,2.1,Operations,None
+R140,Software Engineer,Engineering,Pass practical assessment on peer review workflow,TRUE,Medium,First 30 Days,SOP-01,1.1,Engineering Process,Practical exercise
+R141,DevOps/Infrastructure Engineer,Engineering,Pass tabletop exercise for Critical Incident response,TRUE,Medium,First 60 Days,SOP-01,3.1,Incident Response,Tabletop exercise
+R142,QA Engineer,Engineering,Complete release sign-off shadowing with senior QA,FALSE,Low,First 30 Days,ROLE-03,1.2,Engineering Process,None
+R143,Customer Support Representative,Customer Operations,Pass refund-scenario role-play assessment,TRUE,Medium,Week 2,SOP-02,2.1,Support Process,Role-play assessment
+R144,Payments Operations Specialist,Customer Operations,Complete quarterly access-review attestation,FALSE,Low,First 90 Days,SOP-03,1.1,Payment Operations,None
+R145,HR Generalist,People & Culture,Complete records-audit shadowing with senior HR staff,FALSE,Low,First 60 Days,POL-01,2.2,HR Operations,None
+R146,Recruiter,People & Culture,Pass confidentiality scenario-based assessment,TRUE,Medium,Week 2,POL-01,1.1,Confidentiality,Scenario assessment
+R147,Financial Analyst,Finance,Complete forecasting model walkthrough with manager,FALSE,Low,First 60 Days,SOP-05,3.1,Finance Operations,None
+R148,Accounts Payable Clerk,Finance,Pass invoice-processing certification quiz,TRUE,Medium,Week 2,SOP-05,1.3,Finance Operations,Quiz pass ≥80%
+R149,Warehouse Operations Coordinator,Operations,Complete refresher safety walkthrough at 30 days,TRUE,Medium,First 30 Days,SOP-04,2.2,Safety Compliance,Certification exam
+R150,All Roles,Company-wide,Acknowledge understanding of disciplinary consequences policy,TRUE,Medium,First 30 Days,POL-04,4.1,Conduct Compliance,Signed acknowledgment form
+R151,All Roles,Company-wide,Understand third-party data sharing approval process,FALSE,Low,First 60 Days,POL-05,4.1,Data Privacy,None
+R152,Software Engineer,Engineering,Understand postmortem documentation expectations,FALSE,Low,First 60 Days,SOP-01,4.2,Documentation,None
+R153,DevOps/Infrastructure Engineer,Engineering,Understand break-glass account exception process,TRUE,Medium,First 30 Days,POL-03,2.1,Security Compliance,Quiz pass ≥80%
+R154,Payments Operations Specialist,Customer Operations,Understand refund co-sign cross-reference with Support SOP,TRUE,Medium,Week 2,SOP-03,2.2,Payment Operations,Quiz pass ≥80%
