@@ -1,0 +1,1 @@
+"""SkillSprint AI application package."""
