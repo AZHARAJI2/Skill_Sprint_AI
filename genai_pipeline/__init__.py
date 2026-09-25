@@ -13,6 +13,7 @@ from genai_pipeline.requirement_extractor import RequirementExtractor
 from genai_pipeline.retry_manager import RetryManager
 from genai_pipeline.scenario_generator import ScenarioTaskGenerator
 from genai_pipeline.schema_validator import OutputSchemaValidator
+from genai_pipeline.scripted_provider import ScriptedProvider
 from genai_pipeline.sequence import PrerequisiteEnforcer
 
 __all__ = [
@@ -33,4 +34,5 @@ __all__ = [
     "RequirementExtractor",
     "RetryManager",
     "ScenarioTaskGenerator",
+    "ScriptedProvider",
 ]
