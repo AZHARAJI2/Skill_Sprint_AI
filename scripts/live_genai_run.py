@@ -22,12 +22,16 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import re
+import time
+
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from config.logging_config import configure_logging, get_logger
 from config.settings import settings
 from database.base import SessionLocal
-from genai_pipeline.base_provider import GenerationConfig
+from genai_pipeline.base_provider import GenAIResponse, GenerationConfig
 from genai_pipeline.gemini_provider import GeminiProvider
 from genai_pipeline.prompt_manager import PromptManager
 from schemas.plan_schema import GeneratedPlan
@@ -40,6 +44,77 @@ from src.plans.service import PlanGenerationService
 logger = get_logger("live_genai_run")
 
 RAW_SAMPLE_CHAR_LIMIT = 1200
+RETRY_DELAY_PATTERN = re.compile(r"retry in ([\d.]+)s", re.IGNORECASE)
+
+
+class RateLimitedProvider(GeminiProvider):
+    """Harness-only GeminiProvider subclass that stays inside the free-tier quota.
+
+    The free tier allows ~5 generate_content requests per minute per model, while
+    one role needs 5 model calls (plan + 4 enrichment passes). Without pacing,
+    every call after the 5th returns 429 and the plan silently falls back to the
+    assembler. This subclass enforces a minimum interval between calls and honors
+    the server's ``retryDelay`` on 429. Subclassing (not wrapping) keeps the
+    ``isinstance(provider, GeminiProvider)`` enrichment gate in
+    ``PlanGenerationService`` working. Production code and tests are untouched.
+    """
+
+    def __init__(
+        self,
+        api_key: str | None = None,
+        model: str | None = None,
+        min_interval_secs: float = 13.0,
+        max_rate_retries: int = 6,
+    ) -> None:
+        super().__init__(api_key=api_key, model=model)
+        self.min_interval_secs = min_interval_secs
+        self.max_rate_retries = max_rate_retries
+        self._last_call: float = 0.0
+        self.rate_limit_hits = 0
+
+    def generate(
+        self,
+        prompt: str,
+        schema: type[BaseModel] | None = None,
+        config: GenerationConfig | None = None,
+    ) -> GenAIResponse:
+        """Pace calls and retry on 429 with the server-suggested delay."""
+        attempts = 0
+        while True:
+            self._pace()
+            try:
+                return super().generate(prompt, schema=schema, config=config)
+            except AppError as exc:
+                if not self._is_rate_limit(exc) or attempts >= self.max_rate_retries:
+                    raise
+                attempts += 1
+                self.rate_limit_hits += 1
+                delay = self._retry_delay(exc)
+                logger.warning("rate_limited attempt=%s sleeping=%.1fs", attempts, delay)
+                time.sleep(delay)
+                self._last_call = time.monotonic()
+
+    def _pace(self) -> None:
+        elapsed = time.monotonic() - self._last_call
+        wait = self.min_interval_secs - elapsed
+        if wait > 0:
+            time.sleep(wait)
+        self._last_call = time.monotonic()
+
+    @staticmethod
+    def _is_rate_limit(exc: AppError) -> bool:
+        details = str(getattr(exc, "details", "") or "")
+        return "429" in details or "RESOURCE_EXHAUSTED" in details or "quota" in details.lower()
+
+    @staticmethod
+    def _retry_delay(exc: AppError) -> float:
+        match = RETRY_DELAY_PATTERN.search(str(getattr(exc, "details", "") or ""))
+        if match:
+            try:
+                return float(match.group(1)) + 2.0
+            except ValueError:
+                pass
+        return 15.0
 
 
 class LiveGenAIRun:
@@ -184,6 +259,8 @@ class LiveGenAIRun:
             "roles_with_gemini_contribution": len(gemini_backed),
             "all_gemini_backed": bool(runs) and len(gemini_backed) == len(runs),
             "total_retry_count": sum(int(r.get("retry_count") or 0) for r in runs),
+            "rate_limit_hits": getattr(self.provider, "rate_limit_hits", 0),
+            "min_interval_secs": getattr(self.provider, "min_interval_secs", None),
             "mean_wall_clock_ms": round(
                 sum(float(r["wall_clock_ms"]) for r in runs) / len(runs), 1
             ) if runs else 0.0,
@@ -254,6 +331,12 @@ def main(argv: list[str] | None = None) -> int:
         default=settings.project_root / "reports" / "d4_live_genai_run.json",
         help="Where to write the evidence JSON.",
     )
+    parser.add_argument(
+        "--throttle",
+        type=float,
+        default=13.0,
+        help="Minimum seconds between Gemini calls (free-tier quota pacing).",
+    )
     args = parser.parse_args(argv)
 
     configure_logging()
@@ -266,7 +349,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
 
-    provider = GeminiProvider()
+    provider = RateLimitedProvider(min_interval_secs=args.throttle)
     print(f"Model: {provider.model}")
     print(f"Roles to generate: {args.roles if args.roles else 'all seeded demo employees'}")
 
@@ -282,7 +365,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Generated : {evidence['roles_generated']}/{evidence['roles_attempted']}")
     print(f"Failures  : {evidence['roles_failed']}")
     print(f"Gemini-backed (not assembler fallback): {evidence['roles_with_gemini_contribution']}")
-    print(f"Total retries: {evidence['total_retry_count']}   mean wall clock: {evidence['mean_wall_clock_ms']} ms")
+    print(f"Total retries: {evidence['total_retry_count']}   rate-limit hits absorbed: {evidence['rate_limit_hits']}   mean wall clock: {evidence['mean_wall_clock_ms']} ms")
     print(f"Raw Gemini sample captured: {evidence['raw_gemini_sample'].get('captured')}")
     print(f"Evidence written to: {path}")
     return 0 if evidence["roles_generated"] else 1
