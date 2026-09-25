@@ -1,0 +1,9 @@
+# Policy precedence hierarchy for Pipeline 2 contradiction resolution.
+# Highest rank wins when two sources disagree.
+# Phase 3 consumes this file; Phase 1 ships it so the rule is versioned with the repo.
+hierarchy:
+  - Latest Approved Policy
+  - Department SOP
+  - Compliance Procedures
+  - FAQ
+  - Informal Guidance
