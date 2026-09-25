@@ -193,6 +193,18 @@
 
 **Notes**: Do not call Gemini from `python_validation/`. Missing `GEMINI_API_KEY` → 503, never a fake plan. After retry cap, assembler backbone is persisted and `recovered_from_assembler` is logged in generation metadata. Route order: list-by-employee is registered before `GET /{plan_id}`.
 
+### Entry 005 — 2026-09-25 12:36 | Agent: Execution - Phase 2 | Task: Independent re-verification of Pipeline 1
+
+**Timestamp**: 2026-09-25 12:36  
+**Agent**: Execution - Phase 2 (GenAI Pipeline Engineer)  
+**Member**: A'LAA MADYAN  
+**Task**: Re-read Memory Trinity, audit Phase 2 scope vs code, re-run pytest, close remaining public-export gap, confirm branch push  
+**Rationale**: This session was launched as full Phase 2 execution. PROJECT_MAP already marked steps 11–26 and 37–43 complete on `phase-2-genai-pipeline`. Success criterion: do not rebuild Pipeline 1 if VG-2.1–VG-2.9 already hold; independently re-run the suite; export `ScriptedProvider` from `genai_pipeline` so the documented test injection interface is package-public. Will not implement Pipeline 2 validators.
+
+**Status**: Completed  
+
+**Notes**: `.venv` pytest result: 27 passed. All Phase 2 requirement IDs remain checked in PROJECT_MAP. `ScriptedProvider` is now in `genai_pipeline.__all__`. Branch `phase-2-genai-pipeline` was already tracking origin; this session pushes the verification/export commit.
+
 ---
 
 ## Phase 3 Log

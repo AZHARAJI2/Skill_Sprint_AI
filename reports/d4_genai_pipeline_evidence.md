@@ -83,6 +83,6 @@ That file is produced from matrix rows + chunks at test time.
 | GET | `/api/plans/employee/{employee_id}` | Authenticated (employees: own only) |
 
 Public Python interfaces: `PlanGenerationService.generate_for_employee`,
-`BaseGenAIProvider`, `PromptManager`, `RequirementExtractor`, `PlanAssembler`,
-`OutputSchemaValidator`, `InjectionGuard`. Phase 3 must consume stored
-`structured_json` and must not call Gemini from validators.
+`BaseGenAIProvider`, `GeminiProvider`, `ScriptedProvider` (tests), `PromptManager`,
+`RequirementExtractor`, `PlanAssembler`, `OutputSchemaValidator`, `InjectionGuard`.
+Phase 3 must consume stored `structured_json` and must not call Gemini from validators.
