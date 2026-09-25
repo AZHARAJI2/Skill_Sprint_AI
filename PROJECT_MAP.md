@@ -4,7 +4,7 @@
 > an online marketplace with warehousing, payment processing, customer support,
 > and engineering divisions.
 >
-> **Last Updated**: 2026-09-25 (re-verified 12:36) | **Updated By**: Phase 2 GenAI Pipeline Engineer (A'LAA MADYAN)
+> **Last Updated**: 2026-09-25 (Phase 2 integrated into `main`) | **Updated By**: Phase 2 GenAI Pipeline Engineer (A'LAA MADYAN)
 
 ---
 
@@ -576,7 +576,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | # | Deliverable | Owner Phase | Status |
 |---|---|---|---|
 | D1 | Project Report (problem definition, diagrams: DFD, Use Case, Activity, Sequence) | Phase 4 | PENDING |
-| D2 | Source Code in mandatory GitHub folder structure | Phase 1 (scaffold) + all | IN PROGRESS — Phase 1 foundation + Phase 2 `genai_pipeline/`, `prompt_templates/`, `schemas/`, `security/injection_guard.py`, `/api/plans*` filled; Phase 3–4 remaining |
+| D2 | Source Code in mandatory GitHub folder structure | Phase 1 (scaffold) + all | IN PROGRESS — Phase 1 foundation + Phase 2 `genai_pipeline/`, `prompt_templates/`, `schemas/`, `security/injection_guard.py`, `/api/plans*` **merged into `main`**; Phase 3–4 remaining (all four Phase 3 packages are still `__init__.py`-only) |
 | D3 | Company Document Dataset — 24 documents, 38 files (profile, scenario, policies, role descriptions, etc.) | ✅ DONE (Prompt A0 + Addendum) | COMPLETE |
 | D4 | GenAI Pipeline Evidence (API/model, prompts, config, samples, failures, retries) | Phase 2 | ✅ DONE — `reports/d4_genai_pipeline_evidence.md` + live sample `reports/d4_sample_software_engineer_plan.json` |
 | D5 | Python Validation Pipeline Evidence | Phase 3 | PENDING |
@@ -631,7 +631,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | F8 | Hallucination Challenge readiness | Phase 2 (source grounding) + Phase 3 (hallucination detection) | PHASE 2 READY for `grounding_status` / `GroundingFlag`; Phase 3 `HallucinationDetector` still pending |
 | F9 | Live Code Modification readiness | All phases (OOP design enables single-class changes) | PENDING |
 | F10 | Deliberate Defect readiness (debug planted errors) | All phases (clean code, docstrings, SRP) | PENDING |
-| F11 | Meaningful GitHub commits across all 5 days from all members | All phases | IN PROGRESS — Phase 1 split commits by Azhar Raji AL-Herwi; Phase 2 split commits by A'LAA MADYAN; remaining members/days still required |
+| F11 | Meaningful GitHub commits across all 5 days from all members | All phases | IN PROGRESS — 13 Phase 2 commits (A'LAA MADYAN) fast-forwarded into `main`; Phase 1 split commits by Azhar Raji AL-Herwi; remaining members/days still required |
 | F12 | ABSOLUTE PROHIBITION on hard-coded plans/answers/scores/fakes | Phase 2 + Phase 3 (everything computed live) | PHASE 2 SATISFIED for generation — live `PlanAssembler` from matrix+chunks, fail-closed Gemini, no per-role hard-coded plans; Phase 3 scores still pending |
 | F14 | GenAI never replaces Python validation/business rules/security | Phase 2 + Phase 3 (strict pipeline separation) | PHASE 2 SATISFIED — schema/retry/injection/distractors are Python; Pipeline 2 remains Phase 3 with zero GenAI |
 | F15 | AI-assisted code must be reviewed/understood/explainable by team | All phases | PENDING |
