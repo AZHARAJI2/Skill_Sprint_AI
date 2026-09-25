@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Role dashboard{% endblock %}
+{% block content %}
+<h1 class="h3">Role dashboard</h1>
+<table class="table table-striped">
+  <thead><tr><th>Role</th><th>Department</th><th>Employees</th></tr></thead>
+  <tbody>
+  {% for row in by_role %}
+    <tr><td>{{ row.title }}</td><td>{{ row.department }}</td><td>{{ row.employees }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Upload documents{% endblock %}
+{% block content %}
+<h1 class="h3">Document upload</h1>
+<p>PDF and DOCX are required formats. TXT, Markdown, and CSV are accepted for hidden-evaluation compatibility.</p>
+<form id="upload-form" class="mb-3">
+  <input class="form-control mb-2" type="file" name="file" required>
+  <button class="btn btn-primary" type="submit">Upload</button>
+</form>
+<pre id="upload-result" class="bg-light p-3"></pre>
+<script>
+document.getElementById("upload-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(event.target);
+  const response = await fetch("/api/documents/upload", { method: "POST", body: data });
+  document.getElementById("upload-result").textContent = await response.text();
+});
+</script>
+{% endblock %}

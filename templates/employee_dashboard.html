@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Employee dashboard{% endblock %}
+{% block content %}
+<h1 class="h3">Employee dashboard</h1>
+{% if employee %}
+<p>Assigned profile: <strong>{{ employee.name }}</strong> ({{ employee.employee_code }}) — {{ employee.department }}, status {{ employee.training_status }}.</p>
+<p>Modules, quizzes, and progress appear here after Phase 2 generation and Phase 4 tracking are wired to this page.</p>
+{% else %}
+<p>No employee profile is linked to this login.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Login · SkillSprint AI{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <h1 class="h3 mb-3">Sign in</h1>
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <form method="post" action="/login">
+      <div class="mb-3">
+        <label class="form-label" for="username">Username</label>
+        <input class="form-control" id="username" name="username" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-control" id="password" name="password" type="password" required>
+      </div>
+      <button class="btn btn-primary" type="submit">Login</button>
+    </form>
+    <p class="text-muted mt-3 small">Demo: admin/admin123 · trainer/trainer123 · reviewer/reviewer123 · manager/manager123 · employee/employee123</p>
+  </div>
+</div>
+{% endblock %}
