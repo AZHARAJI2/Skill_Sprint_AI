@@ -52,3 +52,74 @@ class ReviewAction(str, Enum):
     EDIT = "edit"
     REGENERATE = "regenerate"
     COMMENT = "comment"
+
+
+class DueStage(str, Enum):
+    """Canonical onboarding stages. Content must be spread across these, never all Day 1."""
+
+    DAY_1 = "Day 1"
+    WEEK_1 = "Week 1"
+    WEEK_2 = "Week 2"
+    FIRST_30_DAYS = "First 30 Days"
+    FIRST_60_DAYS = "First 60 Days"
+    FIRST_90_DAYS = "First 90 Days"
+
+
+class DifficultyLevel(str, Enum):
+    """Task/module/quiz difficulty reflecting role plus experience."""
+
+    BEGINNER = "Beginner"
+    INTERMEDIATE = "Intermediate"
+    ADVANCED = "Advanced"
+
+
+class QuestionType(str, Enum):
+    """Supported quiz formats."""
+
+    MCQ = "MCQ"
+    MULTIPLE_RESPONSE = "MR"
+    TRUE_FALSE = "TF"
+    SCENARIO = "Scenario"
+
+
+class AssessmentType(str, Enum):
+    """Assessment categories required by the specification."""
+
+    KNOWLEDGE = "knowledge"
+    PRACTICAL = "practical"
+    SCENARIO = "scenario"
+    ROLE_SPECIFIC = "role-specific"
+
+
+class RequirementClassification(str, Enum):
+    """How a matrix row must be treated in a generated plan (step 11)."""
+
+    MUST_KNOW = "Must Know"
+    MUST_COMPLETE = "Must Complete"
+    MUST_DEMONSTRATE = "Must Demonstrate"
+    MUST_ACKNOWLEDGE = "Must Acknowledge"
+    RECOMMENDED = "Recommended"
+    OPTIONAL = "Optional"
+    NOT_APPLICABLE = "N/A"
+
+
+class GroundingStatus(str, Enum):
+    """Source-grounding outcome for a generated item (Phase 2 flags; Phase 3 scores)."""
+
+    SOURCE_SUPPORTED = "source_supported"
+    INSTRUCTIONAL_WORDING = "instructional_wording"
+    UNSUPPORTED_FACTUAL = "unsupported_factual"
+    INJECTION_FLAGGED = "injection_flagged"
+    MANUAL_REVIEW = "manual_review"
+
+
+class DistractorValidationStatus(str, Enum):
+    """Python check of quiz options against the cited source chunk."""
+
+    PASSED = "passed"
+    FAILED_NOT_IN_SOURCE = "failed_not_in_source"
+    FAILED_CONTRADICTORY = "failed_contradictory"
+    REPAIRED = "repaired"
+
+
+STAGE_ORDER: tuple[str, ...] = tuple(stage.value for stage in DueStage)
