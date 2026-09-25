@@ -74,6 +74,45 @@ Pytest `test_plans_for_all_ten_roles` writes a live Software Engineer plan JSON 
 
 That file is produced from matrix rows + chunks at test time.
 
+## Live Gemini run (2026-09-25, operator harness `scripts/live_genai_run.py`)
+
+First real model calls in project history. Environment: `google-genai==2.23.0`,
+model `gemini-3.5-flash-lite` via `GEMINI_MODEL` override, seeded SQLite
+(178 matrix rows, 38 files, 24 documents). Machine evidence:
+`reports/d4_live_genai_run.json` (key never persisted — env only).
+
+| Item | Value |
+|---|---|
+| Roles generated | 2/2, 0 failures |
+| Gemini-backed (model wording merged, `recovered_from_assembler: false`) | 1 — Software Engineer (plan_id 1): 2 modules, 39 checklists, 25 tasks, 8 quizzes, 4 assessments, 6 stages; retry_count 0; provider latency 14.5 s |
+| Assembler fallback (`recovered_from_assembler: true`, correctly flagged) | 1 — DevOps/Infrastructure Engineer (plan_id 2): model returned non-JSON 3× (likely truncation of a large plan), retry cap behaved as designed, `OutputSchemaValidator` accepted 103 assembler items |
+| Raw unedited Gemini response | Captured (`raw_gemini_sample.captured: true`, 3799 chars, parses as JSON, `prompt_version: onboarding_plan_v1`) |
+| Total RetryManager retries | 0 on the Gemini-backed role |
+
+### Findings only a live run could reveal
+
+1. **Default model dead for new keys**: `gemini-2.5-flash` (the `GEMINI_MODEL`
+   default) returns `404 NOT_FOUND — no longer available to new users`.
+   The API itself pointed at `gemini-3.8-flash`; probing the key's model list
+   (61 models) showed `gemini-3.5-flash-lite` as the working flash option.
+   The default is intentionally **unchanged** — evaluators may hold older keys
+   with `2.5-flash` access — and the override path (`GEMINI_MODEL`) is proven.
+2. **Prompt never contained the schema**: `onboarding_plan_v1.json` said
+   "output JSON matching the provided schema" but no schema was provided, so
+   the model invented `{"employee_onboarding_plan": {...}}` (11→104 validation
+   errors across retries). Fixed by passing `response_json_schema` from the
+   Pydantic contract in `GeminiProvider.generate` and passing `schema` through
+   `RetryManager` (still validated locally as a safety net). First attempt then
+   succeeded with zero retries. Suite re-run: 27 passed.
+3. **Free-tier quota is the binding constraint**: 5 req/min and 20 req/day per
+   model. One role costs 5 model calls (plan + 4 enrichment passes), so the
+   harness paces calls (`RateLimitedProvider`, a `GeminiProvider` subclass so
+   the enrichment gate still fires) and honors server `retryDelay` on 429.
+4. **Open hypothesis (unverified — quota exhausted)**: the DevOps non-JSON
+   triple looks like response truncation; raising `max_output_tokens` from
+   8192 may fix it, but the constant is deliberately **not** changed without a
+   live verification run.
+
 ## HTTP surface for later phases
 
 | Method | Path | RBAC |

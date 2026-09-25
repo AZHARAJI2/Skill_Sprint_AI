@@ -234,6 +234,23 @@
 
 **Notes**: `google-genai==2.23.0` installed into `.venv`; it downgrades `websockets` 17.1 → 16.1.1, and `uvicorn==0.53.0` still imports fine (27/27 tests re-run green, no regression). A wiring test with a deliberately invalid key proved the path is live: the request reached `generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent` and Google returned `400 API_KEY_INVALID`; `RetryManager` logged 3 capped attempts, `PlanGenerator` fell back to `PlanAssembler`, `OutputSchemaValidator` accepted 102 items, and the harness honestly reported `recovered_from_assembler: true` / `all_gemini_backed: false`. The seeded DB was empty (18 tables, 0 rows), so I re-ran `python -m database.seed` (178 matrix rows, 38 files, 24 documents, 11 adversarial sections) and reset it again after the wiring test so the real run starts clean. The harness must never persist or log the key — it reads the environment only.
 
+### Entry 008 — 2026-09-25 | Agent: Execution - Phase 2 | Task: First live Gemini run + schema-constraint fix + D4 close-out
+
+**Timestamp**: 2026-09-25 15:05
+**Agent**: Execution - Phase 2 (GenAI Pipeline Engineer)
+**Member**: A'LAA MADYAN
+**Task**: Run Pipeline 1 against the real API with the member-supplied key, fix whatever the live run exposes, and close D4 honestly
+**Rationale**: The key arrived, so the success criterion became a recorded Gemini-backed plan, not just wiring. The run exposed three production issues no mock could: (1) `gemini-2.5-flash` 404s for new keys — kept the default (evaluators may hold old keys) and proved the `GEMINI_MODEL` override with `gemini-3.5-flash-lite`; (2) the plan template demanded schema conformance without ever supplying the schema, so the model invented `employee_onboarding_plan` — fixed with `response_json_schema` in `GeminiProvider.generate` plus schema passthrough in `RetryManager` (local validation retained as safety net; suite still 27 green); (3) free-tier quota (5/min, 20/day per model) makes unpaced 10-role runs impossible — added `RateLimitedProvider` as a `GeminiProvider` subclass inside the harness only, so the `isinstance` enrichment gate keeps firing. Result: Software Engineer Gemini-backed with 0 retries (2 modules, 39 checklists, 25 tasks, 8 quizzes, 4 assessments, 6 stages, 14.5 s provider latency) plus an unedited 3799-char raw response, all in `reports/d4_live_genai_run.json`. DevOps fell back to the assembler after 3× non-JSON output — recorded as fallback, not hidden. Security: grepped evidence + logs for key fragments before commit — clean.
+
+**Status**: Completed
+
+**Public interfaces for later phases** (unchanged contracts, stronger guarantees):
+- `GeminiProvider.generate` now constrains output with `response_json_schema` whenever a Pydantic schema is passed — Phase 3 can trust `structured_json` shape more, but must still validate (contract, not proof)
+- `RetryManager` passes `schema` to the provider; behavior for non-constraining providers is identical (still validates locally)
+- `scripts/live_genai_run.py` gains `--throttle` and `--roles`; rerun after quota reset for the remaining 8 roles
+
+**Notes**: Deliberately did NOT raise `max_output_tokens` (8192) — the DevOps truncation is a hypothesis that quota exhaustion blocks from verifying today; changing it blind would be speculative engineering. Quota spend on `gemini-3.5-flash-lite` today ≈ 18/20. Temp probes (`_schema_probe_tmp`, `_census_tmp`, `_db_census`) deleted; only `scripts/live_genai_run.py` + `scripts/__init__.py` remain. Remaining Phase 2 follow-up for a future session: rerun the harness for roles 3–10 to extend D4 coverage (D4 itself is DONE — it holds verified live proof, not a promise).
+
 ---
 
 ## Phase 3 Log
