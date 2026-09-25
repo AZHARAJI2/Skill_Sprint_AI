@@ -153,3 +153,27 @@ R151,All Roles,Company-wide,Understand third-party data sharing approval process
 R152,Software Engineer,Engineering,Understand postmortem documentation expectations,FALSE,Low,First 60 Days,SOP-01,4.2,Documentation,None
 R153,DevOps/Infrastructure Engineer,Engineering,Understand break-glass account exception process,TRUE,Medium,First 30 Days,POL-03,2.1,Security Compliance,Quiz pass ≥80%
 R154,Payments Operations Specialist,Customer Operations,Understand refund co-sign cross-reference with Support SOP,TRUE,Medium,Week 2,SOP-03,2.2,Payment Operations,Quiz pass ≥80%
+R155,Recruiter,People & Culture,Understand the Recruiter role's purpose and hiring-pipeline mission,TRUE,High,Day 1,ROLE-07,1.1,Role Readiness,Manager confirmation
+R156,Recruiter,People & Culture,Build initial candidate pipeline for assigned departments,TRUE,Medium,First 30 Days,ROLE-07,2.1,Sourcing,Manager confirmation
+R157,Recruiter,People & Culture,Complete scorecard/interview-panel process with a hiring manager,TRUE,High,Week 2,ROLE-07,2.2,Hiring Process,Practical exercise
+R158,Recruiter,People & Culture,Attend an industry hiring event or career fair when scheduled,FALSE,Low,First 90 Days,ROLE-07,2.3,Employer Branding,None
+R159,Recruiter,People & Culture,Understand reporting line and candidate-handoff process with HR Generalists,TRUE,Medium,Week 1,ROLE-07,3.1,Role Readiness,Quiz pass ≥80%
+R160,Recruiter,People & Culture,Understand time-to-fill and candidate-quality success metrics,TRUE,Medium,First 30 Days,ROLE-07,4.1,Performance Awareness,Manager confirmation
+R161,Financial Analyst,Finance,Understand the Financial Analyst role's purpose and budget-oversight mission,TRUE,High,Day 1,ROLE-08,1.1,Role Readiness,Manager confirmation
+R162,Financial Analyst,Finance,Complete first monthly budget-to-actual variance report,TRUE,High,First 30 Days,ROLE-08,2.1,Financial Reporting,Manager review
+R163,Financial Analyst,Finance,Complete invoice review/approval workflow training,TRUE,High,Week 1,ROLE-08,2.2,Finance Operations,Practical exercise
+R164,Financial Analyst,Finance,Set up rolling cash-flow forecast model,FALSE,Low,First 90 Days,ROLE-08,2.3,Financial Modeling,None
+R165,Financial Analyst,Finance,Understand reporting line and coordination with Accounts Payable Clerks,TRUE,Medium,Week 1,ROLE-08,3.1,Role Readiness,Quiz pass ≥80%
+R166,Financial Analyst,Finance,Understand forecast-accuracy and reporting-timeliness success metrics,TRUE,Medium,First 30 Days,ROLE-08,4.1,Performance Awareness,Manager confirmation
+R167,Accounts Payable Clerk,Finance,Understand the Accounts Payable Clerk role's purpose and payment-accuracy mission,TRUE,High,Day 1,ROLE-09,1.1,Role Readiness,Manager confirmation
+R168,Accounts Payable Clerk,Finance,Complete invoice-to-purchase-order matching training,TRUE,High,Week 1,ROLE-09,2.1,Finance Operations,Practical exercise
+R169,Accounts Payable Clerk,Finance,Complete vendor master file setup and maintenance training,TRUE,Medium,First 30 Days,ROLE-09,2.2,Finance Operations,Practical exercise
+R170,Accounts Payable Clerk,Finance,Practice responding to vendor payment-status inquiries,FALSE,Low,First 60 Days,ROLE-09,2.3,Vendor Relations,None
+R171,Accounts Payable Clerk,Finance,Understand reporting line and daily coordination with Financial Analysts,TRUE,Medium,Week 1,ROLE-09,3.1,Role Readiness,Quiz pass ≥80%
+R172,Accounts Payable Clerk,Finance,Understand turnaround-time and error-rate success metrics,TRUE,Medium,First 30 Days,ROLE-09,4.1,Performance Awareness,Manager confirmation
+R173,Warehouse Operations Coordinator,Operations,Understand the Warehouse Operations Coordinator role's purpose and fulfillment mission,TRUE,High,Day 1,ROLE-10,1.1,Role Readiness,Manager confirmation
+R174,Warehouse Operations Coordinator,Operations,Complete shipment-scheduling coordination training,TRUE,High,Week 1,ROLE-10,2.1,Logistics Coordination,Practical exercise
+R175,Warehouse Operations Coordinator,Operations,Understand on-site safety-incident point-of-contact responsibilities,TRUE,High,Week 1,ROLE-10,2.2,Safety Compliance,Practical exercise
+R176,Warehouse Operations Coordinator,Operations,Lead a shift-start safety huddle,FALSE,Low,First 30 Days,ROLE-10,2.3,Safety Compliance,None
+R177,Warehouse Operations Coordinator,Operations,Understand reporting line and client/engineering stakeholder interfaces,TRUE,Medium,Week 1,ROLE-10,3.1,Role Readiness,Quiz pass ≥80%
+R178,Warehouse Operations Coordinator,Operations,Understand on-time coordination rate and safety-response-time success metrics,TRUE,Medium,First 30 Days,ROLE-10,4.1,Performance Awareness,Manager confirmation
