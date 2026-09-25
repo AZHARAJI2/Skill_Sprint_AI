@@ -434,3 +434,58 @@ def test_api_generate_requires_admin(session: Session) -> None:
         assert listed.json()[0]["id"] == body["id"]
     finally:
         app.dependency_overrides.clear()
+
+
+def test_enrichment_preserves_full_item_inventory_on_partial_batches(session: Session) -> None:
+    """Enrichment passes with partial model batches must update matching items without dropping remaining ones."""
+    employee_ids = _seed_pipeline_data(session)
+    service = PlanGenerationService(session, provider=_failing_provider())
+    stored = service.generate_for_employee(employee_ids["HR Generalist"], actor="test")
+    from schemas.plan_schema import GeneratedPlan
+    from genai_pipeline.module_generator import ModuleGenerator
+    from genai_pipeline.quiz_generator import QuizGenerator
+    from genai_pipeline.assessment_generator import AssessmentGenerator
+    from genai_pipeline.scenario_generator import ScenarioTaskGenerator
+
+    plan = GeneratedPlan.model_validate(stored.structured_json)
+    initial_module_count = len(plan.modules)
+    initial_quiz_count = len(plan.quizzes)
+    initial_assessment_count = len(plan.assessments)
+    initial_task_count = len(plan.tasks)
+    assert initial_module_count > 1
+    assert initial_quiz_count > 1
+    assert initial_assessment_count > 1
+    assert initial_task_count > 1
+
+    # 1. ModuleGenerator with a single enriched module
+    sample_module = plan.modules[0].model_copy(update={"purpose": "Enriched purpose from model"})
+    mod_provider = ScriptedProvider([{"modules": [sample_module.model_dump(mode="json")]}])
+    enriched_modules = ModuleGenerator(mod_provider).enrich(plan, "source_chunks")
+    assert len(enriched_modules) == initial_module_count
+    assert enriched_modules[0].purpose == "Enriched purpose from model"
+    assert enriched_modules[1].purpose == plan.modules[1].purpose
+
+    # 2. QuizGenerator with a single enriched quiz
+    sample_quiz = plan.quizzes[0].model_copy(update={"question_text": "Enriched question text?"})
+    quiz_provider = ScriptedProvider([{"quizzes": [sample_quiz.model_dump(mode="json")]}])
+    enriched_quizzes = QuizGenerator(quiz_provider).enrich(plan, "source_chunks", {})
+    assert len(enriched_quizzes) == initial_quiz_count
+    assert enriched_quizzes[0].question_text == "Enriched question text?"
+    assert enriched_quizzes[1].question_text == plan.quizzes[1].question_text
+
+    # 3. AssessmentGenerator with a single enriched assessment
+    sample_assessment = plan.assessments[0].model_copy(update={"title": "Enriched assessment title"})
+    asst_provider = ScriptedProvider([{"assessments": [sample_assessment.model_dump(mode="json")]}])
+    enriched_assessments = AssessmentGenerator(asst_provider).enrich(plan, "source_chunks")
+    assert len(enriched_assessments) == initial_assessment_count
+    assert enriched_assessments[0].title == "Enriched assessment title"
+    assert enriched_assessments[1].title == plan.assessments[1].title
+
+    # 4. ScenarioTaskGenerator with a single enriched task
+    sample_task = plan.tasks[0].model_copy(update={"description": "Enriched task description"})
+    task_provider = ScriptedProvider([{"tasks": [sample_task.model_dump(mode="json")]}])
+    enriched_tasks = ScenarioTaskGenerator(task_provider).enrich(plan, "source_chunks")
+    assert len(enriched_tasks) == initial_task_count
+    assert enriched_tasks[0].description == "Enriched task description"
+    assert enriched_tasks[1].description == plan.tasks[1].description
+
