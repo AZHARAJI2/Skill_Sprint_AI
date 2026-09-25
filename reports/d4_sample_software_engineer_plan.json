@@ -1,0 +1,2531 @@
+{
+  "schema_version": "onboarding_plan_v1",
+  "role_title": "Software Engineer",
+  "employee_code": "P2-001",
+  "experience_level": "Beginner",
+  "classified_requirements": [
+    {
+      "requirement_id": "R001",
+      "role": "All Roles",
+      "classification": "Must Acknowledge",
+      "requirement_text": "Read and acknowledge the Employee Handbook",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Day 1",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "1.1",
+      "competency": "Policy Awareness",
+      "assessment_requirement": "Signed acknowledgment form",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R002",
+      "role": "All Roles",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Understand standard work hours and mandatory core hours",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Day 1",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "2.1",
+      "competency": "Policy Awareness",
+      "assessment_requirement": "Manager confirmation",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R022",
+      "role": "Software Engineer",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Understand core Software Engineer responsibilities",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Day 1",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.1",
+      "competency": "Role Readiness",
+      "assessment_requirement": "Manager confirmation",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R035",
+      "role": "Software Engineer",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Set up version control and CI access",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Day 1",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "2.1",
+      "competency": "Technical Setup",
+      "assessment_requirement": "IT confirmation",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R004",
+      "role": "All Roles",
+      "classification": "Must Know",
+      "requirement_text": "Understand harassment and discrimination policy",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Week 1",
+      "source_document_id": "POL-04",
+      "source_section_id": "1.2",
+      "competency": "Conduct Compliance",
+      "assessment_requirement": "Quiz pass \u226580%",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R005",
+      "role": "All Roles",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Know how to report a conduct violation",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "Week 1",
+      "source_document_id": "POL-04",
+      "source_section_id": "2.1",
+      "competency": "Conduct Compliance",
+      "assessment_requirement": "Verbal confirmation in 1:1",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R008",
+      "role": "All Roles",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Understand sick leave policy and notification process",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "Week 1",
+      "source_document_id": "POL-02",
+      "source_section_id": "2.1",
+      "competency": "Benefits Literacy",
+      "assessment_requirement": "Manager confirmation",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R012",
+      "role": "All Roles",
+      "classification": "Must Know",
+      "requirement_text": "Understand definition of confidential employee data",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "Week 1",
+      "source_document_id": "POL-01",
+      "source_section_id": "5.1",
+      "competency": "Confidentiality",
+      "assessment_requirement": "Quiz pass \u226580%",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R015",
+      "role": "All Roles",
+      "classification": "Must Know",
+      "requirement_text": "Complete new-hire onboarding checklist items",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Week 1",
+      "source_document_id": "FAQ-01",
+      "source_section_id": "1.3",
+      "competency": "Onboarding",
+      "assessment_requirement": "Checklist sign-off",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R023",
+      "role": "Software Engineer",
+      "classification": "Must Know",
+      "requirement_text": "Complete peer code review process training",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Week 1",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.2",
+      "competency": "Engineering Process",
+      "assessment_requirement": "Practical exercise",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R025",
+      "role": "Software Engineer",
+      "classification": "Must Know",
+      "requirement_text": "Understand deployment SOP peer-review requirement",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Week 1",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "competency": "Engineering Process",
+      "assessment_requirement": "Practical exercise",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R028",
+      "role": "Software Engineer",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Understand production access MFA requirement",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Week 1",
+      "source_document_id": "POL-03",
+      "source_section_id": "2.1",
+      "competency": "Security Compliance",
+      "assessment_requirement": "MFA setup confirmation",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R032",
+      "role": "Software Engineer",
+      "classification": "Must Know",
+      "requirement_text": "Complete Information Security Policy overview",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Week 1",
+      "source_document_id": "POL-03",
+      "source_section_id": "1.1",
+      "competency": "Security Compliance",
+      "assessment_requirement": "Quiz pass \u226580%",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R007",
+      "role": "All Roles",
+      "classification": "Recommended",
+      "requirement_text": "Understand vacation accrual policy",
+      "mandatory": false,
+      "priority": "Medium",
+      "due_stage": "Week 1",
+      "source_document_id": "POL-02",
+      "source_section_id": "1.1",
+      "competency": "Benefits Literacy",
+      "assessment_requirement": "None",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R016",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Schedule a welcome chat with immediate team",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "Week 1",
+      "source_document_id": "FAQ-01",
+      "source_section_id": "1.2",
+      "competency": "Team Integration",
+      "assessment_requirement": "None",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R020",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Understand standard company holidays and business-day definitions",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "Week 1",
+      "source_document_id": "SOP-02",
+      "source_section_id": "3.1",
+      "competency": "Policy Awareness",
+      "assessment_requirement": "None",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R021",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Understand contractor-specific conduct briefing exception",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "Week 1",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "3.2",
+      "competency": "Policy Awareness",
+      "assessment_requirement": "None",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R013",
+      "role": "All Roles",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Know the compliance escalation reporting path",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "Week 2",
+      "source_document_id": "COMP-01",
+      "source_section_id": "1.1",
+      "competency": "Compliance Awareness",
+      "assessment_requirement": "Verbal confirmation in 1:1",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R027",
+      "role": "Software Engineer",
+      "classification": "Must Know",
+      "requirement_text": "Understand Critical Incident definition (production outage)",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "Week 2",
+      "source_document_id": "SOP-01",
+      "source_section_id": "2.1",
+      "competency": "Incident Response",
+      "assessment_requirement": "Quiz pass \u226580%",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R034",
+      "role": "Software Engineer",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Understand escalation path for Critical Incidents (direct to on-call SRE)",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "Week 2",
+      "source_document_id": "SOP-01",
+      "source_section_id": "3.1",
+      "competency": "Incident Response",
+      "assessment_requirement": "Tabletop exercise",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R003",
+      "role": "All Roles",
+      "classification": "Must Complete",
+      "requirement_text": "Complete Workplace Conduct training",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "First 30 Days",
+      "source_document_id": "POL-04",
+      "source_section_id": "1.1",
+      "competency": "Conduct Compliance",
+      "assessment_requirement": "Training completion certificate",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R018",
+      "role": "All Roles",
+      "classification": "Must Know",
+      "requirement_text": "Understand consequences of confirmed conduct violations",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "First 30 Days",
+      "source_document_id": "POL-04",
+      "source_section_id": "4.1",
+      "competency": "Conduct Compliance",
+      "assessment_requirement": "Quiz pass \u226580%",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R024",
+      "role": "Software Engineer",
+      "classification": "Must Know",
+      "requirement_text": "Demonstrate proficiency in team's primary language/tooling",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "First 30 Days",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "2.1",
+      "competency": "Technical Competency",
+      "assessment_requirement": "Code review by lead",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R026",
+      "role": "Software Engineer",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Understand hotfix exception process during Critical Incidents",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "First 30 Days",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "competency": "Incident Response",
+      "assessment_requirement": "Tabletop exercise",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R030",
+      "role": "Software Engineer",
+      "classification": "Must Demonstrate",
+      "requirement_text": "Understand rollback procedure for Critical Incidents",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "First 30 Days",
+      "source_document_id": "SOP-01",
+      "source_section_id": "4.1",
+      "competency": "Incident Response",
+      "assessment_requirement": "Tabletop exercise",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R140",
+      "role": "Software Engineer",
+      "classification": "Must Know",
+      "requirement_text": "Pass practical assessment on peer review workflow",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "First 30 Days",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "competency": "Engineering Process",
+      "assessment_requirement": "Practical exercise",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R150",
+      "role": "All Roles",
+      "classification": "Must Acknowledge",
+      "requirement_text": "Acknowledge understanding of disciplinary consequences policy",
+      "mandatory": true,
+      "priority": "Medium",
+      "due_stage": "First 30 Days",
+      "source_document_id": "POL-04",
+      "source_section_id": "4.1",
+      "competency": "Conduct Compliance",
+      "assessment_requirement": "Signed acknowledgment form",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R006",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Be aware of the anonymous ethics hotline option",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 30 Days",
+      "source_document_id": "POL-04",
+      "source_section_id": "2.2",
+      "competency": "Conduct Compliance",
+      "assessment_requirement": "None",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R011",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Understand remote work request process",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 30 Days",
+      "source_document_id": "POL-01",
+      "source_section_id": "4.1",
+      "competency": "Policy Awareness",
+      "assessment_requirement": "None",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R014",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Be aware of the anonymous compliance hotline",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 30 Days",
+      "source_document_id": "COMP-01",
+      "source_section_id": "2.1",
+      "competency": "Compliance Awareness",
+      "assessment_requirement": "None",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R019",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Understand employee records confidentiality expectations",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 30 Days",
+      "source_document_id": "POL-01",
+      "source_section_id": "2.1",
+      "competency": "Confidentiality",
+      "assessment_requirement": "None",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R029",
+      "role": "Software Engineer",
+      "classification": "Optional",
+      "requirement_text": "Understand break-glass emergency access exception",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 30 Days",
+      "source_document_id": "POL-03",
+      "source_section_id": "2.1",
+      "competency": "Security Compliance",
+      "assessment_requirement": "None",
+      "difficulty": "Beginner"
+    },
+    {
+      "requirement_id": "R031",
+      "role": "Software Engineer",
+      "classification": "Optional",
+      "requirement_text": "Document rollback steps in postmortem template",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 60 Days",
+      "source_document_id": "SOP-01",
+      "source_section_id": "4.2",
+      "competency": "Documentation",
+      "assessment_requirement": "None",
+      "difficulty": "Intermediate"
+    },
+    {
+      "requirement_id": "R151",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Understand third-party data sharing approval process",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 60 Days",
+      "source_document_id": "POL-05",
+      "source_section_id": "4.1",
+      "competency": "Data Privacy",
+      "assessment_requirement": "None",
+      "difficulty": "Intermediate"
+    },
+    {
+      "requirement_id": "R152",
+      "role": "Software Engineer",
+      "classification": "Optional",
+      "requirement_text": "Understand postmortem documentation expectations",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 60 Days",
+      "source_document_id": "SOP-01",
+      "source_section_id": "4.2",
+      "competency": "Documentation",
+      "assessment_requirement": "None",
+      "difficulty": "Intermediate"
+    },
+    {
+      "requirement_id": "R010",
+      "role": "All Roles",
+      "classification": "Must Acknowledge",
+      "requirement_text": "Complete 90-day probationary review with manager",
+      "mandatory": true,
+      "priority": "High",
+      "due_stage": "First 90 Days",
+      "source_document_id": "POL-01",
+      "source_section_id": "3.1",
+      "competency": "Performance Readiness",
+      "assessment_requirement": "Signed review form",
+      "difficulty": "Intermediate"
+    },
+    {
+      "requirement_id": "R009",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Understand parental leave eligibility",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 90 Days",
+      "source_document_id": "POL-02",
+      "source_section_id": "4.1",
+      "competency": "Benefits Literacy",
+      "assessment_requirement": "None",
+      "difficulty": "Intermediate"
+    },
+    {
+      "requirement_id": "R017",
+      "role": "All Roles",
+      "classification": "Optional",
+      "requirement_text": "Review bereavement leave provisions",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 90 Days",
+      "source_document_id": "POL-02",
+      "source_section_id": "3.1",
+      "competency": "Benefits Literacy",
+      "assessment_requirement": "None",
+      "difficulty": "Intermediate"
+    },
+    {
+      "requirement_id": "R033",
+      "role": "Software Engineer",
+      "classification": "Optional",
+      "requirement_text": "Attend Security team quarterly threat briefing",
+      "mandatory": false,
+      "priority": "Low",
+      "due_stage": "First 90 Days",
+      "source_document_id": "POL-03",
+      "source_section_id": "4.2",
+      "competency": "Security Awareness",
+      "assessment_requirement": "None",
+      "difficulty": "Intermediate"
+    }
+  ],
+  "modules": [
+    {
+      "module_id": "MOD-001",
+      "title": "Policy Awareness (All Roles) \u2014 Day 1",
+      "purpose": "Build policy awareness for All Roles during Day 1.",
+      "objectives": [
+        "Apply: Read and acknowledge the Employee Handbook",
+        "Apply: Understand standard work hours and mandatory core hours"
+      ],
+      "key_concepts": [
+        "Read and acknowledge the Employee Handbook",
+        "Understand standard work hours and mandatory core hours"
+      ],
+      "source_docs": [
+        "HANDBOOK-01"
+      ],
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "1.1",
+      "duration_minutes": 30,
+      "activities": [
+        "Read HANDBOOK-01 \u00a71.1",
+        "Discuss Policy Awareness with the reporting manager"
+      ],
+      "assessment_method": "Signed acknowledgment form",
+      "completion_criteria": "All Policy Awareness requirements for Day 1 marked complete",
+      "stage": "Day 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R001",
+        "R002"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-002",
+      "title": "Role Readiness (Software Engineer) \u2014 Day 1",
+      "purpose": "Build role readiness for Software Engineer during Day 1.",
+      "objectives": [
+        "Apply: Understand core Software Engineer responsibilities"
+      ],
+      "key_concepts": [
+        "Understand core Software Engineer responsibilities"
+      ],
+      "source_docs": [
+        "ROLE-01"
+      ],
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read ROLE-01 \u00a71.1",
+        "Discuss Role Readiness with the reporting manager"
+      ],
+      "assessment_method": "Manager confirmation",
+      "completion_criteria": "All Role Readiness requirements for Day 1 marked complete",
+      "stage": "Day 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R022"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-003",
+      "title": "Technical Setup (Software Engineer) \u2014 Day 1",
+      "purpose": "Build technical setup for Software Engineer during Day 1.",
+      "objectives": [
+        "Apply: Set up version control and CI access"
+      ],
+      "key_concepts": [
+        "Set up version control and CI access"
+      ],
+      "source_docs": [
+        "ROLE-01"
+      ],
+      "source_document_id": "ROLE-01",
+      "source_section_id": "2.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read ROLE-01 \u00a72.1",
+        "Discuss Technical Setup with the reporting manager"
+      ],
+      "assessment_method": "IT confirmation",
+      "completion_criteria": "All Technical Setup requirements for Day 1 marked complete",
+      "stage": "Day 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R035"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-004",
+      "title": "Conduct Compliance (All Roles) \u2014 Week 1",
+      "purpose": "Build conduct compliance for All Roles during Week 1.",
+      "objectives": [
+        "Apply: Understand harassment and discrimination policy",
+        "Apply: Know how to report a conduct violation"
+      ],
+      "key_concepts": [
+        "Understand harassment and discrimination policy",
+        "Know how to report a conduct violation"
+      ],
+      "source_docs": [
+        "POL-04"
+      ],
+      "source_document_id": "POL-04",
+      "source_section_id": "1.2",
+      "duration_minutes": 30,
+      "activities": [
+        "Read POL-04 \u00a71.2",
+        "Discuss Conduct Compliance with the reporting manager"
+      ],
+      "assessment_method": "Quiz pass \u226580%",
+      "completion_criteria": "All Conduct Compliance requirements for Week 1 marked complete",
+      "stage": "Week 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R004",
+        "R005"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-005",
+      "title": "Benefits Literacy (All Roles) \u2014 Week 1",
+      "purpose": "Build benefits literacy for All Roles during Week 1.",
+      "objectives": [
+        "Apply: Understand sick leave policy and notification process",
+        "Apply: Understand vacation accrual policy"
+      ],
+      "key_concepts": [
+        "Understand sick leave policy and notification process",
+        "Understand vacation accrual policy"
+      ],
+      "source_docs": [
+        "POL-02"
+      ],
+      "source_document_id": "POL-02",
+      "source_section_id": "2.1",
+      "duration_minutes": 30,
+      "activities": [
+        "Read POL-02 \u00a72.1",
+        "Discuss Benefits Literacy with the reporting manager"
+      ],
+      "assessment_method": "Manager confirmation",
+      "completion_criteria": "All Benefits Literacy requirements for Week 1 marked complete",
+      "stage": "Week 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R008",
+        "R007"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-006",
+      "title": "Confidentiality (All Roles) \u2014 Week 1",
+      "purpose": "Build confidentiality for All Roles during Week 1.",
+      "objectives": [
+        "Apply: Understand definition of confidential employee data"
+      ],
+      "key_concepts": [
+        "Understand definition of confidential employee data"
+      ],
+      "source_docs": [
+        "POL-01"
+      ],
+      "source_document_id": "POL-01",
+      "source_section_id": "5.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read POL-01 \u00a75.1",
+        "Discuss Confidentiality with the reporting manager"
+      ],
+      "assessment_method": "Quiz pass \u226580%",
+      "completion_criteria": "All Confidentiality requirements for Week 1 marked complete",
+      "stage": "Week 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R012"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-007",
+      "title": "Onboarding (All Roles) \u2014 Week 1",
+      "purpose": "Build onboarding for All Roles during Week 1.",
+      "objectives": [
+        "Apply: Complete new-hire onboarding checklist items"
+      ],
+      "key_concepts": [
+        "Complete new-hire onboarding checklist items"
+      ],
+      "source_docs": [
+        "FAQ-01"
+      ],
+      "source_document_id": "FAQ-01",
+      "source_section_id": "1.3",
+      "duration_minutes": 20,
+      "activities": [
+        "Read FAQ-01 \u00a71.3",
+        "Discuss Onboarding with the reporting manager"
+      ],
+      "assessment_method": "Checklist sign-off",
+      "completion_criteria": "All Onboarding requirements for Week 1 marked complete",
+      "stage": "Week 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R015"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-008",
+      "title": "Engineering Process (Software Engineer) \u2014 Week 1",
+      "purpose": "Build engineering process for Software Engineer during Week 1.",
+      "objectives": [
+        "Apply: Complete peer code review process training",
+        "Apply: Understand deployment SOP peer-review requirement"
+      ],
+      "key_concepts": [
+        "Complete peer code review process training",
+        "Understand deployment SOP peer-review requirement"
+      ],
+      "source_docs": [
+        "ROLE-01",
+        "SOP-01"
+      ],
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.2",
+      "duration_minutes": 30,
+      "activities": [
+        "Read ROLE-01 \u00a71.2",
+        "Discuss Engineering Process with the reporting manager"
+      ],
+      "assessment_method": "Practical exercise",
+      "completion_criteria": "All Engineering Process requirements for Week 1 marked complete",
+      "stage": "Week 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R023",
+        "R025"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-009",
+      "title": "Security Compliance (Software Engineer) \u2014 Week 1",
+      "purpose": "Build security compliance for Software Engineer during Week 1.",
+      "objectives": [
+        "Apply: Understand production access MFA requirement",
+        "Apply: Complete Information Security Policy overview"
+      ],
+      "key_concepts": [
+        "Understand production access MFA requirement",
+        "Complete Information Security Policy overview"
+      ],
+      "source_docs": [
+        "POL-03"
+      ],
+      "source_document_id": "POL-03",
+      "source_section_id": "2.1",
+      "duration_minutes": 30,
+      "activities": [
+        "Read POL-03 \u00a72.1",
+        "Discuss Security Compliance with the reporting manager"
+      ],
+      "assessment_method": "MFA setup confirmation",
+      "completion_criteria": "All Security Compliance requirements for Week 1 marked complete",
+      "stage": "Week 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R028",
+        "R032"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-010",
+      "title": "Team Integration (All Roles) \u2014 Week 1",
+      "purpose": "Build team integration for All Roles during Week 1.",
+      "objectives": [
+        "Apply: Schedule a welcome chat with immediate team"
+      ],
+      "key_concepts": [
+        "Schedule a welcome chat with immediate team"
+      ],
+      "source_docs": [
+        "FAQ-01"
+      ],
+      "source_document_id": "FAQ-01",
+      "source_section_id": "1.2",
+      "duration_minutes": 20,
+      "activities": [
+        "Read FAQ-01 \u00a71.2",
+        "Discuss Team Integration with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Team Integration requirements for Week 1 marked complete",
+      "stage": "Week 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R016"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-011",
+      "title": "Policy Awareness (All Roles) \u2014 Week 1",
+      "purpose": "Build policy awareness for All Roles during Week 1.",
+      "objectives": [
+        "Apply: Understand standard company holidays and business-day definitions",
+        "Apply: Understand contractor-specific conduct briefing exception"
+      ],
+      "key_concepts": [
+        "Understand standard company holidays and business-day definitions",
+        "Understand contractor-specific conduct briefing exception"
+      ],
+      "source_docs": [
+        "HANDBOOK-01",
+        "SOP-02"
+      ],
+      "source_document_id": "SOP-02",
+      "source_section_id": "3.1",
+      "duration_minutes": 30,
+      "activities": [
+        "Read SOP-02 \u00a73.1",
+        "Discuss Policy Awareness with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Policy Awareness requirements for Week 1 marked complete",
+      "stage": "Week 1",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R020",
+        "R021"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-012",
+      "title": "Compliance Awareness (All Roles) \u2014 Week 2",
+      "purpose": "Build compliance awareness for All Roles during Week 2.",
+      "objectives": [
+        "Apply: Know the compliance escalation reporting path"
+      ],
+      "key_concepts": [
+        "Know the compliance escalation reporting path"
+      ],
+      "source_docs": [
+        "COMP-01"
+      ],
+      "source_document_id": "COMP-01",
+      "source_section_id": "1.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read COMP-01 \u00a71.1",
+        "Discuss Compliance Awareness with the reporting manager"
+      ],
+      "assessment_method": "Verbal confirmation in 1:1",
+      "completion_criteria": "All Compliance Awareness requirements for Week 2 marked complete",
+      "stage": "Week 2",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R013"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-013",
+      "title": "Incident Response (Software Engineer) \u2014 Week 2",
+      "purpose": "Build incident response for Software Engineer during Week 2.",
+      "objectives": [
+        "Apply: Understand Critical Incident definition (production outage)",
+        "Apply: Understand escalation path for Critical Incidents (direct to on-call SRE)"
+      ],
+      "key_concepts": [
+        "Understand Critical Incident definition (production outage)",
+        "Understand escalation path for Critical Incidents (direct to on-call SRE)"
+      ],
+      "source_docs": [
+        "SOP-01"
+      ],
+      "source_document_id": "SOP-01",
+      "source_section_id": "2.1",
+      "duration_minutes": 30,
+      "activities": [
+        "Read SOP-01 \u00a72.1",
+        "Discuss Incident Response with the reporting manager"
+      ],
+      "assessment_method": "Quiz pass \u226580%",
+      "completion_criteria": "All Incident Response requirements for Week 2 marked complete",
+      "stage": "Week 2",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R027",
+        "R034"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-014",
+      "title": "Conduct Compliance (All Roles) \u2014 First 30 Days",
+      "purpose": "Build conduct compliance for All Roles during First 30 Days.",
+      "objectives": [
+        "Apply: Complete Workplace Conduct training",
+        "Apply: Understand consequences of confirmed conduct violations",
+        "Apply: Acknowledge understanding of disciplinary consequences policy",
+        "Apply: Be aware of the anonymous ethics hotline option"
+      ],
+      "key_concepts": [
+        "Complete Workplace Conduct training",
+        "Understand consequences of confirmed conduct violations",
+        "Acknowledge understanding of disciplinary consequences policy",
+        "Be aware of the anonymous ethics hotline option"
+      ],
+      "source_docs": [
+        "POL-04"
+      ],
+      "source_document_id": "POL-04",
+      "source_section_id": "1.1",
+      "duration_minutes": 60,
+      "activities": [
+        "Read POL-04 \u00a71.1",
+        "Discuss Conduct Compliance with the reporting manager"
+      ],
+      "assessment_method": "Training completion certificate",
+      "completion_criteria": "All Conduct Compliance requirements for First 30 Days marked complete",
+      "stage": "First 30 Days",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R003",
+        "R018",
+        "R150",
+        "R006"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-015",
+      "title": "Technical Competency (Software Engineer) \u2014 First 30 Days",
+      "purpose": "Build technical competency for Software Engineer during First 30 Days.",
+      "objectives": [
+        "Apply: Demonstrate proficiency in team's primary language/tooling"
+      ],
+      "key_concepts": [
+        "Demonstrate proficiency in team's primary language/tooling"
+      ],
+      "source_docs": [
+        "ROLE-01"
+      ],
+      "source_document_id": "ROLE-01",
+      "source_section_id": "2.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read ROLE-01 \u00a72.1",
+        "Discuss Technical Competency with the reporting manager"
+      ],
+      "assessment_method": "Code review by lead",
+      "completion_criteria": "All Technical Competency requirements for First 30 Days marked complete",
+      "stage": "First 30 Days",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R024"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-016",
+      "title": "Incident Response (Software Engineer) \u2014 First 30 Days",
+      "purpose": "Build incident response for Software Engineer during First 30 Days.",
+      "objectives": [
+        "Apply: Understand hotfix exception process during Critical Incidents",
+        "Apply: Understand rollback procedure for Critical Incidents"
+      ],
+      "key_concepts": [
+        "Understand hotfix exception process during Critical Incidents",
+        "Understand rollback procedure for Critical Incidents"
+      ],
+      "source_docs": [
+        "SOP-01"
+      ],
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "duration_minutes": 30,
+      "activities": [
+        "Read SOP-01 \u00a71.1",
+        "Discuss Incident Response with the reporting manager"
+      ],
+      "assessment_method": "Tabletop exercise",
+      "completion_criteria": "All Incident Response requirements for First 30 Days marked complete",
+      "stage": "First 30 Days",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R026",
+        "R030"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-017",
+      "title": "Engineering Process (Software Engineer) \u2014 First 30 Days",
+      "purpose": "Build engineering process for Software Engineer during First 30 Days.",
+      "objectives": [
+        "Apply: Pass practical assessment on peer review workflow"
+      ],
+      "key_concepts": [
+        "Pass practical assessment on peer review workflow"
+      ],
+      "source_docs": [
+        "SOP-01"
+      ],
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read SOP-01 \u00a71.1",
+        "Discuss Engineering Process with the reporting manager"
+      ],
+      "assessment_method": "Practical exercise",
+      "completion_criteria": "All Engineering Process requirements for First 30 Days marked complete",
+      "stage": "First 30 Days",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R140"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-018",
+      "title": "Policy Awareness (All Roles) \u2014 First 30 Days",
+      "purpose": "Build policy awareness for All Roles during First 30 Days.",
+      "objectives": [
+        "Apply: Understand remote work request process"
+      ],
+      "key_concepts": [
+        "Understand remote work request process"
+      ],
+      "source_docs": [
+        "POL-01"
+      ],
+      "source_document_id": "POL-01",
+      "source_section_id": "4.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read POL-01 \u00a74.1",
+        "Discuss Policy Awareness with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Policy Awareness requirements for First 30 Days marked complete",
+      "stage": "First 30 Days",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R011"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-019",
+      "title": "Compliance Awareness (All Roles) \u2014 First 30 Days",
+      "purpose": "Build compliance awareness for All Roles during First 30 Days.",
+      "objectives": [
+        "Apply: Be aware of the anonymous compliance hotline"
+      ],
+      "key_concepts": [
+        "Be aware of the anonymous compliance hotline"
+      ],
+      "source_docs": [
+        "COMP-01"
+      ],
+      "source_document_id": "COMP-01",
+      "source_section_id": "2.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read COMP-01 \u00a72.1",
+        "Discuss Compliance Awareness with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Compliance Awareness requirements for First 30 Days marked complete",
+      "stage": "First 30 Days",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R014"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-020",
+      "title": "Confidentiality (All Roles) \u2014 First 30 Days",
+      "purpose": "Build confidentiality for All Roles during First 30 Days.",
+      "objectives": [
+        "Apply: Understand employee records confidentiality expectations"
+      ],
+      "key_concepts": [
+        "Understand employee records confidentiality expectations"
+      ],
+      "source_docs": [
+        "POL-01"
+      ],
+      "source_document_id": "POL-01",
+      "source_section_id": "2.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read POL-01 \u00a72.1",
+        "Discuss Confidentiality with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Confidentiality requirements for First 30 Days marked complete",
+      "stage": "First 30 Days",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R019"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-021",
+      "title": "Security Compliance (Software Engineer) \u2014 First 30 Days",
+      "purpose": "Build security compliance for Software Engineer during First 30 Days.",
+      "objectives": [
+        "Apply: Understand break-glass emergency access exception"
+      ],
+      "key_concepts": [
+        "Understand break-glass emergency access exception"
+      ],
+      "source_docs": [
+        "POL-03"
+      ],
+      "source_document_id": "POL-03",
+      "source_section_id": "2.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read POL-03 \u00a72.1",
+        "Discuss Security Compliance with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Security Compliance requirements for First 30 Days marked complete",
+      "stage": "First 30 Days",
+      "difficulty": "Beginner",
+      "requirement_ids": [
+        "R029"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-022",
+      "title": "Documentation (Software Engineer) \u2014 First 60 Days",
+      "purpose": "Build documentation for Software Engineer during First 60 Days.",
+      "objectives": [
+        "Apply: Document rollback steps in postmortem template",
+        "Apply: Understand postmortem documentation expectations"
+      ],
+      "key_concepts": [
+        "Document rollback steps in postmortem template",
+        "Understand postmortem documentation expectations"
+      ],
+      "source_docs": [
+        "SOP-01"
+      ],
+      "source_document_id": "SOP-01",
+      "source_section_id": "4.2",
+      "duration_minutes": 30,
+      "activities": [
+        "Read SOP-01 \u00a74.2",
+        "Discuss Documentation with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Documentation requirements for First 60 Days marked complete",
+      "stage": "First 60 Days",
+      "difficulty": "Intermediate",
+      "requirement_ids": [
+        "R031",
+        "R152"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-023",
+      "title": "Data Privacy (All Roles) \u2014 First 60 Days",
+      "purpose": "Build data privacy for All Roles during First 60 Days.",
+      "objectives": [
+        "Apply: Understand third-party data sharing approval process"
+      ],
+      "key_concepts": [
+        "Understand third-party data sharing approval process"
+      ],
+      "source_docs": [
+        "POL-05"
+      ],
+      "source_document_id": "POL-05",
+      "source_section_id": "4.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read POL-05 \u00a74.1",
+        "Discuss Data Privacy with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Data Privacy requirements for First 60 Days marked complete",
+      "stage": "First 60 Days",
+      "difficulty": "Intermediate",
+      "requirement_ids": [
+        "R151"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-024",
+      "title": "Performance Readiness (All Roles) \u2014 First 90 Days",
+      "purpose": "Build performance readiness for All Roles during First 90 Days.",
+      "objectives": [
+        "Apply: Complete 90-day probationary review with manager"
+      ],
+      "key_concepts": [
+        "Complete 90-day probationary review with manager"
+      ],
+      "source_docs": [
+        "POL-01"
+      ],
+      "source_document_id": "POL-01",
+      "source_section_id": "3.1",
+      "duration_minutes": 20,
+      "activities": [
+        "Read POL-01 \u00a73.1",
+        "Discuss Performance Readiness with the reporting manager"
+      ],
+      "assessment_method": "Signed review form",
+      "completion_criteria": "All Performance Readiness requirements for First 90 Days marked complete",
+      "stage": "First 90 Days",
+      "difficulty": "Intermediate",
+      "requirement_ids": [
+        "R010"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-025",
+      "title": "Benefits Literacy (All Roles) \u2014 First 90 Days",
+      "purpose": "Build benefits literacy for All Roles during First 90 Days.",
+      "objectives": [
+        "Apply: Understand parental leave eligibility",
+        "Apply: Review bereavement leave provisions"
+      ],
+      "key_concepts": [
+        "Understand parental leave eligibility",
+        "Review bereavement leave provisions"
+      ],
+      "source_docs": [
+        "POL-02"
+      ],
+      "source_document_id": "POL-02",
+      "source_section_id": "4.1",
+      "duration_minutes": 30,
+      "activities": [
+        "Read POL-02 \u00a74.1",
+        "Discuss Benefits Literacy with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Benefits Literacy requirements for First 90 Days marked complete",
+      "stage": "First 90 Days",
+      "difficulty": "Intermediate",
+      "requirement_ids": [
+        "R009",
+        "R017"
+      ],
+      "grounding_status": "source_supported"
+    },
+    {
+      "module_id": "MOD-026",
+      "title": "Security Awareness (Software Engineer) \u2014 First 90 Days",
+      "purpose": "Build security awareness for Software Engineer during First 90 Days.",
+      "objectives": [
+        "Apply: Attend Security team quarterly threat briefing"
+      ],
+      "key_concepts": [
+        "Attend Security team quarterly threat briefing"
+      ],
+      "source_docs": [
+        "POL-03"
+      ],
+      "source_document_id": "POL-03",
+      "source_section_id": "4.2",
+      "duration_minutes": 20,
+      "activities": [
+        "Read POL-03 \u00a74.2",
+        "Discuss Security Awareness with the reporting manager"
+      ],
+      "assessment_method": "None",
+      "completion_criteria": "All Security Awareness requirements for First 90 Days marked complete",
+      "stage": "First 90 Days",
+      "difficulty": "Intermediate",
+      "requirement_ids": [
+        "R033"
+      ],
+      "grounding_status": "source_supported"
+    }
+  ],
+  "checklists": [
+    {
+      "item_id": "CHK-001",
+      "activity": "Read and acknowledge the Employee Handbook",
+      "required_or_optional": "required",
+      "due_stage": "Day 1",
+      "completion_status": "not_started",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "1.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R001",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-002",
+      "activity": "Understand standard work hours and mandatory core hours",
+      "required_or_optional": "required",
+      "due_stage": "Day 1",
+      "completion_status": "not_started",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R002",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-003",
+      "activity": "Understand core Software Engineer responsibilities",
+      "required_or_optional": "required",
+      "due_stage": "Day 1",
+      "completion_status": "not_started",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R022",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-004",
+      "activity": "Set up version control and CI access",
+      "required_or_optional": "required",
+      "due_stage": "Day 1",
+      "completion_status": "not_started",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R035",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-005",
+      "activity": "Understand harassment and discrimination policy",
+      "required_or_optional": "required",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "POL-04",
+      "source_section_id": "1.2",
+      "responsible_person": "Lead",
+      "requirement_id": "R004",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-006",
+      "activity": "Know how to report a conduct violation",
+      "required_or_optional": "required",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "POL-04",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R005",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-007",
+      "activity": "Understand sick leave policy and notification process",
+      "required_or_optional": "required",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "POL-02",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R008",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-008",
+      "activity": "Understand definition of confidential employee data",
+      "required_or_optional": "required",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "POL-01",
+      "source_section_id": "5.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R012",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-009",
+      "activity": "Complete new-hire onboarding checklist items",
+      "required_or_optional": "required",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "FAQ-01",
+      "source_section_id": "1.3",
+      "responsible_person": "Lead",
+      "requirement_id": "R015",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-010",
+      "activity": "Complete peer code review process training",
+      "required_or_optional": "required",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.2",
+      "responsible_person": "Lead",
+      "requirement_id": "R023",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-011",
+      "activity": "Understand deployment SOP peer-review requirement",
+      "required_or_optional": "required",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R025",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-012",
+      "activity": "Understand production access MFA requirement",
+      "required_or_optional": "required",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "POL-03",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R028",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-013",
+      "activity": "Complete Information Security Policy overview",
+      "required_or_optional": "required",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "POL-03",
+      "source_section_id": "1.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R032",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-014",
+      "activity": "Understand vacation accrual policy",
+      "required_or_optional": "optional",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "POL-02",
+      "source_section_id": "1.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R007",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-015",
+      "activity": "Schedule a welcome chat with immediate team",
+      "required_or_optional": "optional",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "FAQ-01",
+      "source_section_id": "1.2",
+      "responsible_person": "Lead",
+      "requirement_id": "R016",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-016",
+      "activity": "Understand standard company holidays and business-day definitions",
+      "required_or_optional": "optional",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "SOP-02",
+      "source_section_id": "3.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R020",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-017",
+      "activity": "Understand contractor-specific conduct briefing exception",
+      "required_or_optional": "optional",
+      "due_stage": "Week 1",
+      "completion_status": "not_started",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "3.2",
+      "responsible_person": "Lead",
+      "requirement_id": "R021",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-018",
+      "activity": "Know the compliance escalation reporting path",
+      "required_or_optional": "required",
+      "due_stage": "Week 2",
+      "completion_status": "not_started",
+      "source_document_id": "COMP-01",
+      "source_section_id": "1.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R013",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-019",
+      "activity": "Understand Critical Incident definition (production outage)",
+      "required_or_optional": "required",
+      "due_stage": "Week 2",
+      "completion_status": "not_started",
+      "source_document_id": "SOP-01",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R027",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-020",
+      "activity": "Understand escalation path for Critical Incidents (direct to on-call SRE)",
+      "required_or_optional": "required",
+      "due_stage": "Week 2",
+      "completion_status": "not_started",
+      "source_document_id": "SOP-01",
+      "source_section_id": "3.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R034",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-021",
+      "activity": "Complete Workplace Conduct training",
+      "required_or_optional": "required",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-04",
+      "source_section_id": "1.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R003",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-022",
+      "activity": "Understand consequences of confirmed conduct violations",
+      "required_or_optional": "required",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-04",
+      "source_section_id": "4.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R018",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-023",
+      "activity": "Demonstrate proficiency in team's primary language/tooling",
+      "required_or_optional": "required",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R024",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-024",
+      "activity": "Understand hotfix exception process during Critical Incidents",
+      "required_or_optional": "required",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R026",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-025",
+      "activity": "Understand rollback procedure for Critical Incidents",
+      "required_or_optional": "required",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "SOP-01",
+      "source_section_id": "4.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R030",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-026",
+      "activity": "Pass practical assessment on peer review workflow",
+      "required_or_optional": "required",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R140",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-027",
+      "activity": "Acknowledge understanding of disciplinary consequences policy",
+      "required_or_optional": "required",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-04",
+      "source_section_id": "4.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R150",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-028",
+      "activity": "Be aware of the anonymous ethics hotline option",
+      "required_or_optional": "optional",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-04",
+      "source_section_id": "2.2",
+      "responsible_person": "Lead",
+      "requirement_id": "R006",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-029",
+      "activity": "Understand remote work request process",
+      "required_or_optional": "optional",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-01",
+      "source_section_id": "4.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R011",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-030",
+      "activity": "Be aware of the anonymous compliance hotline",
+      "required_or_optional": "optional",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "COMP-01",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R014",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-031",
+      "activity": "Understand employee records confidentiality expectations",
+      "required_or_optional": "optional",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-01",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R019",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-032",
+      "activity": "Understand break-glass emergency access exception",
+      "required_or_optional": "optional",
+      "due_stage": "First 30 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-03",
+      "source_section_id": "2.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R029",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-033",
+      "activity": "Document rollback steps in postmortem template",
+      "required_or_optional": "optional",
+      "due_stage": "First 60 Days",
+      "completion_status": "not_started",
+      "source_document_id": "SOP-01",
+      "source_section_id": "4.2",
+      "responsible_person": "Lead",
+      "requirement_id": "R031",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-034",
+      "activity": "Understand third-party data sharing approval process",
+      "required_or_optional": "optional",
+      "due_stage": "First 60 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-05",
+      "source_section_id": "4.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R151",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-035",
+      "activity": "Understand postmortem documentation expectations",
+      "required_or_optional": "optional",
+      "due_stage": "First 60 Days",
+      "completion_status": "not_started",
+      "source_document_id": "SOP-01",
+      "source_section_id": "4.2",
+      "responsible_person": "Lead",
+      "requirement_id": "R152",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-036",
+      "activity": "Complete 90-day probationary review with manager",
+      "required_or_optional": "required",
+      "due_stage": "First 90 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-01",
+      "source_section_id": "3.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R010",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-037",
+      "activity": "Understand parental leave eligibility",
+      "required_or_optional": "optional",
+      "due_stage": "First 90 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-02",
+      "source_section_id": "4.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R009",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-038",
+      "activity": "Review bereavement leave provisions",
+      "required_or_optional": "optional",
+      "due_stage": "First 90 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-02",
+      "source_section_id": "3.1",
+      "responsible_person": "Lead",
+      "requirement_id": "R017",
+      "grounding_status": "source_supported"
+    },
+    {
+      "item_id": "CHK-039",
+      "activity": "Attend Security team quarterly threat briefing",
+      "required_or_optional": "optional",
+      "due_stage": "First 90 Days",
+      "completion_status": "not_started",
+      "source_document_id": "POL-03",
+      "source_section_id": "4.2",
+      "responsible_person": "Lead",
+      "requirement_id": "R033",
+      "grounding_status": "source_supported"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TSK-001",
+      "description": "Read and acknowledge the Employee Handbook (Must Acknowledge)",
+      "expected_outcome": "Signed acknowledgment form",
+      "source_requirement_id": "R001",
+      "completion_criteria": "Signed acknowledgment form",
+      "difficulty": "Beginner",
+      "due_stage": "Day 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "1.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-002",
+      "description": "Understand standard work hours and mandatory core hours (Must Demonstrate)",
+      "expected_outcome": "Manager confirmation",
+      "source_requirement_id": "R002",
+      "completion_criteria": "Manager confirmation",
+      "difficulty": "Beginner",
+      "due_stage": "Day 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "2.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-003",
+      "description": "Understand core Software Engineer responsibilities (Must Demonstrate)",
+      "expected_outcome": "Manager confirmation",
+      "source_requirement_id": "R022",
+      "completion_criteria": "Manager confirmation",
+      "difficulty": "Beginner",
+      "due_stage": "Day 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-004",
+      "description": "Set up version control and CI access (Must Demonstrate)",
+      "expected_outcome": "IT confirmation",
+      "source_requirement_id": "R035",
+      "completion_criteria": "IT confirmation",
+      "difficulty": "Beginner",
+      "due_stage": "Day 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "2.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-005",
+      "description": "Understand harassment and discrimination policy (Must Know)",
+      "expected_outcome": "Quiz pass \u226580%",
+      "source_requirement_id": "R004",
+      "completion_criteria": "Quiz pass \u226580%",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-04",
+      "source_section_id": "1.2",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-006",
+      "description": "Know how to report a conduct violation (Must Demonstrate)",
+      "expected_outcome": "Verbal confirmation in 1:1",
+      "source_requirement_id": "R005",
+      "completion_criteria": "Verbal confirmation in 1:1",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-04",
+      "source_section_id": "2.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-007",
+      "description": "Understand sick leave policy and notification process (Must Demonstrate)",
+      "expected_outcome": "Manager confirmation",
+      "source_requirement_id": "R008",
+      "completion_criteria": "Manager confirmation",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-02",
+      "source_section_id": "2.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-008",
+      "description": "Understand definition of confidential employee data (Must Know)",
+      "expected_outcome": "Quiz pass \u226580%",
+      "source_requirement_id": "R012",
+      "completion_criteria": "Quiz pass \u226580%",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-01",
+      "source_section_id": "5.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-009",
+      "description": "Complete new-hire onboarding checklist items (Must Know)",
+      "expected_outcome": "Checklist sign-off",
+      "source_requirement_id": "R015",
+      "completion_criteria": "Checklist sign-off",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "FAQ-01",
+      "source_section_id": "1.3",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-010",
+      "description": "Complete peer code review process training (Must Know)",
+      "expected_outcome": "Practical exercise",
+      "source_requirement_id": "R023",
+      "completion_criteria": "Practical exercise",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.2",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-011",
+      "description": "Understand deployment SOP peer-review requirement (Must Know)",
+      "expected_outcome": "Practical exercise",
+      "source_requirement_id": "R025",
+      "completion_criteria": "Practical exercise",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-012",
+      "description": "Understand production access MFA requirement (Must Demonstrate)",
+      "expected_outcome": "MFA setup confirmation",
+      "source_requirement_id": "R028",
+      "completion_criteria": "MFA setup confirmation",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-03",
+      "source_section_id": "2.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-013",
+      "description": "Complete Information Security Policy overview (Must Know)",
+      "expected_outcome": "Quiz pass \u226580%",
+      "source_requirement_id": "R032",
+      "completion_criteria": "Quiz pass \u226580%",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-03",
+      "source_section_id": "1.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-025",
+      "description": "Scenario: You are the new Software Engineer. Using SOP-01 \u00a71.1, walk through the approved process: Understand deployment SOP peer-review requirement. Official source SOP-01 section 1.1.",
+      "expected_outcome": "Documented walkthrough that follows the cited SOP/policy, not informal guidance",
+      "source_requirement_id": "R025",
+      "completion_criteria": "Manager signs off that the walkthrough matched the cited source",
+      "difficulty": "Beginner",
+      "due_stage": "Week 1",
+      "role_title": "Software Engineer",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "is_scenario": true,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-014",
+      "description": "Know the compliance escalation reporting path (Must Demonstrate)",
+      "expected_outcome": "Verbal confirmation in 1:1",
+      "source_requirement_id": "R013",
+      "completion_criteria": "Verbal confirmation in 1:1",
+      "difficulty": "Beginner",
+      "due_stage": "Week 2",
+      "role_title": "Software Engineer",
+      "source_document_id": "COMP-01",
+      "source_section_id": "1.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-015",
+      "description": "Understand Critical Incident definition (production outage) (Must Know)",
+      "expected_outcome": "Quiz pass \u226580%",
+      "source_requirement_id": "R027",
+      "completion_criteria": "Quiz pass \u226580%",
+      "difficulty": "Beginner",
+      "due_stage": "Week 2",
+      "role_title": "Software Engineer",
+      "source_document_id": "SOP-01",
+      "source_section_id": "2.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-016",
+      "description": "Understand escalation path for Critical Incidents (direct to on-call SRE) (Must Demonstrate)",
+      "expected_outcome": "Tabletop exercise",
+      "source_requirement_id": "R034",
+      "completion_criteria": "Tabletop exercise",
+      "difficulty": "Beginner",
+      "due_stage": "Week 2",
+      "role_title": "Software Engineer",
+      "source_document_id": "SOP-01",
+      "source_section_id": "3.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-017",
+      "description": "Complete Workplace Conduct training (Must Complete)",
+      "expected_outcome": "Training completion certificate",
+      "source_requirement_id": "R003",
+      "completion_criteria": "Training completion certificate",
+      "difficulty": "Beginner",
+      "due_stage": "First 30 Days",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-04",
+      "source_section_id": "1.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-018",
+      "description": "Understand consequences of confirmed conduct violations (Must Know)",
+      "expected_outcome": "Quiz pass \u226580%",
+      "source_requirement_id": "R018",
+      "completion_criteria": "Quiz pass \u226580%",
+      "difficulty": "Beginner",
+      "due_stage": "First 30 Days",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-04",
+      "source_section_id": "4.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-019",
+      "description": "Demonstrate proficiency in team's primary language/tooling (Must Know)",
+      "expected_outcome": "Code review by lead",
+      "source_requirement_id": "R024",
+      "completion_criteria": "Code review by lead",
+      "difficulty": "Beginner",
+      "due_stage": "First 30 Days",
+      "role_title": "Software Engineer",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "2.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-020",
+      "description": "Understand hotfix exception process during Critical Incidents (Must Demonstrate)",
+      "expected_outcome": "Tabletop exercise",
+      "source_requirement_id": "R026",
+      "completion_criteria": "Tabletop exercise",
+      "difficulty": "Beginner",
+      "due_stage": "First 30 Days",
+      "role_title": "Software Engineer",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-021",
+      "description": "Understand rollback procedure for Critical Incidents (Must Demonstrate)",
+      "expected_outcome": "Tabletop exercise",
+      "source_requirement_id": "R030",
+      "completion_criteria": "Tabletop exercise",
+      "difficulty": "Beginner",
+      "due_stage": "First 30 Days",
+      "role_title": "Software Engineer",
+      "source_document_id": "SOP-01",
+      "source_section_id": "4.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-022",
+      "description": "Pass practical assessment on peer review workflow (Must Know)",
+      "expected_outcome": "Practical exercise",
+      "source_requirement_id": "R140",
+      "completion_criteria": "Practical exercise",
+      "difficulty": "Beginner",
+      "due_stage": "First 30 Days",
+      "role_title": "Software Engineer",
+      "source_document_id": "SOP-01",
+      "source_section_id": "1.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-023",
+      "description": "Acknowledge understanding of disciplinary consequences policy (Must Acknowledge)",
+      "expected_outcome": "Signed acknowledgment form",
+      "source_requirement_id": "R150",
+      "completion_criteria": "Signed acknowledgment form",
+      "difficulty": "Beginner",
+      "due_stage": "First 30 Days",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-04",
+      "source_section_id": "4.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    },
+    {
+      "task_id": "TSK-024",
+      "description": "Complete 90-day probationary review with manager (Must Acknowledge)",
+      "expected_outcome": "Signed review form",
+      "source_requirement_id": "R010",
+      "completion_criteria": "Signed review form",
+      "difficulty": "Intermediate",
+      "due_stage": "First 90 Days",
+      "role_title": "Software Engineer",
+      "source_document_id": "POL-01",
+      "source_section_id": "3.1",
+      "is_scenario": false,
+      "grounding_status": "source_supported"
+    }
+  ],
+  "quizzes": [
+    {
+      "question_id": "QZ-001",
+      "question_text": "True or False: Read and acknowledge the Employee Handbook.",
+      "question_type": "TF",
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_answer": "True",
+      "explanation": "Required by HANDBOOK-01 \u00a71.1.",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "1.1",
+      "difficulty": "Beginner",
+      "requirement_id": "R001",
+      "distractor_validation_status": "passed",
+      "grounding_status": "source_supported"
+    },
+    {
+      "question_id": "QZ-002",
+      "question_text": "Which action satisfies requirement R002 for this role?",
+      "question_type": "MCQ",
+      "options": [
+        "HANDBOOK-01 \u00a72.1: Understand standard work hours and mandatory core hours",
+        "This requirement is waived for all new hires",
+        "Follow unofficial Slack advice instead of the cited policy",
+        "Defer this item until after the first annual review"
+      ],
+      "correct_answer": "HANDBOOK-01 \u00a72.1: Understand standard work hours and mandatory core hours",
+      "explanation": "The matrix cites HANDBOOK-01 \u00a72.1.",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "2.1",
+      "difficulty": "Beginner",
+      "requirement_id": "R002",
+      "distractor_validation_status": "passed",
+      "grounding_status": "source_supported"
+    },
+    {
+      "question_id": "QZ-003",
+      "question_text": "Select every statement that is correct for R022.",
+      "question_type": "MR",
+      "options": [
+        "Use source ROLE-01 \u00a71.1",
+        "Treat this as Must Demonstrate",
+        "Ignore the matrix and invent a local shortcut"
+      ],
+      "correct_answer": [
+        "Use source ROLE-01 \u00a71.1",
+        "Treat this as Must Demonstrate"
+      ],
+      "explanation": "Both the cited source and the classification are required; shortcuts are not.",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.1",
+      "difficulty": "Beginner",
+      "requirement_id": "R022",
+      "distractor_validation_status": "passed",
+      "grounding_status": "source_supported"
+    },
+    {
+      "question_id": "QZ-004",
+      "question_text": "Scenario: a teammate suggests skipping 'Set up version control and CI access'. What do you do?",
+      "question_type": "Scenario",
+      "options": [
+        "Follow ROLE-01 \u00a72.1: Set up version control and CI access",
+        "Follow the suggestion because it is faster",
+        "Use a conflicting FAQ rumor instead of ROLE-01"
+      ],
+      "correct_answer": "Follow ROLE-01 \u00a72.1: Set up version control and CI access",
+      "explanation": "Demonstrate proficiency in team's primary language/tooling. Official source ROLE-01 section 2.1.",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "2.1",
+      "difficulty": "Beginner",
+      "requirement_id": "R035",
+      "distractor_validation_status": "passed",
+      "grounding_status": "source_supported"
+    },
+    {
+      "question_id": "QZ-005",
+      "question_text": "True or False: Understand harassment and discrimination policy.",
+      "question_type": "TF",
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_answer": "True",
+      "explanation": "Required by POL-04 \u00a71.2.",
+      "source_document_id": "POL-04",
+      "source_section_id": "1.2",
+      "difficulty": "Beginner",
+      "requirement_id": "R004",
+      "distractor_validation_status": "passed",
+      "grounding_status": "source_supported"
+    },
+    {
+      "question_id": "QZ-006",
+      "question_text": "Which action satisfies requirement R005 for this role?",
+      "question_type": "MCQ",
+      "options": [
+        "POL-04 \u00a72.1: Know how to report a conduct violation",
+        "This requirement is waived for all new hires",
+        "Follow unofficial Slack advice instead of the cited policy",
+        "Defer this item until after the first annual review"
+      ],
+      "correct_answer": "POL-04 \u00a72.1: Know how to report a conduct violation",
+      "explanation": "The matrix cites POL-04 \u00a72.1.",
+      "source_document_id": "POL-04",
+      "source_section_id": "2.1",
+      "difficulty": "Beginner",
+      "requirement_id": "R005",
+      "distractor_validation_status": "passed",
+      "grounding_status": "source_supported"
+    },
+    {
+      "question_id": "QZ-007",
+      "question_text": "Select every statement that is correct for R008.",
+      "question_type": "MR",
+      "options": [
+        "Use source POL-02 \u00a72.1",
+        "Treat this as Must Demonstrate",
+        "Ignore the matrix and invent a local shortcut"
+      ],
+      "correct_answer": [
+        "Use source POL-02 \u00a72.1",
+        "Treat this as Must Demonstrate"
+      ],
+      "explanation": "Both the cited source and the classification are required; shortcuts are not.",
+      "source_document_id": "POL-02",
+      "source_section_id": "2.1",
+      "difficulty": "Beginner",
+      "requirement_id": "R008",
+      "distractor_validation_status": "passed",
+      "grounding_status": "source_supported"
+    },
+    {
+      "question_id": "QZ-008",
+      "question_text": "Scenario: a teammate suggests skipping 'Understand definition of confidential employee data'. What do you do?",
+      "question_type": "Scenario",
+      "options": [
+        "Follow POL-01 \u00a75.1: Understand definition of confidential employee data",
+        "Follow the suggestion because it is faster",
+        "Use a conflicting FAQ rumor instead of POL-01"
+      ],
+      "correct_answer": "Follow POL-01 \u00a75.1: Understand definition of confidential employee data",
+      "explanation": "Understand definition of confidential employee data. Official source POL-01 section 5.1.",
+      "source_document_id": "POL-01",
+      "source_section_id": "5.1",
+      "difficulty": "Beginner",
+      "requirement_id": "R012",
+      "distractor_validation_status": "passed",
+      "grounding_status": "source_supported"
+    }
+  ],
+  "assessments": [
+    {
+      "assessment_id": "ASM-001",
+      "title": "Knowledge check on cited policies",
+      "assessment_type": "knowledge",
+      "rubric": [
+        {
+          "criterion": "Source alignment",
+          "weight": 0.4,
+          "expected_performance": "Answers match HANDBOOK-01 \u00a71.1",
+          "pass_condition": "No unsupported policy claims"
+        },
+        {
+          "criterion": "Role relevance",
+          "weight": 0.3,
+          "expected_performance": "Task is appropriate for All Roles",
+          "pass_condition": "No off-role procedures presented as required"
+        },
+        {
+          "criterion": "Completion quality",
+          "weight": 0.3,
+          "expected_performance": "Signed acknowledgment form",
+          "pass_condition": "Pass threshold 80%"
+        }
+      ],
+      "difficulty": "Beginner",
+      "stage": "Week 1",
+      "source_document_id": "HANDBOOK-01",
+      "source_section_id": "1.1",
+      "requirement_ids": [
+        "R001",
+        "R002",
+        "R022",
+        "R035"
+      ],
+      "grounding_status": "source_supported",
+      "pass_threshold": 0.8
+    },
+    {
+      "assessment_id": "ASM-002",
+      "title": "Practical demonstration of required process",
+      "assessment_type": "practical",
+      "rubric": [
+        {
+          "criterion": "Source alignment",
+          "weight": 0.4,
+          "expected_performance": "Answers match POL-04 \u00a71.2",
+          "pass_condition": "No unsupported policy claims"
+        },
+        {
+          "criterion": "Role relevance",
+          "weight": 0.3,
+          "expected_performance": "Task is appropriate for All Roles",
+          "pass_condition": "No off-role procedures presented as required"
+        },
+        {
+          "criterion": "Completion quality",
+          "weight": 0.3,
+          "expected_performance": "Quiz pass \u226580%",
+          "pass_condition": "Pass threshold 80%"
+        }
+      ],
+      "difficulty": "Beginner",
+      "stage": "Week 2",
+      "source_document_id": "POL-04",
+      "source_section_id": "1.2",
+      "requirement_ids": [
+        "R004",
+        "R005",
+        "R008",
+        "R012",
+        "R015",
+        "R023"
+      ],
+      "grounding_status": "source_supported",
+      "pass_threshold": 0.8
+    },
+    {
+      "assessment_id": "ASM-003",
+      "title": "Scenario judgment using approved SOP",
+      "assessment_type": "scenario",
+      "rubric": [
+        {
+          "criterion": "Source alignment",
+          "weight": 0.4,
+          "expected_performance": "Answers match POL-04 \u00a71.1",
+          "pass_condition": "No unsupported policy claims"
+        },
+        {
+          "criterion": "Role relevance",
+          "weight": 0.3,
+          "expected_performance": "Task is appropriate for All Roles",
+          "pass_condition": "No off-role procedures presented as required"
+        },
+        {
+          "criterion": "Completion quality",
+          "weight": 0.3,
+          "expected_performance": "Training completion certificate",
+          "pass_condition": "Pass threshold 80%"
+        }
+      ],
+      "difficulty": "Beginner",
+      "stage": "First 30 Days",
+      "source_document_id": "POL-04",
+      "source_section_id": "1.1",
+      "requirement_ids": [
+        "R003",
+        "R018",
+        "R024",
+        "R026",
+        "R030",
+        "R140"
+      ],
+      "grounding_status": "source_supported",
+      "pass_threshold": 0.8
+    },
+    {
+      "assessment_id": "ASM-004",
+      "title": "Role-specific competency assessment",
+      "assessment_type": "role-specific",
+      "rubric": [
+        {
+          "criterion": "Source alignment",
+          "weight": 0.4,
+          "expected_performance": "Answers match ROLE-01 \u00a71.1",
+          "pass_condition": "No unsupported policy claims"
+        },
+        {
+          "criterion": "Role relevance",
+          "weight": 0.3,
+          "expected_performance": "Task is appropriate for Software Engineer",
+          "pass_condition": "No off-role procedures presented as required"
+        },
+        {
+          "criterion": "Completion quality",
+          "weight": 0.3,
+          "expected_performance": "Manager confirmation",
+          "pass_condition": "Pass threshold 80%"
+        }
+      ],
+      "difficulty": "Intermediate",
+      "stage": "First 60 Days",
+      "source_document_id": "ROLE-01",
+      "source_section_id": "1.1",
+      "requirement_ids": [
+        "R022",
+        "R035",
+        "R023",
+        "R025",
+        "R028",
+        "R032"
+      ],
+      "grounding_status": "source_supported",
+      "pass_threshold": 0.8
+    }
+  ],
+  "stages_used": [
+    "Day 1",
+    "Week 1",
+    "Week 2",
+    "First 30 Days",
+    "First 60 Days",
+    "First 90 Days"
+  ],
+  "grounding_flags": [],
+  "covered_requirement_ids": [
+    "R001",
+    "R002",
+    "R022",
+    "R035",
+    "R004",
+    "R005",
+    "R008",
+    "R012",
+    "R015",
+    "R023",
+    "R025",
+    "R028",
+    "R032",
+    "R007",
+    "R016",
+    "R020",
+    "R021",
+    "R013",
+    "R027",
+    "R034",
+    "R003",
+    "R018",
+    "R024",
+    "R026",
+    "R030",
+    "R140",
+    "R150",
+    "R006",
+    "R011",
+    "R014",
+    "R019",
+    "R029",
+    "R031",
+    "R151",
+    "R152",
+    "R010",
+    "R009",
+    "R017",
+    "R033"
+  ]
+}
