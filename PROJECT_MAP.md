@@ -4,7 +4,7 @@
 > an online marketplace with warehousing, payment processing, customer support,
 > and engineering divisions.
 >
-> **Last Updated**: 2026-09-25 | **Updated By**: Tech Lead (Architecture Session)
+> **Last Updated**: 2026-09-25 | **Updated By**: Phase 1 Foundation Engineer (Azhar Raji AL-Herwi)
 
 ---
 
@@ -322,28 +322,28 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | 1 | Fictional company creation | ✅ DONE (Prompt A0 — NovaCart) |
 | 2 | 10 job roles (all 10 now have dedicated ROLE-xx documents) | ✅ DONE (Prompt A0 + Addendum) |
 | 3 | 24 company documents (20 original + ROLE-07 to ROLE-10 addendum) with all required variation | ✅ DONE (Prompt A0 + Addendum) |
-| 4 | Document upload (PDF/DOCX mandatory; TXT/MD/CSV optional) — process all 24 documents (38 files on disk: 24 DOCX + 14 PDF) end-to-end | PENDING |
-| 5 | Document validation: file type, size, duplicate, empty, version, effective/expiry date, department, category | PENDING |
-| 6 | Document parsing: retain doc_id, title, section, heading, page/location ref, version, effective_date | PENDING |
-| 7 | Content chunking with full traceability metadata | PENDING |
-| 8 | Document version control (active vs obsolete) | PENDING |
-| 9 | Employee profile creation (ID, role, department, experience, location, joining_date, reporting_manager, competencies, prior_experience, training_status) | PENDING |
-| 10 | Role Requirement Matrix — write `load_matrix.py` to load CSV, validate (reject malformed IDs, missing columns, duplicates), populate DB. NOT authoring content. | PENDING |
+| 4 | Document upload (PDF/DOCX mandatory; TXT/MD/CSV optional) — process all 24 documents (38 files on disk: 24 DOCX + 14 PDF) end-to-end | ✅ DONE (Phase 1 — `DocumentService.ingest_directory`) |
+| 5 | Document validation: file type, size, duplicate, empty, version, effective/expiry date, department, category | ✅ DONE |
+| 6 | Document parsing: retain doc_id, title, section, heading, page/location ref, version, effective_date | ✅ DONE |
+| 7 | Content chunking with full traceability metadata | ✅ DONE |
+| 8 | Document version control (active vs obsolete) | ✅ DONE (`DocumentRevision`; POL-02 v1 obsolete / v2 active) |
+| 9 | Employee profile creation (ID, role, department, experience, location, joining_date, reporting_manager, competencies, prior_experience, training_status) | ✅ DONE |
+| 10 | Role Requirement Matrix — write `load_matrix.py` to load CSV, validate (reject malformed IDs, missing columns, duplicates), populate DB. NOT authoring content. | ✅ DONE (178 rows loaded; malformed/duplicate IDs rejected) |
 
 #### Functional Requirements Owned (from Section C)
-- User Authentication
-- Role-Based Access Control (skeleton — route guards + role decorators)
-- Employee Profile Management
-- Role Management
-- Document Upload
-- Document Validation
-- Document Parsing
-- Document Chunking
-- Source Metadata Management
-- Document Version Control
-- Role Requirement Matrix
-- Responsive Web Interface (layout skeleton + base templates)
-- API Error Handling (base error handler middleware)
+- User Authentication — ✅
+- Role-Based Access Control (skeleton — route guards + role decorators) — ✅
+- Employee Profile Management — ✅
+- Role Management — ✅
+- Document Upload — ✅
+- Document Validation — ✅
+- Document Parsing — ✅
+- Document Chunking — ✅
+- Source Metadata Management — ✅
+- Document Version Control — ✅
+- Role Requirement Matrix — ✅
+- Responsive Web Interface (layout skeleton + base templates) — ✅
+- API Error Handling (base error handler middleware) — ✅
 
 #### Deliverables Touched
 - requirements.txt (create, pin all versions)
@@ -353,13 +353,13 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 - Sample data loaded end-to-end
 
 #### Key Verification Goals
-- [ ] VG-1.1: All 24 documents (38 files) in sample_documents/ successfully uploaded, validated, parsed, chunked, and stored with full metadata
-- [ ] VG-1.2: `load_matrix.py` loads all 178 CSV rows; rejects any row with malformed requirement_id, missing mandatory columns, or duplicate requirement_id
-- [ ] VG-1.3: Parsed counts verified: ≥24 docs, ≥102 mandatory sections, ≥28 optional sections, ≥65 role-specific sections, ≥10 conflict pairs, ≥10 version changes, ≥11 adversarial cases
-- [ ] VG-1.4: Document version control distinguishes POL-02 v1/v2 (both .docx and .pdf) correctly; obsolete versions marked accordingly
-- [ ] VG-1.5: Employee CRUD works for all 10 roles (each with a dedicated ROLE-xx document) with proper RBAC guards
-- [ ] VG-1.6: Database schema supports all entities from the Architecture section
-- [ ] VG-1.7: Auth skeleton: 5 user roles (Employee, Admin, Training Manager, Reviewer, Manager) with route-level access control
+- [x] VG-1.1: All 24 documents (38 files) in sample_documents/ successfully uploaded, validated, parsed, chunked, and stored with full metadata
+- [x] VG-1.2: `load_matrix.py` loads all 178 CSV rows; rejects any row with malformed requirement_id, missing mandatory columns, or duplicate requirement_id
+- [x] VG-1.3: Parsed counts verified: ≥24 docs, ≥102 mandatory sections, ≥28 optional sections, ≥65 role-specific sections, ≥10 conflict pairs, ≥10 version changes, ≥11 adversarial cases
+- [x] VG-1.4: Document version control distinguishes POL-02 v1/v2 (both .docx and .pdf) correctly; obsolete versions marked accordingly
+- [x] VG-1.5: Employee CRUD works for all 10 roles (each with a dedicated ROLE-xx document) with proper RBAC guards
+- [x] VG-1.6: Database schema supports all entities from the Architecture section
+- [x] VG-1.7: Auth skeleton: 5 user roles (Employee, Admin, Training Manager, Reviewer, Manager) with route-level access control
 
 ---
 
@@ -576,7 +576,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | # | Deliverable | Owner Phase | Status |
 |---|---|---|---|
 | D1 | Project Report (problem definition, diagrams: DFD, Use Case, Activity, Sequence) | Phase 4 | PENDING |
-| D2 | Source Code in mandatory GitHub folder structure | Phase 1 (scaffold) + all | PENDING |
+| D2 | Source Code in mandatory GitHub folder structure | Phase 1 (scaffold) + all | IN PROGRESS — Phase 1 scaffold + foundation code on disk; later phases fill GenAI/validation/delivery packages |
 | D3 | Company Document Dataset — 24 documents, 38 files (profile, scenario, policies, role descriptions, etc.) | ✅ DONE (Prompt A0 + Addendum) | COMPLETE |
 | D4 | GenAI Pipeline Evidence (API/model, prompts, config, samples, failures, retries) | Phase 2 | PENDING |
 | D5 | Python Validation Pipeline Evidence | Phase 3 | PENDING |
@@ -584,7 +584,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | D7 | Onboarding Plan Evidence for ≥10 roles | Phase 4 (assembly) | PENDING |
 | D8 | Validation Report | Phase 3 | PENDING |
 | D9 | Security Testing Report | Phase 4 | PENDING |
-| D10 | Test Cases (all categories) | Phase 4 (integration) + all phases (unit) | PENDING |
+| D10 | Test Cases (all categories) | Phase 4 (integration) + all phases (unit) | IN PROGRESS — Phase 1 unit tests: ingest, matrix, auth, employees, schema (15 passing) |
 | D11 | Installation Instructions | Phase 4 | PENDING |
 | D12 | Execution Instructions (full walkthrough) | Phase 4 | PENDING |
 | D13 | Public GitHub Repository (daily commits from all members) | All phases | PENDING |
@@ -600,7 +600,8 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 
 ### Known Input Data Gaps (for Phase 1 to flag)
 - ~~No dedicated role description documents for 4 roles.~~ **Resolved** — all 10 roles now have ROLE-xx documents.
-- PDF versions exist for 14 of 24 documents (POL-02 through POL-05, ROLE-01 through ROLE-10). The remaining 10 documents (HANDBOOK-01, POL-01, SOP-01 through SOP-05, FAQ-01, FAQ-02, COMP-01) are DOCX-only. Both formats must be tested end-to-end where available.
+- PDF versions exist for 14 of 24 documents (POL-02 through POL-05, ROLE-01 through ROLE-10). The remaining 10 documents (HANDBOOK-01, POL-01, SOP-01 through SOP-05, FAQ-01, FAQ-02, COMP-01) are DOCX-only. Both formats are ingested where present.
+- **Metrics note (Phase 1)**: Some documents repeat the same `section_id` in body text (e.g. a later sentence citing `1.1`). `CorpusMetricsService` ORs `[M]/[O]` flags across those duplicates so VG-1.3 counts the tagged section, not the last write. Phase 2/3 should cite `(document_id, section_id)` from the richest/tagged chunk.
 
 ---
 
@@ -621,16 +622,16 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | # | Requirement | Relevant Phase(s) | Status |
 |---|---|---|---|
 | F1 | Unique company pack (NovaCart) | Prompt A0 | ✅ DONE |
-| F2 | Correctly ingest hidden unseen documents without code modification | Phase 1 (upload pipeline must be generic) | PENDING |
-| F3 | Correctly onboard a hidden new role without code modification | Phase 1 (role CRUD) + Phase 2 (generic prompts) + Phase 3 (generic validators) | PENDING |
+| F2 | Correctly ingest hidden unseen documents without code modification | Phase 1 (upload pipeline must be generic) | PHASE 1 READY — ingest is filename/content-driven, not a hardcoded 24-doc list; hidden-eval proof still requires live upload of unseen files |
+| F3 | Correctly onboard a hidden new role without code modification | Phase 1 (role CRUD) + Phase 2 (generic prompts) + Phase 3 (generic validators) | PHASE 1 READY for CRUD (`POST /api/roles`, `POST /api/employees`); generation/validation still Phase 2/3 |
 | F4 | Policy Update Challenge readiness | Phase 4 (steps 57-59) | PENDING |
 | F5 | Prompt Injection Challenge readiness | Phase 2 (step 42-43) + Phase 3 (hallucination detection) | PENDING |
 | F6 | Contradiction Challenge readiness | Phase 3 (steps 33-34) | PENDING |
-| F7 | Source Traceability Challenge readiness | Phase 1 (metadata) + Phase 2 (citations) + Phase 3 (traceability score) | PENDING |
+| F7 | Source Traceability Challenge readiness | Phase 1 (metadata) + Phase 2 (citations) + Phase 3 (traceability score) | PHASE 1 READY for stored doc_id/section/page/paragraph metadata on chunks; citations + scores still Phase 2/3 |
 | F8 | Hallucination Challenge readiness | Phase 2 (source grounding) + Phase 3 (hallucination detection) | PENDING |
 | F9 | Live Code Modification readiness | All phases (OOP design enables single-class changes) | PENDING |
 | F10 | Deliberate Defect readiness (debug planted errors) | All phases (clean code, docstrings, SRP) | PENDING |
-| F11 | Meaningful GitHub commits across all 5 days from all members | All phases | PENDING |
+| F11 | Meaningful GitHub commits across all 5 days from all members | All phases | IN PROGRESS — Phase 1 split commits by Azhar Raji AL-Herwi; other members/days still required |
 | F12 | ABSOLUTE PROHIBITION on hard-coded plans/answers/scores/fakes | Phase 2 + Phase 3 (everything computed live) | PENDING |
 | F14 | GenAI never replaces Python validation/business rules/security | Phase 2 + Phase 3 (strict pipeline separation) | PENDING |
 | F15 | AI-assisted code must be reviewed/understood/explainable by team | All phases | PENDING |

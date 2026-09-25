@@ -138,7 +138,7 @@ Documents (PDF/DOCX files on disk)
 - ✅ Role Requirement Matrix CSV: 178 rows, 11 columns, 131 mandatory entries, 10 roles, 24 source documents
 
 ### Remaining (4 Phases of Engineering)
-- Phase 1: Document processing pipeline, database, employee/role CRUD, auth, matrix loader
+- Phase 1: ✅ Document processing pipeline, database schema, employee/role CRUD, auth/RBAC skeleton, matrix loader, HTML shells. Run `python -m database.seed` then `uvicorn src.main:app`.
 - Phase 2: GenAI integration, prompt templates, all content generation, injection defense
 - Phase 3: Validation pipeline (8 validators), comparison engine, consistency testing
 - Phase 4: Review workflow, 3 dashboards, progress tracking, policy updates, reports, export, final packaging

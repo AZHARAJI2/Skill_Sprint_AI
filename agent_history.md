@@ -87,7 +87,44 @@
 
 ## Phase 1 Log
 
-*(Reserved for Phase 1 Foundation Engineer entries)*
+### Entry 001 — 2026-09-25 08:22 | Agent: Execution - Phase 1 | Task: Start foundation implementation
+
+**Timestamp**: 2026-09-25  
+**Agent**: Execution - Phase 1 (Foundation Engineer)  
+**Member**: Azhar Raji AL-Herwi  
+**Task**: Implement Phase 1 end-to-end (schema, document pipeline, matrix loader, employee/role CRUD, auth/RBAC skeleton, FastAPI + base UI)  
+**Rationale**: PROJECT_MAP assigns steps 4–10 and FRs for ingest/auth/matrix to Phase 1. Hidden-document readiness (F2) requires a generic upload→validate→parse→chunk→version pipeline that treats `sample_documents/` as real input, not pre-loaded artifacts. `load_matrix.py` must validate and persist the approved CSV rather than author requirements. OOP boundaries from [ARCHITECTURE] (repositories, DocumentService, version control) will be implemented so later phases consume stored chunks/matrix without re-parsing files ad hoc.
+
+**Public interfaces this phase will expose**: `Document`/`DocumentChunk`/`DocumentRevision`, `DocumentRepository`/`ChunkRepository`, `DocumentService.ingest_file`/`ingest_upload`, `RoleMatrixRepository` + `load_matrix.py`, `Employee`/`Role` + CRUD services, `AuthService` + `require_role`, SQLAlchemy `Base.metadata` for all planned tables, FastAPI app with global error handlers.
+
+**Depends on (other phases)**: none. Phase 2–4 consume this layer; this phase will not call GenAI or run plan validators.
+
+**Status**: In progress
+
+### Entry 002 — 2026-09-25 09:17 | Agent: Execution - Phase 1 | Task: Close foundation + Memory Trinity sync
+
+**Timestamp**: 2026-09-25  
+**Agent**: Execution - Phase 1 (Foundation Engineer)  
+**Member**: Azhar Raji AL-Herwi  
+**Task**: Verify Phase 1, sync Memory Trinity, split git commits  
+**Rationale**: Implementation of steps 4–10 is complete and covered by 15 pytest cases. PROJECT_MAP still showed PENDING, which would mis-scope Phase 2+ agents. Metrics originally under-counted `[M]` because duplicate `section_id` rows in one document overwrote a tagged chunk; `CorpusMetricsService` now ORs flags per `(document_id, section_id)`.
+
+**Status**: Completed  
+
+**Public interfaces for later phases**:
+- `DocumentService.ingest_file` / `ingest_bytes` / `ingest_directory`
+- `DocumentRepository`, `ChunkRepository`, `DocumentRevisionRepository`
+- `CorpusMetricsService.compute()`
+- `MatrixLoader` / `load_matrix()` / `RoleMatrixRepository`
+- `EmployeeService`, `RoleService`
+- `AuthService`, `require_role`, `get_current_user`
+- Tables: documents, chunks, revisions, employees, roles, role_requirements, users, plans, modules, checklists, tasks, quizzes, assessments, validation_reports, review_decisions, audit_log, prompt_templates, generation_metadata
+- HTTP: `/login`, `/api/login`, `/api/documents/*`, `/api/employees`, `/api/roles`, `/api/matrix`, `/dashboard*`
+
+**Notes**: Do not call Gemini from these modules. Empty packages (`genai_pipeline/`, `python_validation/` validators, etc.) are scaffolds only. Seed with `python -m database.seed`. Demo users: admin/admin123 and the other four README accounts.
+
+**Next**: Phase 2 consumes parsed chunks + matrix rows; Phase 3 consumes the same plus generated JSON.
+
 
 ---
 
