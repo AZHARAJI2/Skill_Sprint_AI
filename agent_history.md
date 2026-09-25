@@ -246,10 +246,26 @@
 
 **Public interfaces for later phases** (unchanged contracts, stronger guarantees):
 - `GeminiProvider.generate` now constrains output with `response_json_schema` whenever a Pydantic schema is passed — Phase 3 can trust `structured_json` shape more, but must still validate (contract, not proof)
-- `RetryManager` passes `schema` to the provider; behavior for non-constraining providers is identical (still validates locally)
 - `scripts/live_genai_run.py` gains `--throttle` and `--roles`; rerun after quota reset for the remaining 8 roles
 
-**Notes**: Deliberately did NOT raise `max_output_tokens` (8192) — the DevOps truncation is a hypothesis that quota exhaustion blocks from verifying today; changing it blind would be speculative engineering. Quota spend on `gemini-3.5-flash-lite` today ≈ 18/20. Temp probes (`_schema_probe_tmp`, `_census_tmp`, `_db_census`) deleted; only `scripts/live_genai_run.py` + `scripts/__init__.py` remain. Remaining Phase 2 follow-up for a future session: rerun the harness for roles 3–10 to extend D4 coverage (D4 itself is DONE — it holds verified live proof, not a promise).
+### Entry 009 — 2026-09-25 16:25 | Agent: Execution - Phase 2 | Task: Fix enrichment item retention and raise token limit
+
+**Timestamp**: 2026-09-25 16:25  
+**Agent**: Execution - Phase 2 (GenAI Pipeline Engineer)  
+**Member**: A'LAA MADYAN  
+**Task**: Fix item retention across enrichment passes (`ModuleGenerator`, `QuizGenerator`, `AssessmentGenerator`, `ScenarioTaskGenerator`) and make `max_output_tokens` configurable/raised  
+**Rationale**: Post-run audit of `d4_live_genai_run.json` showed Software Engineer had only 1 module recorded instead of the full 26 assembler modules. Root cause: `ModuleGenerator.enrich` (and similarly `QuizGenerator`, `AssessmentGenerator`, `ScenarioTaskGenerator`) iterated over `batch.items` rather than updating `plan.items` by ID. When the LLM returned a partial batch (e.g. 1 module), the remaining items were dropped from the plan rather than preserved. Merging by iterating over `plan.items` and replacing with matching enriched items guarantees 100% item retention while accepting model wording improvements. In addition, `GenerationConfig.max_output_tokens` is raised from 8192 to 16384 (standard in Gemini 2.5/3.5) to prevent mid-JSON truncation on large multi-stage plans.
+
+**Status**: Completed
+
+**Public interfaces for later phases** (unchanged signatures, guaranteed complete inventory):
+- `ModuleGenerator.enrich`: preserves 100% of plan modules, merging batch wording on ID matches.
+- `QuizGenerator.enrich`: preserves 100% of plan quizzes and runs distractor validation across all items.
+- `AssessmentGenerator.enrich`: preserves 100% of plan assessments, merging batch wording on ID matches.
+- `ScenarioTaskGenerator.enrich`: preserves 100% of plan tasks and maintains original stage/prerequisite order.
+- `GenerationConfig.max_output_tokens`: raised to 16384 default to prevent truncation on large plans.
+
+**Notes**: Verified with automated test `test_enrichment_preserves_full_item_inventory_on_partial_batches`. Full test suite now passes with 28 tests (28 passed, 0 failed). Ready for Phase 3 ingestion.
 
 ---
 

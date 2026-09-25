@@ -4,7 +4,7 @@
 > an online marketplace with warehousing, payment processing, customer support,
 > and engineering divisions.
 >
-> **Last Updated**: 2026-09-25 (Phase 2 integrated into `main`) | **Updated By**: Phase 2 GenAI Pipeline Engineer (A'LAA MADYAN)
+> **Last Updated**: 2026-09-25 (Phase 2 enrichment retention fix & token limit) | **Updated By**: Phase 2 GenAI Pipeline Engineer (A'LAA MADYAN)
 
 ---
 
@@ -584,7 +584,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | D7 | Onboarding Plan Evidence for ≥10 roles | Phase 4 (assembly) | PENDING |
 | D8 | Validation Report | Phase 3 | PENDING |
 | D9 | Security Testing Report | Phase 4 | PENDING |
-| D10 | Test Cases (all categories) | Phase 4 (integration) + all phases (unit) | IN PROGRESS — Phase 1 (15) + Phase 2 (`tests/test_genai_pipeline.py`, `tests/test_injection.py`); suite 27 passing |
+| D10 | Test Cases (all categories) | Phase 4 (integration) + all phases (unit) | IN PROGRESS — Phase 1 (15) + Phase 2 (`tests/test_genai_pipeline.py`, `tests/test_injection.py`); suite 28 passing |
 | D11 | Installation Instructions | Phase 4 | PENDING |
 | D12 | Execution Instructions (full walkthrough) | Phase 4 | PENDING |
 | D13 | Public GitHub Repository (daily commits from all members) | All phases | PENDING |
