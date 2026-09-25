@@ -130,7 +130,68 @@
 
 ## Phase 2 Log
 
-*(Reserved for Phase 2 GenAI Pipeline Engineer entries)*
+### Entry 001 — 2026-09-25 10:27 | Agent: Execution - Phase 2 | Task: Start GenAI pipeline
+
+**Timestamp**: 2026-09-25 10:27  
+**Agent**: Execution - Phase 2 (GenAI Pipeline Engineer)  
+**Member**: A'LAA MADYAN  
+**Task**: Implement Pipeline 1 end-to-end (requirement extraction, versioned prompts, Gemini structured JSON, schema/retry, source-grounded modules/checklists/tasks/quizzes/assessments, injection defense, generation metadata)  
+**Rationale**: PROJECT_MAP assigns steps 11–26 and 37–43 plus D4 to Phase 2. Generation must consume Phase 1 public interfaces only (`RoleMatrixRepository`, `ChunkRepository`/`DocumentRepository`, `EmployeeService`, `AuditRepository`) and expose `PlanGenerationService` + Pydantic schemas for Phase 3/4. All LLM calls go through `BaseGenAIProvider`; uploaded text is fenced as data. Tests inject a context-derived fixture provider so we never hard-code role plans. Production default is `GeminiProvider` and fails closed without an API key (F12 — no fabricated plans).
+
+**Public interfaces this phase will expose**: `BaseGenAIProvider`, `GeminiProvider`, `PromptManager`, `RetryManager`, `OutputSchemaValidator`, `InjectionGuard`, `RequirementExtractor`, generators (plan/module/quiz/assessment), `PlanGenerationService.generate_for_employee`, `PlanRepository`, HTTP `/api/plans*`.
+
+**Depends on (other phases)**: Phase 1 ingest, matrix, employee/role, auth. Will not implement Pipeline 2 validators.
+
+**Status**: Completed
+
+### Entry 002 — 2026-09-25 11:15 | Agent: Execution - Phase 2 | Task: Verify Pipeline 1, tests, D4 evidence
+
+**Timestamp**: 2026-09-25 11:15  
+**Agent**: Execution - Phase 2 (GenAI Pipeline Engineer)  
+**Member**: A'LAA MADYAN  
+**Task**: Close remaining Phase 2 gaps (scenario-task generator, sequence mutation safety, automated VG-2.x tests, D4 evidence, Memory Trinity, distributed commits, branch push)  
+**Rationale**: Uncommitted Pipeline 1 modules already cover providers, versioned prompts, assembler-backed structured JSON, injection fencing, retry cap, and plan persistence. Success criteria before calling the phase done: pytest covers VG-2.1–VG-2.9 without fabricating plans; Gemini fails closed without an API key; `/api/plans*` is wired; D4 evidence is a real artifact; PROJECT_MAP Phase 2 steps are checked off.
+
+**Status**: Completed  
+
+**Notes**: D4 written to `reports/d4_genai_pipeline_evidence.md`. Sample plan JSON is produced by `test_plans_for_all_ten_roles`.
+
+### Entry 003 — 2026-09-25 12:10 | Agent: Execution - Phase 2 | Task: Fix provider injection on generate path
+
+**Timestamp**: 2026-09-25 12:10  
+**Agent**: Execution - Phase 2 (GenAI Pipeline Engineer)  
+**Member**: A'LAA MADYAN  
+**Task**: Bind `PlanGenerator` to the current `BaseGenAIProvider` on each generate call; expose FastAPI `get_genai_provider` so tests/routes can inject `ScriptedProvider` without hitting Gemini  
+**Rationale**: pytest VG coverage was 26/27. `test_api_generate_requires_admin` returned 503 because `PlanGenerationService.__init__` cached `PlanGenerator(GeminiProvider())` and later `self.provider = ...` swaps were ignored. Success criterion: Admin POST `/api/plans/generate/{id}` with an injected test provider returns 200 + valid `GeneratedPlan` JSON; missing-key unit test still fails closed (F12).
+
+**Status**: Completed  
+
+**Notes**: `PlanGenerationService` constructs `PlanGenerator(provider)` inside `generate_for_employee`. FastAPI `Depends(get_genai_provider)` is the injection point. GET `/api/plans` does not construct Gemini.
+
+### Entry 004 — 2026-09-25 12:20 | Agent: Execution - Phase 2 | Task: Verify, close, commit, and push Pipeline 1
+
+**Timestamp**: 2026-09-25 12:20  
+**Agent**: Execution - Phase 2 (GenAI Pipeline Engineer)  
+**Member**: A'LAA MADYAN  
+**Task**: Finish Phase 2: confirm VG-2.1–VG-2.9 against uncommitted Pipeline 1 code, fix remaining gaps (route order, Memory Trinity, AI_USAGE, distributed commits), then push `phase-2-genai-pipeline`  
+**Rationale**: Implementation is on disk but not committed; Entry 003 left provider injection in progress. Success criterion: full pytest green including Admin generate with injected provider; Memory Trinity + AI_USAGE synchronized; branch pushed. Will not implement Pipeline 2 validators.
+
+**Status**: Completed  
+
+**Public interfaces for later phases**:
+- `PlanGenerationService.generate_for_employee` / `get_plan` / `list_for_employee`
+- `PlanRepository`, `PromptTemplateRepository`, `GenerationMetadataRepository`
+- `BaseGenAIProvider`, `GeminiProvider`, `ScriptedProvider` (tests)
+- `PromptManager` + `prompt_templates/*_v1.json`
+- `RequirementExtractor`, `PlanAssembler`, `PlanGenerator`
+- `ModuleGenerator`, `QuizGenerator` + `DistractorValidator`, `AssessmentGenerator`, `ScenarioTaskGenerator`
+- `OutputSchemaValidator`, `RetryManager` (cap 3), `PrerequisiteEnforcer`
+- `InjectionGuard` (`security.injection_guard`; re-exported from `genai_pipeline`)
+- Pydantic: `GeneratedPlan`, `LearningModule`, `ChecklistItem`, `TaskItem`, `QuizQuestion`, `Assessment`
+- HTTP: `POST /api/plans/generate/{employee_id}`, `GET /api/plans/{plan_id}`, `GET /api/plans/employee/{employee_id}`
+- Stored `OnboardingPlan.structured_json` is the plan of record for Phase 3
+
+**Notes**: Do not call Gemini from `python_validation/`. Missing `GEMINI_API_KEY` → 503, never a fake plan. After retry cap, assembler backbone is persisted and `recovered_from_assembler` is logged in generation metadata. Route order: list-by-employee is registered before `GET /{plan_id}`.
 
 ---
 
@@ -148,4 +209,6 @@
 
 ## Cross-Phase Notes
 
-*(For issues, blockers, or decisions that span multiple phases)*
+- Phase 2 plan of record is `OnboardingPlan.structured_json` (`GeneratedPlan`). Phase 3 must validate that JSON with zero GenAI calls.
+- LLM injection point: `src.plans.dependencies.get_genai_provider`. Do not instantiate `GeminiProvider` inside validators or routes except through this dependency / `PlanGenerationService.generate_for_employee`.
+- After Gemini retry cap, metadata may show `recovered_from_assembler=true`; that backbone is still live matrix+chunk computation, not a fake score.

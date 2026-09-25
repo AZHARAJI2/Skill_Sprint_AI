@@ -9,6 +9,13 @@ plans (Phase 2), and independently validates them in pure Python (Phase 3).
 Foundation is implemented: document ingest pipeline, database schema, matrix
 loader, employee/role CRUD, auth/RBAC skeleton, and responsive HTML shells.
 
+## Phase 2 status
+
+Pipeline 1 is implemented: requirement extraction, versioned prompt templates,
+`GeminiProvider` (fails closed without an API key), Pydantic JSON schemas,
+capped retry, source-grounded plan/module/checklist/task/quiz/assessment
+generation, injection fencing, and `/api/plans*` routes. Evidence: `reports/d4_genai_pipeline_evidence.md`.
+
 ## Requirements
 
 - Python 3.12+
@@ -22,6 +29,9 @@ py -3.12 -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 ```
+
+Set `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) in the environment before live generation.
+Without a key the API returns 503 rather than inventing a plan.
 
 ## Seed demo data
 
@@ -63,7 +73,11 @@ pytest
 - `MatrixLoader` / `load_matrix` and `RoleMatrixRepository`
 - `EmployeeService`, `RoleService`
 - `AuthService`, `require_role`, `get_current_user`
-- SQLAlchemy tables for plans, quizzes, reviews, and audit (writers come later)
+- SQLAlchemy tables for plans, quizzes, reviews, and audit
+- Phase 2: `PlanGenerationService.generate_for_employee`, `PlanRepository`,
+  `BaseGenAIProvider` / `GeminiProvider`, `PromptManager`, `InjectionGuard`,
+  Pydantic schemas in `schemas/`
 
-Do not call the Gemini SDK from business logic. Phase 2 owns `BaseGenAIProvider`.
-Do not put GenAI calls in `python_validation/` — that pipeline must stay GenAI-free.
+Do not call the Gemini SDK from routes or validators. All LLM calls go through
+`BaseGenAIProvider`. Do not put GenAI calls in `python_validation/` — that
+pipeline must stay GenAI-free.

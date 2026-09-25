@@ -139,7 +139,7 @@ Documents (PDF/DOCX files on disk)
 
 ### Remaining (4 Phases of Engineering)
 - Phase 1: ✅ Document processing pipeline, database schema, employee/role CRUD, auth/RBAC skeleton, matrix loader, HTML shells. Run `python -m database.seed` then `uvicorn src.main:app`.
-- Phase 2: GenAI integration, prompt templates, all content generation, injection defense
+- Phase 2: ✅ Pipeline 1 — `PlanGenerationService.generate_for_employee`, versioned `prompt_templates/*_v1.json`, `GeminiProvider` (503 without API key), Pydantic `GeneratedPlan`, capped retry, source-grounded modules/checklists/tasks/quizzes/assessments, `InjectionGuard`, `/api/plans*`. Evidence: `reports/d4_genai_pipeline_evidence.md`.
 - Phase 3: Validation pipeline (8 validators), comparison engine, consistency testing
 - Phase 4: Review workflow, 3 dashboards, progress tracking, policy updates, reports, export, final packaging
 

@@ -4,7 +4,7 @@
 > an online marketplace with warehousing, payment processing, customer support,
 > and engineering divisions.
 >
-> **Last Updated**: 2026-09-25 | **Updated By**: Phase 1 Foundation Engineer (Azhar Raji AL-Herwi)
+> **Last Updated**: 2026-09-25 | **Updated By**: Phase 2 GenAI Pipeline Engineer (A'LAA MADYAN)
 
 ---
 
@@ -369,53 +369,53 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 #### Development Steps Owned
 | Step | Description | Status |
 |---|---|---|
-| 11 | Requirement extraction (Must Know/Complete/Demonstrate/Acknowledge/Recommended/Optional/N/A) | PENDING |
-| 12 | Personalized onboarding plan generation per role/department/experience/timeline | PENDING |
-| 13 | Multi-stage plan (Day 1, Week 1, Week 2, First 30/60/90 Days) | PENDING |
-| 14 | Learning module generation (title, purpose, objectives, key concepts, source docs, duration, activities, assessment, completion criteria) | PENDING |
-| 15 | Source-grounded generation — unsupported content flagged/removed/manual review | PENDING |
-| 16 | Role-specific learning (genuinely different content per role) | PENDING |
-| 17 | Checklist generation (activity, required/optional, due date/stage, status, source, responsible) | PENDING |
-| 18 | Role-specific task generation (description, outcome, source req, completion criteria, difficulty, due stage) | PENDING |
-| 19 | Scenario-based task generation from approved processes | PENDING |
-| 20 | Quiz generation (MCQ, multiple response, True/False, scenario-based) | PENDING |
-| 21 | Quiz traceability (source doc/section, correct answer, explanation, difficulty) | PENDING |
-| 22 | Distractor validation — plausible but not misleadingly contradictory; correct answer validated by Python against source | PENDING |
-| 23 | Assessment generation (knowledge, practical, scenario, role-specific) | PENDING |
-| 24 | Assessment rubric (criterion, weight, expected performance, pass condition) | PENDING |
-| 25 | Difficulty levels (Beginner/Intermediate/Advanced reflecting role+experience) | PENDING |
-| 26 | Prerequisite management (no advanced task before required prerequisite) | PENDING |
-| 37 | GenAI structured JSON output per defined schema; free-form never sole output | PENDING |
-| 38 | Schema validation in Python (missing fields, invalid types, invalid source IDs, invalid role, duplicate IDs, missing mandatory status) | PENDING |
-| 39 | GenAI retry & recovery on invalid/incomplete output, with logging + cap | PENDING |
-| 40 | Prompt template management — versioned template files, not hard-coded | PENDING |
-| 41 | Prompt version tracking — every plan records prompt version, model, timestamp, source doc versions | PENDING |
-| 42 | Prompt injection defense — uploaded text treated strictly as data | PENDING |
-| 43 | Adversarial document testing — demonstrate protection against injection docs | PENDING |
+| 11 | Requirement extraction (Must Know/Complete/Demonstrate/Acknowledge/Recommended/Optional/N/A) | ✅ DONE (`RequirementExtractor`) |
+| 12 | Personalized onboarding plan generation per role/department/experience/timeline | ✅ DONE (`PlanGenerationService.generate_for_employee`) |
+| 13 | Multi-stage plan (Day 1, Week 1, Week 2, First 30/60/90 Days) | ✅ DONE (`OutputSchemaValidator` rejects single-stage dumps) |
+| 14 | Learning module generation (title, purpose, objectives, key concepts, source docs, duration, activities, assessment, completion criteria) | ✅ DONE (`ModuleGenerator` + `PlanAssembler`) |
+| 15 | Source-grounded generation — unsupported content flagged/removed/manual review | ✅ DONE (`GroundingFlag` / `grounding_status` on items) |
+| 16 | Role-specific learning (genuinely different content per role) | ✅ DONE (VG-2.1: ten live plans differ by role) |
+| 17 | Checklist generation (activity, required/optional, due date/stage, status, source, responsible) | ✅ DONE |
+| 18 | Role-specific task generation (description, outcome, source req, completion criteria, difficulty, due stage) | ✅ DONE |
+| 19 | Scenario-based task generation from approved processes | ✅ DONE (`ScenarioTaskGenerator`; SOP-preferred scenario task) |
+| 20 | Quiz generation (MCQ, multiple response, True/False, scenario-based) | ✅ DONE |
+| 21 | Quiz traceability (source doc/section, correct answer, explanation, difficulty) | ✅ DONE |
+| 22 | Distractor validation — plausible but not misleadingly contradictory; correct answer validated by Python against source | ✅ DONE (`DistractorValidator`) |
+| 23 | Assessment generation (knowledge, practical, scenario, role-specific) | ✅ DONE |
+| 24 | Assessment rubric (criterion, weight, expected performance, pass condition) | ✅ DONE |
+| 25 | Difficulty levels (Beginner/Intermediate/Advanced reflecting role+experience) | ✅ DONE (`RequirementExtractor.difficulty_for`) |
+| 26 | Prerequisite management (no advanced task before required prerequisite) | ✅ DONE (`PrerequisiteEnforcer`) |
+| 37 | GenAI structured JSON output per defined schema; free-form never sole output | ✅ DONE (`GeneratedPlan` is the plan of record) |
+| 38 | Schema validation in Python (missing fields, invalid types, invalid source IDs, invalid role, duplicate IDs, missing mandatory status) | ✅ DONE (`OutputSchemaValidator`) |
+| 39 | GenAI retry & recovery on invalid/incomplete output, with logging + cap | ✅ DONE (`RetryManager` cap 3; assembler recovery on 502) |
+| 40 | Prompt template management — versioned template files, not hard-coded | ✅ DONE (`prompt_templates/*_v1.json` + `PromptManager`) |
+| 41 | Prompt version tracking — every plan records prompt version, model, timestamp, source doc versions | ✅ DONE (`OnboardingPlan` + `GenerationMetadata`) |
+| 42 | Prompt injection defense — uploaded text treated strictly as data | ✅ DONE (`InjectionGuard` fences `UNTRUSTED_DOCUMENT_DATA`) |
+| 43 | Adversarial document testing — demonstrate protection against injection docs | ✅ DONE (11 corpus cases in `tests/test_injection.py`) |
 
 #### Functional Requirements Owned (from Section C)
-- Requirement Extraction
-- GenAI API Integration
-- Structured Prompt Templates
-- Structured JSON Output
-- JSON Schema Validation
-- Personalized Onboarding Plan
-- Multi-Stage Onboarding
-- Learning Module Generation
-- Learning Objective Generation
-- Checklist Generation
-- Task Generation
-- Scenario Generation
-- Quiz Generation
-- Quiz Answer Validation
-- Assessment Generation
-- Assessment Rubric Generation
-- Prerequisite Detection
-- Source Citation
-- Prompt Injection Protection
-- Adversarial Document Detection
-- Retry Management
-- Model and Prompt Logging
+- Requirement Extraction — ✅
+- GenAI API Integration — ✅
+- Structured Prompt Templates — ✅
+- Structured JSON Output — ✅
+- JSON Schema Validation — ✅
+- Personalized Onboarding Plan — ✅
+- Multi-Stage Onboarding — ✅
+- Learning Module Generation — ✅
+- Learning Objective Generation — ✅
+- Checklist Generation — ✅
+- Task Generation — ✅
+- Scenario Generation — ✅
+- Quiz Generation — ✅
+- Quiz Answer Validation — ✅
+- Assessment Generation — ✅
+- Assessment Rubric Generation — ✅
+- Prerequisite Detection — ✅
+- Source Citation — ✅
+- Prompt Injection Protection — ✅
+- Adversarial Document Detection — ✅
+- Retry Management — ✅
+- Model and Prompt Logging — ✅
 
 #### Deliverables Touched
 - GenAI Pipeline Evidence (D4)
@@ -425,15 +425,15 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 - security/ (InjectionGuard)
 
 #### Key Verification Goals
-- [ ] VG-2.1: Onboarding plans generated for all 10 roles (each with dedicated role description document + matrix entries) with genuinely different content per role
-- [ ] VG-2.2: Multi-stage plans never dump everything into Day 1
-- [ ] VG-2.3: All generated JSON passes Pydantic schema validation with zero missing required fields
-- [ ] VG-2.4: Every generated module/task/quiz/assessment includes valid source_document_id + source_section_id
-- [ ] VG-2.5: Prompt injection defense demonstrated against all 10 adversarial cases in the corpus
-- [ ] VG-2.6: Retry logic capped (max 3), logged, recovers gracefully from invalid GenAI output
-- [ ] VG-2.7: Prompt templates versioned in files; generation metadata records version + model + timestamp
-- [ ] VG-2.8: Prerequisite ordering enforced in generated plans (no advanced before basic)
-- [ ] VG-2.9: Distractor validation: incorrect quiz options plausible but not contradictory to source
+- [x] VG-2.1: Onboarding plans generated for all 10 roles (each with dedicated role description document + matrix entries) with genuinely different content per role
+- [x] VG-2.2: Multi-stage plans never dump everything into Day 1
+- [x] VG-2.3: All generated JSON passes Pydantic schema validation with zero missing required fields
+- [x] VG-2.4: Every generated module/task/quiz/assessment includes valid source_document_id + source_section_id
+- [x] VG-2.5: Prompt injection defense demonstrated against all 11 adversarial cases in the corpus
+- [x] VG-2.6: Retry logic capped (max 3), logged, recovers gracefully from invalid GenAI output
+- [x] VG-2.7: Prompt templates versioned in files; generation metadata records version + model + timestamp
+- [x] VG-2.8: Prerequisite ordering enforced in generated plans (no advanced before basic)
+- [x] VG-2.9: Distractor validation: incorrect quiz options plausible but not contradictory to source
 
 ---
 
@@ -576,22 +576,22 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | # | Deliverable | Owner Phase | Status |
 |---|---|---|---|
 | D1 | Project Report (problem definition, diagrams: DFD, Use Case, Activity, Sequence) | Phase 4 | PENDING |
-| D2 | Source Code in mandatory GitHub folder structure | Phase 1 (scaffold) + all | IN PROGRESS — Phase 1 scaffold + foundation code on disk; later phases fill GenAI/validation/delivery packages |
+| D2 | Source Code in mandatory GitHub folder structure | Phase 1 (scaffold) + all | IN PROGRESS — Phase 1 foundation + Phase 2 `genai_pipeline/`, `prompt_templates/`, `schemas/`, `security/injection_guard.py`, `/api/plans*` filled; Phase 3–4 remaining |
 | D3 | Company Document Dataset — 24 documents, 38 files (profile, scenario, policies, role descriptions, etc.) | ✅ DONE (Prompt A0 + Addendum) | COMPLETE |
-| D4 | GenAI Pipeline Evidence (API/model, prompts, config, samples, failures, retries) | Phase 2 | PENDING |
+| D4 | GenAI Pipeline Evidence (API/model, prompts, config, samples, failures, retries) | Phase 2 | ✅ DONE — `reports/d4_genai_pipeline_evidence.md` + live sample `reports/d4_sample_software_engineer_plan.json` |
 | D5 | Python Validation Pipeline Evidence | Phase 3 | PENDING |
 | D6 | GenAI/Python Comparison Report (≥100 comparisons) | Phase 3 | PENDING |
 | D7 | Onboarding Plan Evidence for ≥10 roles | Phase 4 (assembly) | PENDING |
 | D8 | Validation Report | Phase 3 | PENDING |
 | D9 | Security Testing Report | Phase 4 | PENDING |
-| D10 | Test Cases (all categories) | Phase 4 (integration) + all phases (unit) | IN PROGRESS — Phase 1 unit tests: ingest, matrix, auth, employees, schema (15 passing) |
+| D10 | Test Cases (all categories) | Phase 4 (integration) + all phases (unit) | IN PROGRESS — Phase 1 (15) + Phase 2 (`tests/test_genai_pipeline.py`, `tests/test_injection.py`); suite 27 passing |
 | D11 | Installation Instructions | Phase 4 | PENDING |
 | D12 | Execution Instructions (full walkthrough) | Phase 4 | PENDING |
 | D13 | Public GitHub Repository (daily commits from all members) | All phases | PENDING |
 | D14 | Deployed Application (public URL + evaluator logins) | Phase 4 | PENDING |
 | D15 | Demonstration Video (.mp4) | Phase 4 | PENDING |
 | D16 | Technical Blog (2,000+ words) | Phase 4 | PENDING |
-| D17 | AI Tool Usage Declaration (AI_USAGE.md) | All phases (human-filled) | PENDING |
+| D17 | AI Tool Usage Declaration (AI_USAGE.md) | All phases (human-filled) | IN PROGRESS — Phase 1 + Phase 2 entries present; remaining members/days still required |
 | D18 | Final Submission Checklist | Phase 4 | PENDING |
 
 ### Unresolved Architectural Questions
@@ -601,7 +601,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 ### Known Input Data Gaps (for Phase 1 to flag)
 - ~~No dedicated role description documents for 4 roles.~~ **Resolved** — all 10 roles now have ROLE-xx documents.
 - PDF versions exist for 14 of 24 documents (POL-02 through POL-05, ROLE-01 through ROLE-10). The remaining 10 documents (HANDBOOK-01, POL-01, SOP-01 through SOP-05, FAQ-01, FAQ-02, COMP-01) are DOCX-only. Both formats are ingested where present.
-- **Metrics note (Phase 1)**: Some documents repeat the same `section_id` in body text (e.g. a later sentence citing `1.1`). `CorpusMetricsService` ORs `[M]/[O]` flags across those duplicates so VG-1.3 counts the tagged section, not the last write. Phase 2/3 should cite `(document_id, section_id)` from the richest/tagged chunk.
+- **Metrics note (Phase 1)**: Some documents repeat the same `section_id` in body text (e.g. a later sentence citing `1.1`). `CorpusMetricsService` ORs `[M]/[O]` flags across those duplicates so VG-1.3 counts the tagged section, not the last write. Phase 2 `PlanAssembler.excerpts_from_chunks` prefers the longest tagged chunk per `(document_id, section_id)`.
 
 ---
 
@@ -623,17 +623,17 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 |---|---|---|---|
 | F1 | Unique company pack (NovaCart) | Prompt A0 | ✅ DONE |
 | F2 | Correctly ingest hidden unseen documents without code modification | Phase 1 (upload pipeline must be generic) | PHASE 1 READY — ingest is filename/content-driven, not a hardcoded 24-doc list; hidden-eval proof still requires live upload of unseen files |
-| F3 | Correctly onboard a hidden new role without code modification | Phase 1 (role CRUD) + Phase 2 (generic prompts) + Phase 3 (generic validators) | PHASE 1 READY for CRUD (`POST /api/roles`, `POST /api/employees`); generation/validation still Phase 2/3 |
+| F3 | Correctly onboard a hidden new role without code modification | Phase 1 (role CRUD) + Phase 2 (generic prompts) + Phase 3 (generic validators) | PHASE 1+2 READY — CRUD plus generic templates/`PlanGenerationService` (new role needs matrix rows + ingested docs); Phase 3 validators still pending |
 | F4 | Policy Update Challenge readiness | Phase 4 (steps 57-59) | PENDING |
-| F5 | Prompt Injection Challenge readiness | Phase 2 (step 42-43) + Phase 3 (hallucination detection) | PENDING |
+| F5 | Prompt Injection Challenge readiness | Phase 2 (step 42-43) + Phase 3 (hallucination detection) | PHASE 2 READY — `InjectionGuard` fences uploaded text as data; 11 corpus cases covered in `tests/test_injection.py`; Phase 3 hallucination still pending |
 | F6 | Contradiction Challenge readiness | Phase 3 (steps 33-34) | PENDING |
-| F7 | Source Traceability Challenge readiness | Phase 1 (metadata) + Phase 2 (citations) + Phase 3 (traceability score) | PHASE 1 READY for stored doc_id/section/page/paragraph metadata on chunks; citations + scores still Phase 2/3 |
-| F8 | Hallucination Challenge readiness | Phase 2 (source grounding) + Phase 3 (hallucination detection) | PENDING |
+| F7 | Source Traceability Challenge readiness | Phase 1 (metadata) + Phase 2 (citations) + Phase 3 (traceability score) | PHASE 1+2 READY — chunks store doc/section/page; generated items carry `source_document_id` + `source_section_id` checked by `OutputSchemaValidator`; Phase 3 traceability score still pending |
+| F8 | Hallucination Challenge readiness | Phase 2 (source grounding) + Phase 3 (hallucination detection) | PHASE 2 READY for `grounding_status` / `GroundingFlag`; Phase 3 `HallucinationDetector` still pending |
 | F9 | Live Code Modification readiness | All phases (OOP design enables single-class changes) | PENDING |
 | F10 | Deliberate Defect readiness (debug planted errors) | All phases (clean code, docstrings, SRP) | PENDING |
-| F11 | Meaningful GitHub commits across all 5 days from all members | All phases | IN PROGRESS — Phase 1 split commits by Azhar Raji AL-Herwi; other members/days still required |
-| F12 | ABSOLUTE PROHIBITION on hard-coded plans/answers/scores/fakes | Phase 2 + Phase 3 (everything computed live) | PENDING |
-| F14 | GenAI never replaces Python validation/business rules/security | Phase 2 + Phase 3 (strict pipeline separation) | PENDING |
+| F11 | Meaningful GitHub commits across all 5 days from all members | All phases | IN PROGRESS — Phase 1 split commits by Azhar Raji AL-Herwi; Phase 2 split commits by A'LAA MADYAN; remaining members/days still required |
+| F12 | ABSOLUTE PROHIBITION on hard-coded plans/answers/scores/fakes | Phase 2 + Phase 3 (everything computed live) | PHASE 2 SATISFIED for generation — live `PlanAssembler` from matrix+chunks, fail-closed Gemini, no per-role hard-coded plans; Phase 3 scores still pending |
+| F14 | GenAI never replaces Python validation/business rules/security | Phase 2 + Phase 3 (strict pipeline separation) | PHASE 2 SATISFIED — schema/retry/injection/distractors are Python; Pipeline 2 remains Phase 3 with zero GenAI |
 | F15 | AI-assisted code must be reviewed/understood/explainable by team | All phases | PENDING |
 | F16 | AI_USAGE.md maintained by every team member | All phases (human responsibility) | PENDING |
 
