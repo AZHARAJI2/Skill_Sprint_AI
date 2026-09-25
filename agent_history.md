@@ -217,6 +217,23 @@
 
 **Notes**: Fast-forward `main` onto `phase-2-genai-pipeline` (no merge commit, no history rewrite — Phase 1's commits are already ancestors, so nothing is lost and `phase-2-genai-pipeline` stays intact for audit). Phase 2 code is unchanged by this integration; only branch pointers move. Phase 3 remains the next executable phase and may consume `OnboardingPlan.structured_json` (`GeneratedPlan`) as the plan of record.
 
+### Entry 007 — 2026-09-25 | Agent: Execution - Phase 2 | Task: Close the "no live Gemini call" evidence gap
+
+**Timestamp**: 2026-09-25 14:09
+**Agent**: Execution - Phase 2 (GenAI Pipeline Engineer)
+**Member**: A'LAA MADYAN
+**Task**: Audit whether Pipeline 1 was ever exercised against the real Gemini API; if not, close the environment gap and build the live-run harness
+**Rationale**: Asked directly whether Gemini had actually been called, so I re-checked instead of trusting the green suite. Findings: `GEMINI_API_KEY` unset; all 27 tests inject `ScriptedProvider`; the one `GeminiProvider` test only asserts the 503 fail-closed path; `d4_sample_software_engineer_plan.json` has no `model_used`/`prompt_version`/`generation_timestamp` keys, proving it came from `PlanAssembler`, not Gemini; and `google-genai` was absent from `.venv` despite being pinned in `requirements.txt`. So Phase 2's *code* was complete but its *GenAI proof* was not. Kept the test suite key-free by design (CI must not depend on a live key) and instead added an operator harness — the right boundary, since D4 needs a real recorded response, not a test that skips when no key exists.
+
+**Status**: In progress — harness built and wiring-proven; the real run needs a valid key from the team member.
+
+**Public interfaces this phase will expose**:
+- `scripts.live_genai_run.LiveGenAIRun` — `discover_employees()`, `run_role()`, `capture_raw_sample()`, `execute()`, `write_evidence()`
+- CLI `python -m scripts.live_genai_run [--roles N] [--out PATH]`, exit 2 with a clear message when `GEMINI_API_KEY` is unset, exit 1 when zero roles generate
+- Evidence artifact `reports/d4_live_genai_run.json` with per-role model, retry count, provider latency, wall clock, item counts, `recovered_from_assembler`, and one unedited raw Gemini response head
+
+**Notes**: `google-genai==2.23.0` installed into `.venv`; it downgrades `websockets` 17.1 → 16.1.1, and `uvicorn==0.53.0` still imports fine (27/27 tests re-run green, no regression). A wiring test with a deliberately invalid key proved the path is live: the request reached `generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent` and Google returned `400 API_KEY_INVALID`; `RetryManager` logged 3 capped attempts, `PlanGenerator` fell back to `PlanAssembler`, `OutputSchemaValidator` accepted 102 items, and the harness honestly reported `recovered_from_assembler: true` / `all_gemini_backed: false`. The seeded DB was empty (18 tables, 0 rows), so I re-ran `python -m database.seed` (178 matrix rows, 38 files, 24 documents, 11 adversarial sections) and reset it again after the wiring test so the real run starts clean. The harness must never persist or log the key — it reads the environment only.
+
 ---
 
 ## Phase 3 Log
