@@ -54,11 +54,17 @@ class GeminiProvider(BaseGenAIProvider):
         try:
             from google.genai import types
 
-            gen_config = types.GenerateContentConfig(
-                temperature=cfg.temperature,
-                max_output_tokens=cfg.max_output_tokens,
-                response_mime_type="application/json",
-            )
+            gen_config_kwargs: dict[str, Any] = {
+                "temperature": cfg.temperature,
+                "max_output_tokens": cfg.max_output_tokens,
+                "response_mime_type": "application/json",
+            }
+            if schema is not None:
+                # Constrain the model to the Pydantic contract at the API level.
+                # Without this, "output JSON matching the schema" is only a
+                # suggestion and the model invents its own top-level shape.
+                gen_config_kwargs["response_json_schema"] = schema.model_json_schema()
+            gen_config = types.GenerateContentConfig(**gen_config_kwargs)
             response = client.models.generate_content(
                 model=model_name,
                 contents=prompt,

@@ -31,7 +31,11 @@ class RetryManager:
         working_prompt = prompt
         for attempt in range(1, self.max_attempts + 1):
             try:
-                response = self.provider.generate(working_prompt, schema=None, config=config)
+                # Pass the schema through so providers with constrained-generation
+                # support (e.g. Gemini response_json_schema) emit conformant JSON
+                # on the first attempt instead of guessing the shape. The result
+                # is still validated below as a safety net.
+                response = self.provider.generate(working_prompt, schema=schema, config=config)
                 if schema is not None:
                     parsed_model = schema.model_validate(response.parsed)
                     response.parsed = parsed_model.model_dump(mode="json")
