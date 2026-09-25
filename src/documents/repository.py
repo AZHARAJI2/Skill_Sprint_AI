@@ -44,6 +44,10 @@ class ChunkRepository(BaseRepository[DocumentChunk]):
         """Return all chunks for a logical document_id (all formats/versions)."""
         return list(self.session.query(DocumentChunk).filter(DocumentChunk.document_id == document_id).all())
 
+    def list_all(self) -> list[DocumentChunk]:
+        """Return every stored chunk. Plan generation filters by source document in Python."""
+        return list(self.session.query(DocumentChunk).all())
+
     def list_unique_sections(self) -> list[DocumentChunk]:
         """Return one representative chunk per (document_id, section_id) from DOCX when possible."""
         chunks = list(self.session.query(DocumentChunk).all())

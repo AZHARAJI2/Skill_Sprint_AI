@@ -19,6 +19,7 @@ from src.documents.routes import router as document_router
 from src.employees.matrix_routes import router as matrix_router
 from src.employees.routes import router as employee_router
 from src.errors import AppError
+from src.plans.routes import router as plan_router
 
 configure_logging()
 logger = get_logger("api")
@@ -34,6 +35,7 @@ app.include_router(dashboard_router)
 app.include_router(document_router)
 app.include_router(employee_router)
 app.include_router(matrix_router)
+app.include_router(plan_router)
 
 
 @app.exception_handler(AppError)
