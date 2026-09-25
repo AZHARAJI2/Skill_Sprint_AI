@@ -52,8 +52,9 @@ def employee_dashboard(
     if user.employee_id:
         employee = EmployeeService(session).get(user.employee_id)
     return templates.TemplateResponse(
-        "employee_dashboard.html",
-        {"request": request, "user": user, "employee": employee},
+        request=request,
+        name="employee_dashboard.html",
+        context={"user": user, "employee": employee},
     )
 
 
@@ -69,9 +70,9 @@ def admin_dashboard(
     roles = RoleService(session).list_roles()
     matrix_count = RoleMatrixRepository(session).count()
     return templates.TemplateResponse(
-        "admin_dashboard.html",
-        {
-            "request": request,
+        request=request,
+        name="admin_dashboard.html",
+        context={
             "user": user,
             "metrics": metrics,
             "employee_count": len(employees),
@@ -95,8 +96,9 @@ def role_dashboard(
         count = sum(1 for emp in employees if emp.role_id == role.id)
         by_role.append({"title": role.title, "department": role.department, "employees": count})
     return templates.TemplateResponse(
-        "role_dashboard.html",
-        {"request": request, "user": user, "by_role": by_role},
+        request=request,
+        name="role_dashboard.html",
+        context={"user": user, "by_role": by_role},
     )
 
 
@@ -106,4 +108,8 @@ def upload_page(
     user: User = Depends(require_role("Admin", "Training Manager")),
 ) -> HTMLResponse:
     """Document upload form."""
-    return templates.TemplateResponse("document_upload.html", {"request": request, "user": user})
+    return templates.TemplateResponse(
+        request=request,
+        name="document_upload.html",
+        context={"user": user},
+    )

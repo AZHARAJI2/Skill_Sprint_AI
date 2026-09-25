@@ -29,7 +29,7 @@ class LoginBody(BaseModel):
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request) -> HTMLResponse:
     """Render the login form."""
-    return templates.TemplateResponse("login.html", {"request": request, "error": None})
+    return templates.TemplateResponse(request=request, name="login.html", context={"error": None})
 
 
 @router.post("/login")
@@ -46,8 +46,9 @@ def login_form(
         token = service.issue_token(user)
     except AppError as exc:
         return templates.TemplateResponse(
-            "login.html",
-            {"request": request, "error": exc.message},
+            request=request,
+            name="login.html",
+            context={"error": exc.message},
             status_code=401,
         )
     response = RedirectResponse(url="/dashboard", status_code=303)

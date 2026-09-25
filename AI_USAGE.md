@@ -11,6 +11,7 @@
 |---|---|---|---|---|---|---|
 | 2026-09-24 | Antigravity IDE (Claude) | Architectural planning, Memory Trinity initialization | PROJECT_MAP.md, app_explanation.md, agent_history.md, AI_USAGE.md, requirements.txt | Created project architecture, phase ownership plan, tech stack decisions, folder structure specification | Manual review of all generated documents against competition spec | Azhar Raji AL-Herwi |
 | 2026-09-25 | Cursor (Grok) | Phase 1 foundation implementation | `src/`, `database/`, `document_processing/`, `document_validation/`, `role_matrix/load_matrix.py`, `config/`, `templates/`, `static/`, `tests/`, README.md, PROJECT_MAP.md, app_explanation.md, agent_history.md | Built ingest→parse→chunk→version pipeline, SQLAlchemy schema, matrix loader, employee/role CRUD, JWT/RBAC skeleton, FastAPI + Jinja shells | `pytest` — 15 passed (corpus ingest 38 files, 178-row matrix, POL-02 v1/v2, 10-role CRUD, 5-role RBAC, schema tables) | Azhar Raji AL-Herwi |
+| 2026-09-25 | Antigravity IDE (Gemini) | Bugfix: Starlette Jinja2Templates TemplateResponse parameter compatibility | `src/auth/routes.py`, `src/dashboards/routes.py` | Fixed `TemplateResponse` calls to pass `request=request` as keyword argument, resolving `TypeError: unhashable type: 'dict'` in newer Starlette versions | FastAPI TestClient GET `/login` returned HTTP 200 with HTML form rendered; full test suite passed (`pytest` 15 passed) | Azhar Raji AL-Herwi |
 | | | | | | | |
 
 ## Guidelines for Team Members
