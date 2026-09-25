@@ -31,6 +31,8 @@ class Settings:
         self.sample_documents_dir: Path = self.project_root / "sample_documents"
         self.matrix_csv_path: Path = self.project_root / "role_matrix" / "role_requirement_matrix_seed.csv"
         self.gemini_api_key: str | None = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        self.gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self.genai_max_retries: int = int(os.getenv("SKILLSPRINT_GENAI_MAX_RETRIES", "3"))
 
     def ensure_runtime_dirs(self) -> None:
         """Create upload, log, and data directories if they do not exist."""
