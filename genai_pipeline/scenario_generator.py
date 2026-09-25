@@ -37,29 +37,26 @@ class ScenarioTaskGenerator:
                 prompt, schema=ScenarioTaskBatch, config=GenerationConfig(temperature=0.2)
             )
             batch = ScenarioTaskBatch.model_validate(response.parsed)
-            by_id = {item.task_id: item for item in plan.tasks}
+            batch_map = {item.task_id: item for item in batch.tasks}
             merged: list[TaskItem] = []
-            for item in batch.tasks:
-                original = by_id.get(item.task_id)
-                if original is None:
-                    continue
-                merged.append(
-                    item.model_copy(
-                        update={
-                            "source_document_id": original.source_document_id,
-                            "source_section_id": original.source_section_id,
-                            "source_requirement_id": original.source_requirement_id,
-                            "due_stage": original.due_stage,
-                            "role_title": original.role_title,
-                            "is_scenario": original.is_scenario,
-                            "grounding_status": original.grounding_status,
-                        }
+            for original in plan.tasks:
+                enriched = batch_map.get(original.task_id)
+                if enriched is not None:
+                    merged.append(
+                        enriched.model_copy(
+                            update={
+                                "source_document_id": original.source_document_id,
+                                "source_section_id": original.source_section_id,
+                                "source_requirement_id": original.source_requirement_id,
+                                "due_stage": original.due_stage,
+                                "role_title": original.role_title,
+                                "is_scenario": original.is_scenario,
+                                "grounding_status": original.grounding_status,
+                            }
+                        )
                     )
-                )
-            if not merged:
-                return plan.tasks
-            kept_ids = {item.task_id for item in merged}
-            remainder = [item for item in plan.tasks if item.task_id not in kept_ids]
-            return merged + remainder
+                else:
+                    merged.append(original)
+            return merged
         except Exception:
             return plan.tasks

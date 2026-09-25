@@ -37,23 +37,24 @@ class ModuleGenerator:
         try:
             response = RetryManager(self.provider).run(prompt, schema=ModuleBatch, config=GenerationConfig(temperature=0.2))
             batch = ModuleBatch.model_validate(response.parsed)
-            by_id = {module.module_id: module for module in plan.modules}
+            batch_map = {module.module_id: module for module in batch.modules}
             merged: list[LearningModule] = []
-            for module in batch.modules:
-                original = by_id.get(module.module_id)
-                if original is None:
-                    continue
-                merged.append(
-                    module.model_copy(
-                        update={
-                            "source_document_id": original.source_document_id,
-                            "source_section_id": original.source_section_id,
-                            "requirement_ids": original.requirement_ids,
-                            "stage": original.stage,
-                            "grounding_status": original.grounding_status,
-                        }
+            for original in plan.modules:
+                enriched = batch_map.get(original.module_id)
+                if enriched is not None:
+                    merged.append(
+                        enriched.model_copy(
+                            update={
+                                "source_document_id": original.source_document_id,
+                                "source_section_id": original.source_section_id,
+                                "requirement_ids": original.requirement_ids,
+                                "stage": original.stage,
+                                "grounding_status": original.grounding_status,
+                            }
+                        )
                     )
-                )
-            return merged or plan.modules
+                else:
+                    merged.append(original)
+            return merged
         except Exception:
             return plan.modules

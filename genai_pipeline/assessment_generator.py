@@ -39,24 +39,25 @@ class AssessmentGenerator:
                 prompt, schema=AssessmentBatch, config=GenerationConfig(temperature=0.2)
             )
             batch = AssessmentBatch.model_validate(response.parsed)
-            by_id = {item.assessment_id: item for item in plan.assessments}
+            batch_map = {item.assessment_id: item for item in batch.assessments}
             merged: list[Assessment] = []
-            for item in batch.assessments:
-                original = by_id.get(item.assessment_id)
-                if original is None:
-                    continue
-                merged.append(
-                    item.model_copy(
-                        update={
-                            "source_document_id": original.source_document_id,
-                            "source_section_id": original.source_section_id,
-                            "requirement_ids": original.requirement_ids,
-                            "assessment_type": original.assessment_type,
-                            "stage": original.stage,
-                            "grounding_status": original.grounding_status,
-                        }
+            for original in plan.assessments:
+                enriched = batch_map.get(original.assessment_id)
+                if enriched is not None:
+                    merged.append(
+                        enriched.model_copy(
+                            update={
+                                "source_document_id": original.source_document_id,
+                                "source_section_id": original.source_section_id,
+                                "requirement_ids": original.requirement_ids,
+                                "assessment_type": original.assessment_type,
+                                "stage": original.stage,
+                                "grounding_status": original.grounding_status,
+                            }
+                        )
                     )
-                )
-            return merged or plan.assessments
+                else:
+                    merged.append(original)
+            return merged
         except Exception:
             return plan.assessments

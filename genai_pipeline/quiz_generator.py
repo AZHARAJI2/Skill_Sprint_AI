@@ -98,24 +98,24 @@ class QuizGenerator:
         try:
             response = RetryManager(self.provider).run(prompt, schema=QuizBatch, config=GenerationConfig(temperature=0.2))
             batch = QuizBatch.model_validate(response.parsed)
-            by_id = {item.question_id: item for item in plan.quizzes}
+            batch_map = {item.question_id: item for item in batch.quizzes}
             merged: list[QuizQuestion] = []
-            for quiz in batch.quizzes:
-                original = by_id.get(quiz.question_id)
-                if original is None:
-                    continue
-                merged.append(
-                    quiz.model_copy(
-                        update={
-                            "source_document_id": original.source_document_id,
-                            "source_section_id": original.source_section_id,
-                            "requirement_id": original.requirement_id,
-                            "grounding_status": original.grounding_status,
-                        }
+            for original in plan.quizzes:
+                quiz = batch_map.get(original.question_id)
+                if quiz is not None:
+                    merged.append(
+                        quiz.model_copy(
+                            update={
+                                "source_document_id": original.source_document_id,
+                                "source_section_id": original.source_section_id,
+                                "requirement_id": original.requirement_id,
+                                "grounding_status": original.grounding_status,
+                            }
+                        )
                     )
-                )
-            if merged:
-                quizzes = merged
+                else:
+                    merged.append(original)
+            quizzes = merged
         except Exception:
             quizzes = plan.quizzes
         validated: list[QuizQuestion] = []

@@ -12,7 +12,7 @@ class GenerationConfig(BaseModel):
     """Optional generation parameters passed to a provider."""
 
     temperature: float = 0.2
-    max_output_tokens: int = 8192
+    max_output_tokens: int = 16384
     model: str | None = None
 
 
