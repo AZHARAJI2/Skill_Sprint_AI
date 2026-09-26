@@ -2,26 +2,12 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from typing import Any
 
+from python_validation.base import BaseValidator
 from schemas.common_schema import VerificationStatus
 from schemas.plan_schema import GeneratedPlan
 from schemas.validation_schema import ItemValidationResult, ValidationReport
-
-
-class BaseValidator(ABC):
-    """Abstract base for all Pipeline 2 validation rules."""
-
-    @abstractmethod
-    def validate(
-        self,
-        plan: GeneratedPlan | dict[str, Any],
-        matrix: list[Any] | None = None,
-        documents: list[Any] | None = None,
-        chunks: list[Any] | None = None,
-    ) -> list[ItemValidationResult]:
-        """Run validation rule and return item-level validation results."""
 
 
 class GenerationFailureValidator(BaseValidator):
@@ -76,38 +62,11 @@ class GenerationFailureValidator(BaseValidator):
         return results
 
 
-class ValidationPipeline:
-    """Composes and runs all validators in sequence."""
+def __getattr__(name: str):
+    if name == "ValidationPipeline":
+        from python_validation.pipeline import ValidationPipeline
+        return ValidationPipeline
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-    def __init__(self, validators: list[BaseValidator] | None = None) -> None:
-        self.validators = validators or [
-            GenerationFailureValidator(),
-        ]
 
-    def run(
-        self,
-        plan: GeneratedPlan | dict[str, Any],
-        matrix: list[Any] | None = None,
-        documents: list[Any] | None = None,
-        chunks: list[Any] | None = None,
-        plan_id: int = 1,
-    ) -> ValidationReport:
-        all_results: list[ItemValidationResult] = []
-        for validator in self.validators:
-            res = validator.validate(plan, matrix=matrix, documents=documents, chunks=chunks)
-            if isinstance(res, list):
-                all_results.extend(res)
-            elif res is not None:
-                all_results.append(res)
-
-        overall = VerificationStatus.VERIFIED
-        for r in all_results:
-            if r.verification_status == VerificationStatus.MANUAL_REVIEW_REQUIRED:
-                overall = VerificationStatus.MANUAL_REVIEW_REQUIRED
-                break
-
-        return ValidationReport(
-            plan_id=plan_id,
-            per_item_results=all_results,
-            overall_status=overall,
-        )
+__all__ = ["BaseValidator", "GenerationFailureValidator", "ValidationPipeline"]
