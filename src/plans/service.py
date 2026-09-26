@@ -157,8 +157,10 @@ class PlanGenerationService:
 
     def _record_prompt_templates(self) -> None:
         for name in ("onboarding_plan", "learning_module", "quiz_generation", "assessment", "scenario_task"):
-            template = self.prompt_manager.load(name, "v1")
+            version = "v2" if name == "onboarding_plan" else "v1"
+            template = self.prompt_manager.load(name, version)
             self.templates.upsert(template.name, template.version, template.system + "\n" + template.user, template.variables)
+
 
     def _persist(self, employee_id: int, role_id: int, plan: GeneratedPlan, telemetry: dict, actor: str) -> OnboardingPlan:
         versions = {doc.document_id: doc.version for doc in self.documents.list_active()}

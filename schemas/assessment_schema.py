@@ -29,3 +29,5 @@ class Assessment(BaseModel):
     source_section_id: str
     requirement_ids: list[str] = Field(min_length=1)
     pass_threshold: float = Field(gt=0, le=1, default=0.8)
+    generation_status: str | None = None
+

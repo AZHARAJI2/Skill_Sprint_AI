@@ -28,9 +28,14 @@ class ScriptedProvider(BaseGenAIProvider):
     ) -> GenAIResponse:
         del prompt, config
         if self.calls >= len(self.payloads):
-            raise AppError("ScriptedProvider has no remaining payloads", status_code=502)
-        item = self.payloads[self.calls]
+            if len(self.payloads) == 1:
+                item = self.payloads[0]
+            else:
+                raise AppError("ScriptedProvider has no remaining payloads", status_code=502)
+        else:
+            item = self.payloads[self.calls]
         self.calls += 1
+
         if isinstance(item, Exception):
             raise item
         if schema is not None:

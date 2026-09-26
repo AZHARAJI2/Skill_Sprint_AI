@@ -59,6 +59,12 @@ class GeminiProvider(BaseGenAIProvider):
                 "max_output_tokens": cfg.max_output_tokens,
                 "response_mime_type": "application/json",
             }
+            budget = cfg.thinking_budget if cfg.thinking_budget is not None else getattr(settings, "gemini_thinking_budget", None)
+            if budget is not None and hasattr(types, "ThinkingConfig"):
+                try:
+                    gen_config_kwargs["thinking_config"] = types.ThinkingConfig(thinking_budget=budget)
+                except Exception as ex:
+                    logger.warning("could_not_set_thinking_config error=%s", ex)
             if schema is not None:
                 # Constrain the model to the Pydantic contract at the API level.
                 # Without this, "output JSON matching the schema" is only a

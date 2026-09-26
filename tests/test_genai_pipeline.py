@@ -313,8 +313,9 @@ def test_plans_for_all_ten_roles(session: Session) -> None:
         assessment_types = {item["assessment_type"] for item in payload["assessments"]}
         assert {"knowledge", "practical", "scenario", "role-specific"} <= assessment_types
         titles_by_role[title] = {module["title"] for module in payload["modules"]}
-        assert stored.prompt_version == "onboarding_plan_v1"
+        assert stored.prompt_version in {"onboarding_plan_v1", "onboarding_plan_v2"}
         assert stored.model_used
+
         meta = session.query(GenerationMetadata).filter(GenerationMetadata.plan_id == stored.id).one()
         assert meta.source_doc_versions is not None
         if title == "Software Engineer":
@@ -422,8 +423,9 @@ def test_api_generate_requires_admin(session: Session) -> None:
         )
         assert created.status_code == 200
         body = created.json()
-        assert body["prompt_version"] == "onboarding_plan_v1"
+        assert body["prompt_version"] in {"onboarding_plan_v1", "onboarding_plan_v2"}
         assert body["structured_json"]["role_title"] == "Software Engineer"
+
         fetched = client.get(f"/api/plans/{body['id']}", headers={"Authorization": f"Bearer {admin_token}"})
         assert fetched.status_code == 200
         listed = client.get(
@@ -507,5 +509,97 @@ def test_freshly_generated_plan_has_no_self_certifying_fields_and_pending_distra
     assert len(payload["quizzes"]) > 0
     for quiz in payload["quizzes"]:
         assert quiz["distractor_validation_status"] == DistractorValidationStatus.PENDING_VERIFICATION.value
+
+
+def test_phased_generation_and_generation_failure_validator(session: Session) -> None:
+    """Part 1 & Part 3: Phased generation and GenerationFailureValidator integration."""
+    from python_validation.generation_failure_validator import GenerationFailureValidator, ValidationPipeline
+    from role_matrix.models import RequirementMatrixEntry
+    from schemas.common_schema import VerificationStatus
+
+    employee_ids = _seed_pipeline_data(session)
+    service = PlanGenerationService(session, provider=_failing_provider())
+    stored = service.generate_for_employee(employee_ids["Software Engineer"], actor="test")
+    payload = stored.structured_json
+
+    # Since _failing_provider was used, stage groups failed after retries
+    # 1. Affected items are tagged with generation_status == "failed_after_retries"
+    # 2. Titles are prefixed with [UNGENERATED - PENDING REVIEW]
+    failed_modules = [m for m in payload["modules"] if m.get("generation_status") == "failed_after_retries"]
+    assert len(failed_modules) > 0
+    assert any("[UNGENERATED - PENDING REVIEW]" in m["title"] for m in failed_modules)
+
+    # 3. Mandatory requirement coverage is still 100%
+    mandatory_reqs = {
+        r.requirement_id
+        for r in session.query(RequirementMatrixEntry)
+        .filter(RequirementMatrixEntry.mandatory == True, RequirementMatrixEntry.role.in_(["All Roles", "Software Engineer"]))
+        .all()
+    }
+    covered_ids = set(payload["covered_requirement_ids"])
+    assert mandatory_reqs <= covered_ids
+
+
+    # 4. Phase 3 GenerationFailureValidator detects failure
+    results = GenerationFailureValidator().validate(payload)
+    assert len(results) > 0
+    assert all(r.verification_status == VerificationStatus.MANUAL_REVIEW_REQUIRED for r in results)
+
+    # 5. ValidationPipeline forces overall_status to Manual Review Required
+    report = ValidationPipeline().run(payload, plan_id=stored.id)
+    assert report.overall_status == VerificationStatus.MANUAL_REVIEW_REQUIRED
+    assert report.overall_status != VerificationStatus.VERIFIED
+
+
+def test_no_plan_with_generation_failures_can_reach_verified_status() -> None:
+    """TDD Part 3 Rule 5: A plan with any generation_status=='failed_after_retries' CANNOT reach Verified."""
+    from python_validation.generation_failure_validator import GenerationFailureValidator, ValidationPipeline
+    from schemas.common_schema import VerificationStatus
+    from schemas.plan_schema import GeneratedPlan
+
+    plan = GeneratedPlan(
+        schema_version="onboarding_plan_v2",
+        role_title="Software Engineer",
+        employee_code="EMP-TEST",
+        experience_level="Beginner",
+        modules=[
+            {
+                "module_id": "MOD-001",
+                "title": "[UNGENERATED - PENDING REVIEW] Test Module",
+                "purpose": "Test",
+                "objectives": ["Obj 1"],
+                "key_concepts": ["Concept 1"],
+                "source_docs": ["DOC-1"],
+                "source_document_id": "DOC-1",
+                "source_section_id": "1.1",
+                "duration_minutes": 30,
+                "activities": ["Activity 1"],
+                "assessment_method": "Quiz",
+                "completion_criteria": "Pass",
+                "stage": "Day 1",
+                "difficulty": "Beginner",
+                "requirement_ids": ["R001"],
+                "generation_status": "failed_after_retries",
+            }
+        ],
+        checklists=[],
+        tasks=[],
+        quizzes=[],
+        assessments=[],
+        stages_used=["Day 1", "Week 1"],
+        covered_requirement_ids=["R001"],
+    )
+
+    validator = GenerationFailureValidator()
+    results = validator.validate(plan)
+    assert len(results) == 1
+    assert results[0].item_id == "MOD-001"
+    assert results[0].verification_status == VerificationStatus.MANUAL_REVIEW_REQUIRED
+
+    pipeline = ValidationPipeline(validators=[validator])
+    report = pipeline.run(plan)
+    assert report.overall_status == VerificationStatus.MANUAL_REVIEW_REQUIRED
+    assert report.overall_status != VerificationStatus.VERIFIED
+
 
 

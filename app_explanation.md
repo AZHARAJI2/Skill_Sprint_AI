@@ -37,15 +37,16 @@ The system's core innovation is that **generation and validation are structurall
 
 ### Pipeline 1: GenAI Generation (Python + Gemini API)
 - Reads parsed document chunks + role requirement matrix + employee profile
-- Uses versioned prompt templates to request structured JSON from Gemini
-- Validates the JSON against Pydantic schemas before accepting it
-- Retries on invalid output (capped at 3 attempts)
+- Uses versioned prompt templates (`onboarding_plan_v2.json`) to request structured JSON from Gemini
+- Generates plans incrementally across 3 stage groups (Day 1 + Week 1, Week 2 + First 30 Days, First 60 Days + First 90 Days) to eliminate token truncation and ensure sub-30s latency (NFR-1)
+- Validates each stage group against Pydantic schemas before merging in pure Python
+- Retries on invalid output (capped at 3 attempts); if retries exhaust on a stage group, items are marked `generation_status: "failed_after_retries"` and prefixed with `[UNGENERATED - PENDING REVIEW]` to prevent unverified content leakage
 - Defends against prompt injection embedded in documents
 - **Output**: Structured onboarding plan (modules, checklists, tasks, quizzes, assessments) with source citations
 
 ### Pipeline 2: Python Validation (Pure Python — ZERO GenAI calls, ever)
 - Takes the structured JSON from Pipeline 1
-- Runs 8 independent validator classes against the role requirement matrix and parsed document corpus:
+- Runs 9 independent validator classes against the role requirement matrix and parsed document corpus:
   - **CoverageValidator**: Are all mandatory requirements covered?
   - **TraceabilityValidator**: Does every source reference actually exist?
   - **DuplicateValidator**: Any redundant content? (uses sentence embeddings)
@@ -54,6 +55,7 @@ The system's core innovation is that **generation and validation are structurall
   - **HallucinationDetector**: Any unsupported factual claims about company policy?
   - **SequenceValidator**: Are prerequisites correctly ordered?
   - **SchemaValidator**: Is the JSON structurally correct?
+  - **GenerationFailureValidator**: Verifies no items have `failed_after_retries` status; forces overall status to "Manual Review Required" if any stage group failed generation after retries.
 - **Output**: ValidationReport with scores (coverage, traceability, consistency) and per-item verification status
 
 ### The Comparison Engine
@@ -79,7 +81,7 @@ Documents (PDF/DOCX files on disk)
         ├──────────────────────────────────┐
         ▼                                  ▼
 [Pipeline 1: GenAI]              [Pipeline 2: Python Validation]
-  Prompt Templates                   Validators (8 classes)
+  Prompt Templates                   Validators (9 classes)
   GeminiProvider                     ValidationPipeline
   Schema Validation                  Scores + Statuses
   Retry + Injection Guard            ZERO GenAI calls
@@ -140,7 +142,7 @@ Documents (PDF/DOCX files on disk)
 ### Remaining (4 Phases of Engineering)
 - Phase 1: ✅ Document processing pipeline, database schema, employee/role CRUD, auth/RBAC skeleton, matrix loader, HTML shells. Run `python -m database.seed` then `uvicorn src.main:app`.
 - Phase 2: ✅ Pipeline 1 — `PlanGenerationService.generate_for_employee`, versioned `prompt_templates/*_v1.json`, `GeminiProvider` (503 without API key), Pydantic `GeneratedPlan`, capped retry, source-grounded modules/checklists/tasks/quizzes/assessments, `InjectionGuard`, `/api/plans*`. Evidence: `reports/d4_genai_pipeline_evidence.md`.
-- Phase 3: Validation pipeline (8 validators), comparison engine, consistency testing
+- Phase 3: Validation pipeline (9 validators, including GenerationFailureValidator), comparison engine, consistency testing
 - Phase 4: Review workflow, 3 dashboards, progress tracking, policy updates, reports, export, final packaging
 
 ---

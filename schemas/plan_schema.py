@@ -41,20 +41,24 @@ class TaskItem(BaseModel):
     source_document_id: str
     source_section_id: str
     is_scenario: bool = False
+    generation_status: str | None = None
 
 
 class GeneratedPlan(BaseModel):
     """Sole accepted GenAI output shape. Free-form prose is never the plan of record."""
 
-    schema_version: str = "onboarding_plan_v1"
+    schema_version: str = "onboarding_plan_v2"
     role_title: str
     employee_code: str
     experience_level: str
-    classified_requirements: list[ClassifiedRequirement] = Field(min_length=1)
-    modules: list[LearningModule] = Field(min_length=1)
-    checklists: list[ChecklistItem] = Field(min_length=1)
-    tasks: list[TaskItem] = Field(min_length=1)
-    quizzes: list[QuizQuestion] = Field(min_length=1)
-    assessments: list[Assessment] = Field(min_length=1)
-    stages_used: list[str] = Field(min_length=2)
-    covered_requirement_ids: list[str] = Field(min_length=1)
+    classified_requirements: list[ClassifiedRequirement] = Field(default_factory=list)
+    modules: list[LearningModule] = Field(default_factory=list)
+    checklists: list[ChecklistItem] = Field(default_factory=list)
+    tasks: list[TaskItem] = Field(default_factory=list)
+    quizzes: list[QuizQuestion] = Field(default_factory=list)
+    assessments: list[Assessment] = Field(default_factory=list)
+    stages_used: list[str] = Field(default_factory=list)
+    covered_requirement_ids: list[str] = Field(default_factory=list)
+    generation_status: str | None = None
+
+

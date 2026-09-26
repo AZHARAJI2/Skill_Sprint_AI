@@ -14,6 +14,8 @@ class GenerationConfig(BaseModel):
     temperature: float = 0.2
     max_output_tokens: int = 16384
     model: str | None = None
+    thinking_budget: int | None = None
+
 
 
 class GenAIResponse(BaseModel):

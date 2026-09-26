@@ -1,5 +1,5 @@
 {
-  "schema_version": "onboarding_plan_v1",
+  "schema_version": "onboarding_plan_v2",
   "role_title": "Software Engineer",
   "employee_code": "P2-001",
   "experience_level": "Beginner",
@@ -554,7 +554,7 @@
   "modules": [
     {
       "module_id": "MOD-001",
-      "title": "Policy Awareness (All Roles) \u2014 Day 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Policy Awareness (All Roles) \u2014 Day 1",
       "purpose": "Build policy awareness for All Roles during Day 1.",
       "objectives": [
         "Apply: Read and acknowledge the Employee Handbook",
@@ -581,11 +581,12 @@
       "requirement_ids": [
         "R001",
         "R002"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-002",
-      "title": "Role Readiness (Software Engineer) \u2014 Day 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Role Readiness (Software Engineer) \u2014 Day 1",
       "purpose": "Build role readiness for Software Engineer during Day 1.",
       "objectives": [
         "Apply: Understand core Software Engineer responsibilities"
@@ -609,11 +610,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R022"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-003",
-      "title": "Technical Setup (Software Engineer) \u2014 Day 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Technical Setup (Software Engineer) \u2014 Day 1",
       "purpose": "Build technical setup for Software Engineer during Day 1.",
       "objectives": [
         "Apply: Set up version control and CI access"
@@ -637,11 +639,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R035"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-004",
-      "title": "Conduct Compliance (All Roles) \u2014 Week 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Conduct Compliance (All Roles) \u2014 Week 1",
       "purpose": "Build conduct compliance for All Roles during Week 1.",
       "objectives": [
         "Apply: Understand harassment and discrimination policy",
@@ -668,11 +671,12 @@
       "requirement_ids": [
         "R004",
         "R005"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-005",
-      "title": "Benefits Literacy (All Roles) \u2014 Week 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Benefits Literacy (All Roles) \u2014 Week 1",
       "purpose": "Build benefits literacy for All Roles during Week 1.",
       "objectives": [
         "Apply: Understand sick leave policy and notification process",
@@ -699,11 +703,12 @@
       "requirement_ids": [
         "R008",
         "R007"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-006",
-      "title": "Confidentiality (All Roles) \u2014 Week 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Confidentiality (All Roles) \u2014 Week 1",
       "purpose": "Build confidentiality for All Roles during Week 1.",
       "objectives": [
         "Apply: Understand definition of confidential employee data"
@@ -727,11 +732,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R012"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-007",
-      "title": "Onboarding (All Roles) \u2014 Week 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Onboarding (All Roles) \u2014 Week 1",
       "purpose": "Build onboarding for All Roles during Week 1.",
       "objectives": [
         "Apply: Complete new-hire onboarding checklist items"
@@ -755,11 +761,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R015"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-008",
-      "title": "Engineering Process (Software Engineer) \u2014 Week 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Engineering Process (Software Engineer) \u2014 Week 1",
       "purpose": "Build engineering process for Software Engineer during Week 1.",
       "objectives": [
         "Apply: Complete peer code review process training",
@@ -787,11 +794,12 @@
       "requirement_ids": [
         "R023",
         "R025"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-009",
-      "title": "Security Compliance (Software Engineer) \u2014 Week 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Security Compliance (Software Engineer) \u2014 Week 1",
       "purpose": "Build security compliance for Software Engineer during Week 1.",
       "objectives": [
         "Apply: Understand production access MFA requirement",
@@ -818,11 +826,12 @@
       "requirement_ids": [
         "R028",
         "R032"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-010",
-      "title": "Team Integration (All Roles) \u2014 Week 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Team Integration (All Roles) \u2014 Week 1",
       "purpose": "Build team integration for All Roles during Week 1.",
       "objectives": [
         "Apply: Schedule a welcome chat with immediate team"
@@ -846,11 +855,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R016"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-011",
-      "title": "Policy Awareness (All Roles) \u2014 Week 1",
+      "title": "[UNGENERATED - PENDING REVIEW] Policy Awareness (All Roles) \u2014 Week 1",
       "purpose": "Build policy awareness for All Roles during Week 1.",
       "objectives": [
         "Apply: Understand standard company holidays and business-day definitions",
@@ -878,11 +888,12 @@
       "requirement_ids": [
         "R020",
         "R021"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-012",
-      "title": "Compliance Awareness (All Roles) \u2014 Week 2",
+      "title": "[UNGENERATED - PENDING REVIEW] Compliance Awareness (All Roles) \u2014 Week 2",
       "purpose": "Build compliance awareness for All Roles during Week 2.",
       "objectives": [
         "Apply: Know the compliance escalation reporting path"
@@ -906,11 +917,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R013"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-013",
-      "title": "Incident Response (Software Engineer) \u2014 Week 2",
+      "title": "[UNGENERATED - PENDING REVIEW] Incident Response (Software Engineer) \u2014 Week 2",
       "purpose": "Build incident response for Software Engineer during Week 2.",
       "objectives": [
         "Apply: Understand Critical Incident definition (production outage)",
@@ -937,11 +949,12 @@
       "requirement_ids": [
         "R027",
         "R034"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-014",
-      "title": "Conduct Compliance (All Roles) \u2014 First 30 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Conduct Compliance (All Roles) \u2014 First 30 Days",
       "purpose": "Build conduct compliance for All Roles during First 30 Days.",
       "objectives": [
         "Apply: Complete Workplace Conduct training",
@@ -974,11 +987,12 @@
         "R018",
         "R150",
         "R006"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-015",
-      "title": "Technical Competency (Software Engineer) \u2014 First 30 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Technical Competency (Software Engineer) \u2014 First 30 Days",
       "purpose": "Build technical competency for Software Engineer during First 30 Days.",
       "objectives": [
         "Apply: Demonstrate proficiency in team's primary language/tooling"
@@ -1002,11 +1016,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R024"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-016",
-      "title": "Incident Response (Software Engineer) \u2014 First 30 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Incident Response (Software Engineer) \u2014 First 30 Days",
       "purpose": "Build incident response for Software Engineer during First 30 Days.",
       "objectives": [
         "Apply: Understand hotfix exception process during Critical Incidents",
@@ -1033,11 +1048,12 @@
       "requirement_ids": [
         "R026",
         "R030"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-017",
-      "title": "Engineering Process (Software Engineer) \u2014 First 30 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Engineering Process (Software Engineer) \u2014 First 30 Days",
       "purpose": "Build engineering process for Software Engineer during First 30 Days.",
       "objectives": [
         "Apply: Pass practical assessment on peer review workflow"
@@ -1061,11 +1077,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R140"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-018",
-      "title": "Policy Awareness (All Roles) \u2014 First 30 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Policy Awareness (All Roles) \u2014 First 30 Days",
       "purpose": "Build policy awareness for All Roles during First 30 Days.",
       "objectives": [
         "Apply: Understand remote work request process"
@@ -1089,11 +1106,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R011"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-019",
-      "title": "Compliance Awareness (All Roles) \u2014 First 30 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Compliance Awareness (All Roles) \u2014 First 30 Days",
       "purpose": "Build compliance awareness for All Roles during First 30 Days.",
       "objectives": [
         "Apply: Be aware of the anonymous compliance hotline"
@@ -1117,11 +1135,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R014"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-020",
-      "title": "Confidentiality (All Roles) \u2014 First 30 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Confidentiality (All Roles) \u2014 First 30 Days",
       "purpose": "Build confidentiality for All Roles during First 30 Days.",
       "objectives": [
         "Apply: Understand employee records confidentiality expectations"
@@ -1145,11 +1164,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R019"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-021",
-      "title": "Security Compliance (Software Engineer) \u2014 First 30 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Security Compliance (Software Engineer) \u2014 First 30 Days",
       "purpose": "Build security compliance for Software Engineer during First 30 Days.",
       "objectives": [
         "Apply: Understand break-glass emergency access exception"
@@ -1173,11 +1193,12 @@
       "difficulty": "Beginner",
       "requirement_ids": [
         "R029"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-022",
-      "title": "Documentation (Software Engineer) \u2014 First 60 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Documentation (Software Engineer) \u2014 First 60 Days",
       "purpose": "Build documentation for Software Engineer during First 60 Days.",
       "objectives": [
         "Apply: Document rollback steps in postmortem template",
@@ -1204,11 +1225,12 @@
       "requirement_ids": [
         "R031",
         "R152"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-023",
-      "title": "Data Privacy (All Roles) \u2014 First 60 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Data Privacy (All Roles) \u2014 First 60 Days",
       "purpose": "Build data privacy for All Roles during First 60 Days.",
       "objectives": [
         "Apply: Understand third-party data sharing approval process"
@@ -1232,11 +1254,12 @@
       "difficulty": "Intermediate",
       "requirement_ids": [
         "R151"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-024",
-      "title": "Performance Readiness (All Roles) \u2014 First 90 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Performance Readiness (All Roles) \u2014 First 90 Days",
       "purpose": "Build performance readiness for All Roles during First 90 Days.",
       "objectives": [
         "Apply: Complete 90-day probationary review with manager"
@@ -1260,11 +1283,12 @@
       "difficulty": "Intermediate",
       "requirement_ids": [
         "R010"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-025",
-      "title": "Benefits Literacy (All Roles) \u2014 First 90 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Benefits Literacy (All Roles) \u2014 First 90 Days",
       "purpose": "Build benefits literacy for All Roles during First 90 Days.",
       "objectives": [
         "Apply: Understand parental leave eligibility",
@@ -1291,11 +1315,12 @@
       "requirement_ids": [
         "R009",
         "R017"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     },
     {
       "module_id": "MOD-026",
-      "title": "Security Awareness (Software Engineer) \u2014 First 90 Days",
+      "title": "[UNGENERATED - PENDING REVIEW] Security Awareness (Software Engineer) \u2014 First 90 Days",
       "purpose": "Build security awareness for Software Engineer during First 90 Days.",
       "objectives": [
         "Apply: Attend Security team quarterly threat briefing"
@@ -1319,444 +1344,484 @@
       "difficulty": "Intermediate",
       "requirement_ids": [
         "R033"
-      ]
+      ],
+      "generation_status": "failed_after_retries"
     }
   ],
   "checklists": [
     {
       "item_id": "CHK-001",
-      "activity": "Read and acknowledge the Employee Handbook",
+      "activity": "[UNGENERATED - PENDING REVIEW] Read and acknowledge the Employee Handbook",
       "required_or_optional": "required",
       "due_stage": "Day 1",
       "completion_status": "not_started",
       "source_document_id": "HANDBOOK-01",
       "source_section_id": "1.1",
       "responsible_person": "Lead",
-      "requirement_id": "R001"
+      "requirement_id": "R001",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-002",
-      "activity": "Understand standard work hours and mandatory core hours",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand standard work hours and mandatory core hours",
       "required_or_optional": "required",
       "due_stage": "Day 1",
       "completion_status": "not_started",
       "source_document_id": "HANDBOOK-01",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R002"
+      "requirement_id": "R002",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-003",
-      "activity": "Understand core Software Engineer responsibilities",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand core Software Engineer responsibilities",
       "required_or_optional": "required",
       "due_stage": "Day 1",
       "completion_status": "not_started",
       "source_document_id": "ROLE-01",
       "source_section_id": "1.1",
       "responsible_person": "Lead",
-      "requirement_id": "R022"
+      "requirement_id": "R022",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-004",
-      "activity": "Set up version control and CI access",
+      "activity": "[UNGENERATED - PENDING REVIEW] Set up version control and CI access",
       "required_or_optional": "required",
       "due_stage": "Day 1",
       "completion_status": "not_started",
       "source_document_id": "ROLE-01",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R035"
+      "requirement_id": "R035",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-005",
-      "activity": "Understand harassment and discrimination policy",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand harassment and discrimination policy",
       "required_or_optional": "required",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "POL-04",
       "source_section_id": "1.2",
       "responsible_person": "Lead",
-      "requirement_id": "R004"
+      "requirement_id": "R004",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-006",
-      "activity": "Know how to report a conduct violation",
+      "activity": "[UNGENERATED - PENDING REVIEW] Know how to report a conduct violation",
       "required_or_optional": "required",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "POL-04",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R005"
+      "requirement_id": "R005",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-007",
-      "activity": "Understand sick leave policy and notification process",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand sick leave policy and notification process",
       "required_or_optional": "required",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "POL-02",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R008"
+      "requirement_id": "R008",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-008",
-      "activity": "Understand definition of confidential employee data",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand definition of confidential employee data",
       "required_or_optional": "required",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "POL-01",
       "source_section_id": "5.1",
       "responsible_person": "Lead",
-      "requirement_id": "R012"
+      "requirement_id": "R012",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-009",
-      "activity": "Complete new-hire onboarding checklist items",
+      "activity": "[UNGENERATED - PENDING REVIEW] Complete new-hire onboarding checklist items",
       "required_or_optional": "required",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "FAQ-01",
       "source_section_id": "1.3",
       "responsible_person": "Lead",
-      "requirement_id": "R015"
+      "requirement_id": "R015",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-010",
-      "activity": "Complete peer code review process training",
+      "activity": "[UNGENERATED - PENDING REVIEW] Complete peer code review process training",
       "required_or_optional": "required",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "ROLE-01",
       "source_section_id": "1.2",
       "responsible_person": "Lead",
-      "requirement_id": "R023"
+      "requirement_id": "R023",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-011",
-      "activity": "Understand deployment SOP peer-review requirement",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand deployment SOP peer-review requirement",
       "required_or_optional": "required",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "SOP-01",
       "source_section_id": "1.1",
       "responsible_person": "Lead",
-      "requirement_id": "R025"
+      "requirement_id": "R025",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-012",
-      "activity": "Understand production access MFA requirement",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand production access MFA requirement",
       "required_or_optional": "required",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "POL-03",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R028"
+      "requirement_id": "R028",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-013",
-      "activity": "Complete Information Security Policy overview",
+      "activity": "[UNGENERATED - PENDING REVIEW] Complete Information Security Policy overview",
       "required_or_optional": "required",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "POL-03",
       "source_section_id": "1.1",
       "responsible_person": "Lead",
-      "requirement_id": "R032"
+      "requirement_id": "R032",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-014",
-      "activity": "Understand vacation accrual policy",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand vacation accrual policy",
       "required_or_optional": "optional",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "POL-02",
       "source_section_id": "1.1",
       "responsible_person": "Lead",
-      "requirement_id": "R007"
+      "requirement_id": "R007",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-015",
-      "activity": "Schedule a welcome chat with immediate team",
+      "activity": "[UNGENERATED - PENDING REVIEW] Schedule a welcome chat with immediate team",
       "required_or_optional": "optional",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "FAQ-01",
       "source_section_id": "1.2",
       "responsible_person": "Lead",
-      "requirement_id": "R016"
+      "requirement_id": "R016",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-016",
-      "activity": "Understand standard company holidays and business-day definitions",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand standard company holidays and business-day definitions",
       "required_or_optional": "optional",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "SOP-02",
       "source_section_id": "3.1",
       "responsible_person": "Lead",
-      "requirement_id": "R020"
+      "requirement_id": "R020",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-017",
-      "activity": "Understand contractor-specific conduct briefing exception",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand contractor-specific conduct briefing exception",
       "required_or_optional": "optional",
       "due_stage": "Week 1",
       "completion_status": "not_started",
       "source_document_id": "HANDBOOK-01",
       "source_section_id": "3.2",
       "responsible_person": "Lead",
-      "requirement_id": "R021"
+      "requirement_id": "R021",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-018",
-      "activity": "Know the compliance escalation reporting path",
+      "activity": "[UNGENERATED - PENDING REVIEW] Know the compliance escalation reporting path",
       "required_or_optional": "required",
       "due_stage": "Week 2",
       "completion_status": "not_started",
       "source_document_id": "COMP-01",
       "source_section_id": "1.1",
       "responsible_person": "Lead",
-      "requirement_id": "R013"
+      "requirement_id": "R013",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-019",
-      "activity": "Understand Critical Incident definition (production outage)",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand Critical Incident definition (production outage)",
       "required_or_optional": "required",
       "due_stage": "Week 2",
       "completion_status": "not_started",
       "source_document_id": "SOP-01",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R027"
+      "requirement_id": "R027",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-020",
-      "activity": "Understand escalation path for Critical Incidents (direct to on-call SRE)",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand escalation path for Critical Incidents (direct to on-call SRE)",
       "required_or_optional": "required",
       "due_stage": "Week 2",
       "completion_status": "not_started",
       "source_document_id": "SOP-01",
       "source_section_id": "3.1",
       "responsible_person": "Lead",
-      "requirement_id": "R034"
+      "requirement_id": "R034",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-021",
-      "activity": "Complete Workplace Conduct training",
+      "activity": "[UNGENERATED - PENDING REVIEW] Complete Workplace Conduct training",
       "required_or_optional": "required",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-04",
       "source_section_id": "1.1",
       "responsible_person": "Lead",
-      "requirement_id": "R003"
+      "requirement_id": "R003",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-022",
-      "activity": "Understand consequences of confirmed conduct violations",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand consequences of confirmed conduct violations",
       "required_or_optional": "required",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-04",
       "source_section_id": "4.1",
       "responsible_person": "Lead",
-      "requirement_id": "R018"
+      "requirement_id": "R018",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-023",
-      "activity": "Demonstrate proficiency in team's primary language/tooling",
+      "activity": "[UNGENERATED - PENDING REVIEW] Demonstrate proficiency in team's primary language/tooling",
       "required_or_optional": "required",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "ROLE-01",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R024"
+      "requirement_id": "R024",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-024",
-      "activity": "Understand hotfix exception process during Critical Incidents",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand hotfix exception process during Critical Incidents",
       "required_or_optional": "required",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "SOP-01",
       "source_section_id": "1.1",
       "responsible_person": "Lead",
-      "requirement_id": "R026"
+      "requirement_id": "R026",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-025",
-      "activity": "Understand rollback procedure for Critical Incidents",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand rollback procedure for Critical Incidents",
       "required_or_optional": "required",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "SOP-01",
       "source_section_id": "4.1",
       "responsible_person": "Lead",
-      "requirement_id": "R030"
+      "requirement_id": "R030",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-026",
-      "activity": "Pass practical assessment on peer review workflow",
+      "activity": "[UNGENERATED - PENDING REVIEW] Pass practical assessment on peer review workflow",
       "required_or_optional": "required",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "SOP-01",
       "source_section_id": "1.1",
       "responsible_person": "Lead",
-      "requirement_id": "R140"
+      "requirement_id": "R140",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-027",
-      "activity": "Acknowledge understanding of disciplinary consequences policy",
+      "activity": "[UNGENERATED - PENDING REVIEW] Acknowledge understanding of disciplinary consequences policy",
       "required_or_optional": "required",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-04",
       "source_section_id": "4.1",
       "responsible_person": "Lead",
-      "requirement_id": "R150"
+      "requirement_id": "R150",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-028",
-      "activity": "Be aware of the anonymous ethics hotline option",
+      "activity": "[UNGENERATED - PENDING REVIEW] Be aware of the anonymous ethics hotline option",
       "required_or_optional": "optional",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-04",
       "source_section_id": "2.2",
       "responsible_person": "Lead",
-      "requirement_id": "R006"
+      "requirement_id": "R006",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-029",
-      "activity": "Understand remote work request process",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand remote work request process",
       "required_or_optional": "optional",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-01",
       "source_section_id": "4.1",
       "responsible_person": "Lead",
-      "requirement_id": "R011"
+      "requirement_id": "R011",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-030",
-      "activity": "Be aware of the anonymous compliance hotline",
+      "activity": "[UNGENERATED - PENDING REVIEW] Be aware of the anonymous compliance hotline",
       "required_or_optional": "optional",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "COMP-01",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R014"
+      "requirement_id": "R014",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-031",
-      "activity": "Understand employee records confidentiality expectations",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand employee records confidentiality expectations",
       "required_or_optional": "optional",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-01",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R019"
+      "requirement_id": "R019",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-032",
-      "activity": "Understand break-glass emergency access exception",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand break-glass emergency access exception",
       "required_or_optional": "optional",
       "due_stage": "First 30 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-03",
       "source_section_id": "2.1",
       "responsible_person": "Lead",
-      "requirement_id": "R029"
+      "requirement_id": "R029",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-033",
-      "activity": "Document rollback steps in postmortem template",
+      "activity": "[UNGENERATED - PENDING REVIEW] Document rollback steps in postmortem template",
       "required_or_optional": "optional",
       "due_stage": "First 60 Days",
       "completion_status": "not_started",
       "source_document_id": "SOP-01",
       "source_section_id": "4.2",
       "responsible_person": "Lead",
-      "requirement_id": "R031"
+      "requirement_id": "R031",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-034",
-      "activity": "Understand third-party data sharing approval process",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand third-party data sharing approval process",
       "required_or_optional": "optional",
       "due_stage": "First 60 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-05",
       "source_section_id": "4.1",
       "responsible_person": "Lead",
-      "requirement_id": "R151"
+      "requirement_id": "R151",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-035",
-      "activity": "Understand postmortem documentation expectations",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand postmortem documentation expectations",
       "required_or_optional": "optional",
       "due_stage": "First 60 Days",
       "completion_status": "not_started",
       "source_document_id": "SOP-01",
       "source_section_id": "4.2",
       "responsible_person": "Lead",
-      "requirement_id": "R152"
+      "requirement_id": "R152",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-036",
-      "activity": "Complete 90-day probationary review with manager",
+      "activity": "[UNGENERATED - PENDING REVIEW] Complete 90-day probationary review with manager",
       "required_or_optional": "required",
       "due_stage": "First 90 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-01",
       "source_section_id": "3.1",
       "responsible_person": "Lead",
-      "requirement_id": "R010"
+      "requirement_id": "R010",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-037",
-      "activity": "Understand parental leave eligibility",
+      "activity": "[UNGENERATED - PENDING REVIEW] Understand parental leave eligibility",
       "required_or_optional": "optional",
       "due_stage": "First 90 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-02",
       "source_section_id": "4.1",
       "responsible_person": "Lead",
-      "requirement_id": "R009"
+      "requirement_id": "R009",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-038",
-      "activity": "Review bereavement leave provisions",
+      "activity": "[UNGENERATED - PENDING REVIEW] Review bereavement leave provisions",
       "required_or_optional": "optional",
       "due_stage": "First 90 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-02",
       "source_section_id": "3.1",
       "responsible_person": "Lead",
-      "requirement_id": "R017"
+      "requirement_id": "R017",
+      "generation_status": "failed_after_retries"
     },
     {
       "item_id": "CHK-039",
-      "activity": "Attend Security team quarterly threat briefing",
+      "activity": "[UNGENERATED - PENDING REVIEW] Attend Security team quarterly threat briefing",
       "required_or_optional": "optional",
       "due_stage": "First 90 Days",
       "completion_status": "not_started",
       "source_document_id": "POL-03",
       "source_section_id": "4.2",
       "responsible_person": "Lead",
-      "requirement_id": "R033"
+      "requirement_id": "R033",
+      "generation_status": "failed_after_retries"
     }
   ],
   "tasks": [
     {
       "task_id": "TSK-001",
-      "description": "Read and acknowledge the Employee Handbook (Must Acknowledge)",
+      "description": "[UNGENERATED - PENDING REVIEW] Read and acknowledge the Employee Handbook (Must Acknowledge)",
       "expected_outcome": "Signed acknowledgment form",
       "source_requirement_id": "R001",
       "completion_criteria": "Signed acknowledgment form",
@@ -1765,11 +1830,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "HANDBOOK-01",
       "source_section_id": "1.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-002",
-      "description": "Understand standard work hours and mandatory core hours (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand standard work hours and mandatory core hours (Must Demonstrate)",
       "expected_outcome": "Manager confirmation",
       "source_requirement_id": "R002",
       "completion_criteria": "Manager confirmation",
@@ -1778,11 +1844,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "HANDBOOK-01",
       "source_section_id": "2.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-003",
-      "description": "Understand core Software Engineer responsibilities (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand core Software Engineer responsibilities (Must Demonstrate)",
       "expected_outcome": "Manager confirmation",
       "source_requirement_id": "R022",
       "completion_criteria": "Manager confirmation",
@@ -1791,11 +1858,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "ROLE-01",
       "source_section_id": "1.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-004",
-      "description": "Set up version control and CI access (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Set up version control and CI access (Must Demonstrate)",
       "expected_outcome": "IT confirmation",
       "source_requirement_id": "R035",
       "completion_criteria": "IT confirmation",
@@ -1804,11 +1872,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "ROLE-01",
       "source_section_id": "2.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-005",
-      "description": "Understand harassment and discrimination policy (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand harassment and discrimination policy (Must Know)",
       "expected_outcome": "Quiz pass \u226580%",
       "source_requirement_id": "R004",
       "completion_criteria": "Quiz pass \u226580%",
@@ -1817,11 +1886,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-04",
       "source_section_id": "1.2",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-006",
-      "description": "Know how to report a conduct violation (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Know how to report a conduct violation (Must Demonstrate)",
       "expected_outcome": "Verbal confirmation in 1:1",
       "source_requirement_id": "R005",
       "completion_criteria": "Verbal confirmation in 1:1",
@@ -1830,11 +1900,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-04",
       "source_section_id": "2.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-007",
-      "description": "Understand sick leave policy and notification process (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand sick leave policy and notification process (Must Demonstrate)",
       "expected_outcome": "Manager confirmation",
       "source_requirement_id": "R008",
       "completion_criteria": "Manager confirmation",
@@ -1843,11 +1914,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-02",
       "source_section_id": "2.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-008",
-      "description": "Understand definition of confidential employee data (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand definition of confidential employee data (Must Know)",
       "expected_outcome": "Quiz pass \u226580%",
       "source_requirement_id": "R012",
       "completion_criteria": "Quiz pass \u226580%",
@@ -1856,11 +1928,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-01",
       "source_section_id": "5.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-009",
-      "description": "Complete new-hire onboarding checklist items (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Complete new-hire onboarding checklist items (Must Know)",
       "expected_outcome": "Checklist sign-off",
       "source_requirement_id": "R015",
       "completion_criteria": "Checklist sign-off",
@@ -1869,11 +1942,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "FAQ-01",
       "source_section_id": "1.3",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-010",
-      "description": "Complete peer code review process training (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Complete peer code review process training (Must Know)",
       "expected_outcome": "Practical exercise",
       "source_requirement_id": "R023",
       "completion_criteria": "Practical exercise",
@@ -1882,11 +1956,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "ROLE-01",
       "source_section_id": "1.2",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-011",
-      "description": "Understand deployment SOP peer-review requirement (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand deployment SOP peer-review requirement (Must Know)",
       "expected_outcome": "Practical exercise",
       "source_requirement_id": "R025",
       "completion_criteria": "Practical exercise",
@@ -1895,11 +1970,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "SOP-01",
       "source_section_id": "1.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-012",
-      "description": "Understand production access MFA requirement (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand production access MFA requirement (Must Demonstrate)",
       "expected_outcome": "MFA setup confirmation",
       "source_requirement_id": "R028",
       "completion_criteria": "MFA setup confirmation",
@@ -1908,11 +1984,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-03",
       "source_section_id": "2.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-013",
-      "description": "Complete Information Security Policy overview (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Complete Information Security Policy overview (Must Know)",
       "expected_outcome": "Quiz pass \u226580%",
       "source_requirement_id": "R032",
       "completion_criteria": "Quiz pass \u226580%",
@@ -1921,11 +1998,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-03",
       "source_section_id": "1.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-025",
-      "description": "Scenario: You are the new Software Engineer. Using SOP-01 \u00a71.1, walk through the approved process: Understand deployment SOP peer-review requirement. Official source SOP-01 section 1.1.",
+      "description": "[UNGENERATED - PENDING REVIEW] Scenario: You are the new Software Engineer. Using SOP-01 \u00a71.1, walk through the approved process: Understand deployment SOP peer-review requirement. Official source SOP-01 section 1.1.",
       "expected_outcome": "Documented walkthrough that follows the cited SOP/policy, not informal guidance",
       "source_requirement_id": "R025",
       "completion_criteria": "Manager signs off that the walkthrough matched the cited source",
@@ -1934,11 +2012,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "SOP-01",
       "source_section_id": "1.1",
-      "is_scenario": true
+      "is_scenario": true,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-014",
-      "description": "Know the compliance escalation reporting path (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Know the compliance escalation reporting path (Must Demonstrate)",
       "expected_outcome": "Verbal confirmation in 1:1",
       "source_requirement_id": "R013",
       "completion_criteria": "Verbal confirmation in 1:1",
@@ -1947,11 +2026,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "COMP-01",
       "source_section_id": "1.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-015",
-      "description": "Understand Critical Incident definition (production outage) (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand Critical Incident definition (production outage) (Must Know)",
       "expected_outcome": "Quiz pass \u226580%",
       "source_requirement_id": "R027",
       "completion_criteria": "Quiz pass \u226580%",
@@ -1960,11 +2040,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "SOP-01",
       "source_section_id": "2.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-016",
-      "description": "Understand escalation path for Critical Incidents (direct to on-call SRE) (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand escalation path for Critical Incidents (direct to on-call SRE) (Must Demonstrate)",
       "expected_outcome": "Tabletop exercise",
       "source_requirement_id": "R034",
       "completion_criteria": "Tabletop exercise",
@@ -1973,11 +2054,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "SOP-01",
       "source_section_id": "3.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-017",
-      "description": "Complete Workplace Conduct training (Must Complete)",
+      "description": "[UNGENERATED - PENDING REVIEW] Complete Workplace Conduct training (Must Complete)",
       "expected_outcome": "Training completion certificate",
       "source_requirement_id": "R003",
       "completion_criteria": "Training completion certificate",
@@ -1986,11 +2068,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-04",
       "source_section_id": "1.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-018",
-      "description": "Understand consequences of confirmed conduct violations (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand consequences of confirmed conduct violations (Must Know)",
       "expected_outcome": "Quiz pass \u226580%",
       "source_requirement_id": "R018",
       "completion_criteria": "Quiz pass \u226580%",
@@ -1999,11 +2082,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-04",
       "source_section_id": "4.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-019",
-      "description": "Demonstrate proficiency in team's primary language/tooling (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Demonstrate proficiency in team's primary language/tooling (Must Know)",
       "expected_outcome": "Code review by lead",
       "source_requirement_id": "R024",
       "completion_criteria": "Code review by lead",
@@ -2012,11 +2096,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "ROLE-01",
       "source_section_id": "2.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-020",
-      "description": "Understand hotfix exception process during Critical Incidents (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand hotfix exception process during Critical Incidents (Must Demonstrate)",
       "expected_outcome": "Tabletop exercise",
       "source_requirement_id": "R026",
       "completion_criteria": "Tabletop exercise",
@@ -2025,11 +2110,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "SOP-01",
       "source_section_id": "1.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-021",
-      "description": "Understand rollback procedure for Critical Incidents (Must Demonstrate)",
+      "description": "[UNGENERATED - PENDING REVIEW] Understand rollback procedure for Critical Incidents (Must Demonstrate)",
       "expected_outcome": "Tabletop exercise",
       "source_requirement_id": "R030",
       "completion_criteria": "Tabletop exercise",
@@ -2038,11 +2124,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "SOP-01",
       "source_section_id": "4.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-022",
-      "description": "Pass practical assessment on peer review workflow (Must Know)",
+      "description": "[UNGENERATED - PENDING REVIEW] Pass practical assessment on peer review workflow (Must Know)",
       "expected_outcome": "Practical exercise",
       "source_requirement_id": "R140",
       "completion_criteria": "Practical exercise",
@@ -2051,11 +2138,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "SOP-01",
       "source_section_id": "1.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-023",
-      "description": "Acknowledge understanding of disciplinary consequences policy (Must Acknowledge)",
+      "description": "[UNGENERATED - PENDING REVIEW] Acknowledge understanding of disciplinary consequences policy (Must Acknowledge)",
       "expected_outcome": "Signed acknowledgment form",
       "source_requirement_id": "R150",
       "completion_criteria": "Signed acknowledgment form",
@@ -2064,11 +2152,12 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-04",
       "source_section_id": "4.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     },
     {
       "task_id": "TSK-024",
-      "description": "Complete 90-day probationary review with manager (Must Acknowledge)",
+      "description": "[UNGENERATED - PENDING REVIEW] Complete 90-day probationary review with manager (Must Acknowledge)",
       "expected_outcome": "Signed review form",
       "source_requirement_id": "R010",
       "completion_criteria": "Signed review form",
@@ -2077,13 +2166,14 @@
       "role_title": "Software Engineer",
       "source_document_id": "POL-01",
       "source_section_id": "3.1",
-      "is_scenario": false
+      "is_scenario": false,
+      "generation_status": "failed_after_retries"
     }
   ],
   "quizzes": [
     {
       "question_id": "QZ-001",
-      "question_text": "True or False: Read and acknowledge the Employee Handbook.",
+      "question_text": "[UNGENERATED - PENDING REVIEW] True or False: Read and acknowledge the Employee Handbook.",
       "question_type": "TF",
       "options": [
         "True",
@@ -2095,11 +2185,12 @@
       "source_section_id": "1.1",
       "difficulty": "Beginner",
       "requirement_id": "R001",
-      "distractor_validation_status": "pending_verification"
+      "distractor_validation_status": "pending_verification",
+      "generation_status": "failed_after_retries"
     },
     {
       "question_id": "QZ-002",
-      "question_text": "Which action satisfies requirement R002 for this role?",
+      "question_text": "[UNGENERATED - PENDING REVIEW] Which action satisfies requirement R002 for this role?",
       "question_type": "MCQ",
       "options": [
         "HANDBOOK-01 \u00a72.1: Understand standard work hours and mandatory core hours",
@@ -2113,11 +2204,12 @@
       "source_section_id": "2.1",
       "difficulty": "Beginner",
       "requirement_id": "R002",
-      "distractor_validation_status": "pending_verification"
+      "distractor_validation_status": "pending_verification",
+      "generation_status": "failed_after_retries"
     },
     {
       "question_id": "QZ-003",
-      "question_text": "Select every statement that is correct for R022.",
+      "question_text": "[UNGENERATED - PENDING REVIEW] Select every statement that is correct for R022.",
       "question_type": "MR",
       "options": [
         "Use source ROLE-01 \u00a71.1",
@@ -2133,11 +2225,12 @@
       "source_section_id": "1.1",
       "difficulty": "Beginner",
       "requirement_id": "R022",
-      "distractor_validation_status": "pending_verification"
+      "distractor_validation_status": "pending_verification",
+      "generation_status": "failed_after_retries"
     },
     {
       "question_id": "QZ-004",
-      "question_text": "Scenario: a teammate suggests skipping 'Set up version control and CI access'. What do you do?",
+      "question_text": "[UNGENERATED - PENDING REVIEW] Scenario: a teammate suggests skipping 'Set up version control and CI access'. What do you do?",
       "question_type": "Scenario",
       "options": [
         "Follow ROLE-01 \u00a72.1: Set up version control and CI access",
@@ -2150,11 +2243,12 @@
       "source_section_id": "2.1",
       "difficulty": "Beginner",
       "requirement_id": "R035",
-      "distractor_validation_status": "pending_verification"
+      "distractor_validation_status": "pending_verification",
+      "generation_status": "failed_after_retries"
     },
     {
       "question_id": "QZ-005",
-      "question_text": "True or False: Understand harassment and discrimination policy.",
+      "question_text": "[UNGENERATED - PENDING REVIEW] True or False: Understand harassment and discrimination policy.",
       "question_type": "TF",
       "options": [
         "True",
@@ -2166,11 +2260,12 @@
       "source_section_id": "1.2",
       "difficulty": "Beginner",
       "requirement_id": "R004",
-      "distractor_validation_status": "pending_verification"
+      "distractor_validation_status": "pending_verification",
+      "generation_status": "failed_after_retries"
     },
     {
       "question_id": "QZ-006",
-      "question_text": "Which action satisfies requirement R005 for this role?",
+      "question_text": "[UNGENERATED - PENDING REVIEW] Which action satisfies requirement R005 for this role?",
       "question_type": "MCQ",
       "options": [
         "POL-04 \u00a72.1: Know how to report a conduct violation",
@@ -2184,11 +2279,12 @@
       "source_section_id": "2.1",
       "difficulty": "Beginner",
       "requirement_id": "R005",
-      "distractor_validation_status": "pending_verification"
+      "distractor_validation_status": "pending_verification",
+      "generation_status": "failed_after_retries"
     },
     {
       "question_id": "QZ-007",
-      "question_text": "Select every statement that is correct for R008.",
+      "question_text": "[UNGENERATED - PENDING REVIEW] Select every statement that is correct for R008.",
       "question_type": "MR",
       "options": [
         "Use source POL-02 \u00a72.1",
@@ -2204,11 +2300,12 @@
       "source_section_id": "2.1",
       "difficulty": "Beginner",
       "requirement_id": "R008",
-      "distractor_validation_status": "pending_verification"
+      "distractor_validation_status": "pending_verification",
+      "generation_status": "failed_after_retries"
     },
     {
       "question_id": "QZ-008",
-      "question_text": "Scenario: a teammate suggests skipping 'Understand definition of confidential employee data'. What do you do?",
+      "question_text": "[UNGENERATED - PENDING REVIEW] Scenario: a teammate suggests skipping 'Understand definition of confidential employee data'. What do you do?",
       "question_type": "Scenario",
       "options": [
         "Follow POL-01 \u00a75.1: Understand definition of confidential employee data",
@@ -2221,13 +2318,14 @@
       "source_section_id": "5.1",
       "difficulty": "Beginner",
       "requirement_id": "R012",
-      "distractor_validation_status": "pending_verification"
+      "distractor_validation_status": "pending_verification",
+      "generation_status": "failed_after_retries"
     }
   ],
   "assessments": [
     {
       "assessment_id": "ASM-001",
-      "title": "Knowledge check on cited policies",
+      "title": "[UNGENERATED - PENDING REVIEW] Knowledge check on cited policies",
       "assessment_type": "knowledge",
       "rubric": [
         {
@@ -2259,11 +2357,12 @@
         "R022",
         "R035"
       ],
-      "pass_threshold": 0.8
+      "pass_threshold": 0.8,
+      "generation_status": "failed_after_retries"
     },
     {
       "assessment_id": "ASM-002",
-      "title": "Practical demonstration of required process",
+      "title": "[UNGENERATED - PENDING REVIEW] Practical demonstration of required process",
       "assessment_type": "practical",
       "rubric": [
         {
@@ -2297,11 +2396,12 @@
         "R015",
         "R023"
       ],
-      "pass_threshold": 0.8
+      "pass_threshold": 0.8,
+      "generation_status": "failed_after_retries"
     },
     {
       "assessment_id": "ASM-003",
-      "title": "Scenario judgment using approved SOP",
+      "title": "[UNGENERATED - PENDING REVIEW] Scenario judgment using approved SOP",
       "assessment_type": "scenario",
       "rubric": [
         {
@@ -2335,11 +2435,12 @@
         "R030",
         "R140"
       ],
-      "pass_threshold": 0.8
+      "pass_threshold": 0.8,
+      "generation_status": "failed_after_retries"
     },
     {
       "assessment_id": "ASM-004",
-      "title": "Role-specific competency assessment",
+      "title": "[UNGENERATED - PENDING REVIEW] Role-specific competency assessment",
       "assessment_type": "role-specific",
       "rubric": [
         {
@@ -2373,16 +2474,17 @@
         "R028",
         "R032"
       ],
-      "pass_threshold": 0.8
+      "pass_threshold": 0.8,
+      "generation_status": "failed_after_retries"
     }
   ],
   "stages_used": [
     "Day 1",
-    "Week 1",
-    "Week 2",
     "First 30 Days",
     "First 60 Days",
-    "First 90 Days"
+    "First 90 Days",
+    "Week 1",
+    "Week 2"
   ],
   "covered_requirement_ids": [
     "R001",
@@ -2424,5 +2526,6 @@
     "R009",
     "R017",
     "R033"
-  ]
+  ],
+  "generation_status": "failed_after_retries"
 }

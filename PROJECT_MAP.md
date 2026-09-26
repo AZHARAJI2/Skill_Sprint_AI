@@ -249,6 +249,10 @@ class SchemaValidator(BaseValidator):
     """Checks: JSON structural correctness — missing fields, invalid types,
     invalid source IDs, invalid role, duplicate IDs, missing mandatory status."""
 
+class GenerationFailureValidator(BaseValidator):
+    """Checks: no item has generation_status == 'failed_after_retries' or '[UNGENERATED - PENDING REVIEW]'.
+    Authorized Phase 3 addition: forces overall plan status to 'Manual Review Required' on any generation failure."""
+
 class ValidationPipeline:
     """Composes and runs all validators in sequence.
     To add a new validation rule: create a new BaseValidator subclass,
@@ -264,6 +268,7 @@ class ValidationPipeline:
             HallucinationDetector(),
             SequenceValidator(),
             SchemaValidator(),
+            GenerationFailureValidator(),
         ]
 
     def run(self, plan, matrix, documents, chunks) -> ValidationReport:
@@ -387,9 +392,10 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | 26 | Prerequisite management (no advanced task before required prerequisite) | ✅ DONE (`PrerequisiteEnforcer`) |
 | 37 | GenAI structured JSON output per defined schema; free-form never sole output | ✅ DONE (`GeneratedPlan` is the plan of record) |
 | 38 | Schema validation in Python (missing fields, invalid types, invalid source IDs, invalid role, duplicate IDs, missing mandatory status) | ✅ DONE (`OutputSchemaValidator`) |
-| 39 | GenAI retry & recovery on invalid/incomplete output, with logging + cap | ✅ DONE (`RetryManager` cap 3; assembler recovery on 502) |
-| 40 | Prompt template management — versioned template files, not hard-coded | ✅ DONE (`prompt_templates/*_v1.json` + `PromptManager`) |
-| 41 | Prompt version tracking — every plan records prompt version, model, timestamp, source doc versions | ✅ DONE (`OnboardingPlan` + `GenerationMetadata`) |
+| 39 | GenAI retry & recovery on invalid/incomplete output, with logging + cap | ✅ DONE (Phased stage-group retries; retry exhaustion tags generation_status='failed_after_retries' and [UNGENERATED - PENDING REVIEW]; triggers Phase 3 GenerationFailureValidator) |
+| 40 | Prompt template management — versioned template files, not hard-coded | ✅ DONE (`prompt_templates/*_v1.json`, `onboarding_plan_v2.json` + `PromptManager`) |
+| 41 | Prompt version tracking — every plan records prompt version, model, timestamp, source doc versions | ✅ DONE (bumped to `onboarding_plan_v2` for phased generation; recorded in `OnboardingPlan` + `GenerationMetadata`) |
+
 | 42 | Prompt injection defense — uploaded text treated strictly as data | ✅ DONE (`InjectionGuard` fences `UNTRUSTED_DOCUMENT_DATA`) |
 | 43 | Adversarial document testing — demonstrate protection against injection docs | ✅ DONE (11 corpus cases in `tests/test_injection.py`) |
 

@@ -21,3 +21,5 @@ class QuizQuestion(BaseModel):
     difficulty: DifficultyLevel
     requirement_id: str
     distractor_validation_status: DistractorValidationStatus = DistractorValidationStatus.PENDING_VERIFICATION
+    generation_status: str | None = None
+

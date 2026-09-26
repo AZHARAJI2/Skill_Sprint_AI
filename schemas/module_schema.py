@@ -25,6 +25,7 @@ class LearningModule(BaseModel):
     stage: str
     difficulty: DifficultyLevel
     requirement_ids: list[str] = Field(min_length=1)
+    generation_status: str | None = None
 
 
 class ChecklistItem(BaseModel):
@@ -39,3 +40,5 @@ class ChecklistItem(BaseModel):
     source_section_id: str
     responsible_person: str
     requirement_id: str
+    generation_status: str | None = None
+
