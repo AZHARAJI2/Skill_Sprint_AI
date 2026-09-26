@@ -104,7 +104,7 @@ class RequirementClassification(str, Enum):
 
 
 class GroundingStatus(str, Enum):
-    """Source-grounding outcome for a generated item (Phase 2 flags; Phase 3 scores)."""
+    """Not used on Pipeline 1 JSON. Source support is Phase 3 ItemValidationResult.verification_status."""
 
     SOURCE_SUPPORTED = "source_supported"
     INSTRUCTIONAL_WORDING = "instructional_wording"
@@ -114,8 +114,9 @@ class GroundingStatus(str, Enum):
 
 
 class DistractorValidationStatus(str, Enum):
-    """Python check of quiz options against the cited source chunk."""
+    """Quiz distractor check. Phase 2 only emits pending_verification; Phase 3 sets the final value."""
 
+    PENDING_VERIFICATION = "pending_verification"
     PASSED = "passed"
     FAILED_NOT_IN_SOURCE = "failed_not_in_source"
     FAILED_CONTRADICTORY = "failed_contradictory"

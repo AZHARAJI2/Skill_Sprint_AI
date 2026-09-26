@@ -8,7 +8,7 @@ from schemas.common_schema import (
     DistractorValidationStatus,
     DocumentStatus,
     DueStage,
-    GroundingStatus,
+    GroundingStatus,  # retained enum only; not a Pipeline 1 output field
     QuestionType,
     RequirementClassification,
     ReviewAction,
@@ -17,7 +17,7 @@ from schemas.common_schema import (
     VerificationStatus,
 )
 from schemas.module_schema import ChecklistItem, LearningModule
-from schemas.plan_schema import ClassifiedRequirement, GeneratedPlan, GroundingFlag, TaskItem
+from schemas.plan_schema import ClassifiedRequirement, GeneratedPlan, TaskItem
 from schemas.quiz_schema import QuizQuestion
 from schemas.validation_schema import ItemValidationResult, ValidationReport
 
@@ -32,7 +32,6 @@ __all__ = [
     "DocumentStatus",
     "DueStage",
     "GeneratedPlan",
-    "GroundingFlag",
     "GroundingStatus",
     "ItemValidationResult",
     "LearningModule",

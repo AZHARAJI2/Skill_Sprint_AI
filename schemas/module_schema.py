@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from schemas.common_schema import DifficultyLevel, GroundingStatus
+from schemas.common_schema import DifficultyLevel
 
 
 class LearningModule(BaseModel):
@@ -25,7 +25,6 @@ class LearningModule(BaseModel):
     stage: str
     difficulty: DifficultyLevel
     requirement_ids: list[str] = Field(min_length=1)
-    grounding_status: GroundingStatus = GroundingStatus.SOURCE_SUPPORTED
 
 
 class ChecklistItem(BaseModel):
@@ -40,4 +39,3 @@ class ChecklistItem(BaseModel):
     source_section_id: str
     responsible_person: str
     requirement_id: str
-    grounding_status: GroundingStatus = GroundingStatus.SOURCE_SUPPORTED

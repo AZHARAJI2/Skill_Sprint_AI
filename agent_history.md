@@ -267,6 +267,20 @@
 
 **Notes**: Verified with automated test `test_enrichment_preserves_full_item_inventory_on_partial_batches`. Full test suite now passes with 28 tests (28 passed, 0 failed). Ready for Phase 3 ingestion.
 
+### Entry 010 — 2026-09-26 | Agent: Execution - Phase 2 | Task: Surgical fix - remove self-certifying validation fields from Pipeline 1 output
+
+**Timestamp**: 2026-09-26  
+**Agent**: Execution - Phase 2 (GenAI Pipeline Engineer)  
+**Member**: Azhar Raji AL-Herwi (review)  
+**Task**: Surgical fix - remove self-certifying validation fields from Pipeline 1 output  
+**Impact Area**: `schemas/common_schema.py`, `schemas/quiz_schema.py`, `schemas/plan_schema.py`, `schemas/module_schema.py`, `schemas/assessment_schema.py`, `schemas/__init__.py`, `genai_pipeline/plan_assembler.py`, `genai_pipeline/quiz_generator.py`, `genai_pipeline/plan_generator.py`, `genai_pipeline/module_generator.py`, `genai_pipeline/assessment_generator.py`, `genai_pipeline/scenario_generator.py`, `src/plans/service.py`, `tests/test_genai_pipeline.py`, `reports/d4_sample_software_engineer_plan.json`, `PROJECT_MAP.md`  
+**Risk**: must not touch Phase 3 code (`python_validation/`, `comparison_engine/`, `hallucination_checks/`)  
+**Rationale**: `distractor_validation_status` was being set to `passed`/`repaired` inside Pipeline 1. Phase 2 cannot independently verify distractors against source; only Phase 3 may set the final value. `grounding_status` / `grounding_flags` are not in PROJECT_MAP entity definitions; equivalent outcomes belong on Phase 3 `ItemValidationResult.verification_status`.
+
+**Status**: Completed
+
+**Notes**: Phase 3 folders were not modified. Pipeline 1 quizzes now always emit `distractor_validation_status=pending_verification`. `grounding_status` and `grounding_flags` are removed from `GeneratedPlan` and item schemas.
+
 ---
 
 ## Phase 3 Log

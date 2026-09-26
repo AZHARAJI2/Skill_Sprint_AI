@@ -52,7 +52,6 @@ class AssessmentGenerator:
                                 "requirement_ids": original.requirement_ids,
                                 "assessment_type": original.assessment_type,
                                 "stage": original.stage,
-                                "grounding_status": original.grounding_status,
                             }
                         )
                     )

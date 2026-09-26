@@ -238,7 +238,6 @@ class PlanGenerationService:
                 log_payload={
                     "recovered_from_assembler": telemetry.get("recovered_from_assembler"),
                     "prompt_version": telemetry.get("prompt_version"),
-                    "grounding_flag_count": len(plan.grounding_flags),
                 },
             )
         )

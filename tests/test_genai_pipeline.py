@@ -279,7 +279,7 @@ def test_distractor_repair_rejects_contradictory_source_claims() -> None:
     )
     excerpt = SourceExcerpt("HANDBOOK-01", "1.1", "Read and acknowledge the Employee Handbook.", False)
     repaired = DistractorValidator().validate(question, excerpt)
-    assert repaired.distractor_validation_status == DistractorValidationStatus.REPAIRED
+    assert repaired.distractor_validation_status == DistractorValidationStatus.PENDING_VERIFICATION
     assert "The cited source is fake" not in repaired.options
 
 
@@ -488,4 +488,24 @@ def test_enrichment_preserves_full_item_inventory_on_partial_batches(session: Se
     assert len(enriched_tasks) == initial_task_count
     assert enriched_tasks[0].description == "Enriched task description"
     assert enriched_tasks[1].description == plan.tasks[1].description
+
+
+def test_freshly_generated_plan_has_no_self_certifying_fields_and_pending_distractor_status(session: Session) -> None:
+    """PROTOCOL 3: freshly generated plan NEVER contains grounding_status/grounding_flags,
+    and every QuizQuestion's distractor_validation_status equals 'pending_verification'.
+    """
+    employee_ids = _seed_pipeline_data(session)
+    service = PlanGenerationService(session, provider=_failing_provider())
+    stored = service.generate_for_employee(employee_ids["Software Engineer"], actor="test")
+    payload = stored.structured_json
+
+    assert "grounding_flags" not in payload
+    for section in ("modules", "checklists", "tasks", "quizzes", "assessments"):
+        for item in payload[section]:
+            assert "grounding_status" not in item, f"grounding_status found in {section} item {item.get('item_id', item.get('question_id'))}"
+
+    assert len(payload["quizzes"]) > 0
+    for quiz in payload["quizzes"]:
+        assert quiz["distractor_validation_status"] == DistractorValidationStatus.PENDING_VERIFICATION.value
+
 

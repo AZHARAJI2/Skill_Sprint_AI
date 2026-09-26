@@ -5,7 +5,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from schemas.assessment_schema import Assessment
-from schemas.common_schema import DifficultyLevel, GroundingStatus, RequirementClassification
+from schemas.common_schema import DifficultyLevel, RequirementClassification
 from schemas.module_schema import ChecklistItem, LearningModule
 from schemas.quiz_schema import QuizQuestion
 
@@ -41,16 +41,6 @@ class TaskItem(BaseModel):
     source_document_id: str
     source_section_id: str
     is_scenario: bool = False
-    grounding_status: GroundingStatus = GroundingStatus.SOURCE_SUPPORTED
-
-
-class GroundingFlag(BaseModel):
-    """Unsupported or injection-tainted generated content that must not be silently accepted."""
-
-    item_id: str
-    item_type: str
-    status: GroundingStatus
-    detail: str
 
 
 class GeneratedPlan(BaseModel):
@@ -67,5 +57,4 @@ class GeneratedPlan(BaseModel):
     quizzes: list[QuizQuestion] = Field(min_length=1)
     assessments: list[Assessment] = Field(min_length=1)
     stages_used: list[str] = Field(min_length=2)
-    grounding_flags: list[GroundingFlag] = Field(default_factory=list)
     covered_requirement_ids: list[str] = Field(min_length=1)

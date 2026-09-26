@@ -11,13 +11,12 @@ from schemas.common_schema import (
     DifficultyLevel,
     DistractorValidationStatus,
     DueStage,
-    GroundingStatus,
     QuestionType,
     RequirementClassification,
     STAGE_ORDER,
 )
 from schemas.module_schema import ChecklistItem, LearningModule
-from schemas.plan_schema import ClassifiedRequirement, GeneratedPlan, GroundingFlag, TaskItem
+from schemas.plan_schema import ClassifiedRequirement, GeneratedPlan, TaskItem
 from schemas.quiz_schema import QuizQuestion
 from security.injection_guard import InjectionGuard
 
@@ -53,12 +52,11 @@ class PlanAssembler:
         responsible_person: str,
     ) -> GeneratedPlan:
         """Assemble a complete GeneratedPlan covering every classified requirement."""
-        flags: list[GroundingFlag] = []
-        modules = self._modules(classified, excerpts, flags)
-        checklists = self._checklists(classified, excerpts, flags, responsible_person)
-        tasks = self._tasks(classified, excerpts, flags, role_title)
-        quizzes = self._quizzes(classified, excerpts, flags)
-        assessments = self._assessments(classified, excerpts, flags, experience_level)
+        modules = self._modules(classified, excerpts)
+        checklists = self._checklists(classified, excerpts, responsible_person)
+        tasks = self._tasks(classified, excerpts, role_title)
+        quizzes = self._quizzes(classified, excerpts)
+        assessments = self._assessments(classified, excerpts, experience_level)
         stages_used = sorted(
             {item.due_stage for item in classified},
             key=lambda stage: STAGE_ORDER.index(stage) if stage in STAGE_ORDER else 99,
@@ -75,7 +73,6 @@ class PlanAssembler:
             quizzes=quizzes,
             assessments=assessments,
             stages_used=stages_used,
-            grounding_flags=flags,
             covered_requirement_ids=[item.requirement_id for item in classified],
         )
 
@@ -96,13 +93,6 @@ class PlanAssembler:
             excerpts[key] = SourceExcerpt(key[0], key[1], text, scan.is_injection)
         return excerpts
 
-    def _grounding(self, excerpt: SourceExcerpt | None) -> GroundingStatus:
-        if excerpt is None or not (excerpt.text or "").strip():
-            return GroundingStatus.UNSUPPORTED_FACTUAL
-        if excerpt.flagged:
-            return GroundingStatus.INJECTION_FLAGGED
-        return GroundingStatus.SOURCE_SUPPORTED
-
     def _excerpt(self, item: ClassifiedRequirement, excerpts: dict[tuple[str, str], SourceExcerpt]) -> SourceExcerpt | None:
         return excerpts.get((item.source_document_id, item.source_section_id))
 
@@ -110,7 +100,6 @@ class PlanAssembler:
         self,
         classified: list[ClassifiedRequirement],
         excerpts: dict[tuple[str, str], SourceExcerpt],
-        flags: list[GroundingFlag],
     ) -> list[LearningModule]:
         groups: dict[tuple[str, str], list[ClassifiedRequirement]] = defaultdict(list)
         for item in classified:
@@ -118,11 +107,7 @@ class PlanAssembler:
         modules: list[LearningModule] = []
         for index, ((stage, competency), rows) in enumerate(sorted(groups.items(), key=lambda kv: STAGE_ORDER.index(kv[0][0]) if kv[0][0] in STAGE_ORDER else 99), start=1):
             lead = rows[0]
-            excerpt = self._excerpt(lead, excerpts)
-            grounding = self._grounding(excerpt)
             module_id = f"MOD-{index:03d}"
-            if grounding != GroundingStatus.SOURCE_SUPPORTED:
-                flags.append(GroundingFlag(item_id=module_id, item_type="module", status=grounding, detail="Source missing or injection-flagged"))
             role_specific = [row for row in rows if row.role != "All Roles"]
             title_role = role_specific[0].role if role_specific else lead.role
             modules.append(
@@ -145,7 +130,6 @@ class PlanAssembler:
                     stage=stage,
                     difficulty=lead.difficulty,
                     requirement_ids=[row.requirement_id for row in rows],
-                    grounding_status=grounding,
                 )
             )
         return modules
@@ -154,19 +138,13 @@ class PlanAssembler:
         self,
         classified: list[ClassifiedRequirement],
         excerpts: dict[tuple[str, str], SourceExcerpt],
-        flags: list[GroundingFlag],
         responsible_person: str,
     ) -> list[ChecklistItem]:
         items: list[ChecklistItem] = []
         for index, row in enumerate(classified, start=1):
-            excerpt = self._excerpt(row, excerpts)
-            grounding = self._grounding(excerpt)
-            item_id = f"CHK-{index:03d}"
-            if grounding != GroundingStatus.SOURCE_SUPPORTED:
-                flags.append(GroundingFlag(item_id=item_id, item_type="checklist", status=grounding, detail="Checklist source not usable as policy fact"))
             items.append(
                 ChecklistItem(
-                    item_id=item_id,
+                    item_id=f"CHK-{index:03d}",
                     activity=row.requirement_text,
                     required_or_optional="required" if row.mandatory else "optional",
                     due_stage=row.due_stage,
@@ -175,7 +153,6 @@ class PlanAssembler:
                     source_section_id=row.source_section_id,
                     responsible_person=responsible_person,
                     requirement_id=row.requirement_id,
-                    grounding_status=grounding,
                 )
             )
         return items
@@ -184,7 +161,6 @@ class PlanAssembler:
         self,
         classified: list[ClassifiedRequirement],
         excerpts: dict[tuple[str, str], SourceExcerpt],
-        flags: list[GroundingFlag],
         role_title: str,
     ) -> list[TaskItem]:
         tasks: list[TaskItem] = []
@@ -201,12 +177,8 @@ class PlanAssembler:
             or row.mandatory
         ]
         for row in actionable:
-            excerpt = self._excerpt(row, excerpts)
-            grounding = self._grounding(excerpt)
             task_id = f"TSK-{index:03d}"
             index += 1
-            if grounding != GroundingStatus.SOURCE_SUPPORTED:
-                flags.append(GroundingFlag(item_id=task_id, item_type="task", status=grounding, detail="Task source flagged or missing"))
             tasks.append(
                 TaskItem(
                     task_id=task_id,
@@ -220,7 +192,6 @@ class PlanAssembler:
                     source_document_id=row.source_document_id,
                     source_section_id=row.source_section_id,
                     is_scenario=False,
-                    grounding_status=grounding,
                 )
             )
         sop_rows = [row for row in classified if row.source_document_id.startswith("SOP-")]
@@ -228,7 +199,6 @@ class PlanAssembler:
             sop_rows = [row for row in classified if row.role != "All Roles"][:1] or classified[:1]
         scenario_source = sop_rows[0]
         excerpt = self._excerpt(scenario_source, excerpts)
-        grounding = self._grounding(excerpt)
         task_id = f"TSK-{index:03d}"
         snippet = self._snippet(excerpt) or scenario_source.requirement_text
         tasks.append(
@@ -247,18 +217,14 @@ class PlanAssembler:
                 source_document_id=scenario_source.source_document_id,
                 source_section_id=scenario_source.source_section_id,
                 is_scenario=True,
-                grounding_status=grounding,
             )
         )
-        if grounding != GroundingStatus.SOURCE_SUPPORTED:
-            flags.append(GroundingFlag(item_id=task_id, item_type="task", status=grounding, detail="Scenario source flagged or missing"))
         return tasks
 
     def _quizzes(
         self,
         classified: list[ClassifiedRequirement],
         excerpts: dict[tuple[str, str], SourceExcerpt],
-        flags: list[GroundingFlag],
     ) -> list[QuizQuestion]:
         quiz_rows = [
             row
@@ -271,21 +237,10 @@ class PlanAssembler:
         questions: list[QuizQuestion] = []
         for index, row in enumerate(quiz_rows[:8], start=1):
             excerpt = self._excerpt(row, excerpts)
-            question = builders[(index - 1) % 4](f"QZ-{index:03d}", row, excerpt)
-            if question.grounding_status != GroundingStatus.SOURCE_SUPPORTED:
-                flags.append(
-                    GroundingFlag(
-                        item_id=question.question_id,
-                        item_type="quiz",
-                        status=question.grounding_status,
-                        detail="Quiz could not be fully grounded",
-                    )
-                )
-            questions.append(question)
+            questions.append(builders[(index - 1) % 4](f"QZ-{index:03d}", row, excerpt))
         return questions
 
     def _tf(self, question_id: str, row: ClassifiedRequirement, excerpt: SourceExcerpt | None) -> QuizQuestion:
-        grounding = self._grounding(excerpt)
         return QuizQuestion(
             question_id=question_id,
             question_text=f"True or False: {row.requirement_text}.",
@@ -297,12 +252,10 @@ class PlanAssembler:
             source_section_id=row.source_section_id,
             difficulty=row.difficulty,
             requirement_id=row.requirement_id,
-            distractor_validation_status=DistractorValidationStatus.PASSED,
-            grounding_status=grounding,
+            distractor_validation_status=DistractorValidationStatus.PENDING_VERIFICATION,
         )
 
     def _mcq(self, question_id: str, row: ClassifiedRequirement, excerpt: SourceExcerpt | None) -> QuizQuestion:
-        grounding = self._grounding(excerpt)
         correct = f"{row.source_document_id} §{row.source_section_id}: {row.requirement_text}"
         distractors = [
             "This requirement is waived for all new hires",
@@ -320,12 +273,10 @@ class PlanAssembler:
             source_section_id=row.source_section_id,
             difficulty=row.difficulty,
             requirement_id=row.requirement_id,
-            distractor_validation_status=DistractorValidationStatus.PASSED,
-            grounding_status=grounding,
+            distractor_validation_status=DistractorValidationStatus.PENDING_VERIFICATION,
         )
 
     def _mr(self, question_id: str, row: ClassifiedRequirement, excerpt: SourceExcerpt | None) -> QuizQuestion:
-        grounding = self._grounding(excerpt)
         correct_a = f"Use source {row.source_document_id} §{row.source_section_id}"
         correct_b = f"Treat this as {row.classification.value}"
         wrong = "Ignore the matrix and invent a local shortcut"
@@ -340,12 +291,10 @@ class PlanAssembler:
             source_section_id=row.source_section_id,
             difficulty=row.difficulty,
             requirement_id=row.requirement_id,
-            distractor_validation_status=DistractorValidationStatus.PASSED,
-            grounding_status=grounding,
+            distractor_validation_status=DistractorValidationStatus.PENDING_VERIFICATION,
         )
 
     def _scenario_q(self, question_id: str, row: ClassifiedRequirement, excerpt: SourceExcerpt | None) -> QuizQuestion:
-        grounding = self._grounding(excerpt)
         snippet = self._snippet(excerpt) or row.requirement_text
         correct = f"Follow {row.source_document_id} §{row.source_section_id}: {row.requirement_text}"
         return QuizQuestion(
@@ -363,15 +312,13 @@ class PlanAssembler:
             source_section_id=row.source_section_id,
             difficulty=row.difficulty,
             requirement_id=row.requirement_id,
-            distractor_validation_status=DistractorValidationStatus.PASSED,
-            grounding_status=grounding,
+            distractor_validation_status=DistractorValidationStatus.PENDING_VERIFICATION,
         )
 
     def _assessments(
         self,
         classified: list[ClassifiedRequirement],
         excerpts: dict[tuple[str, str], SourceExcerpt],
-        flags: list[GroundingFlag],
         experience_level: str,
     ) -> list[Assessment]:
         by_stage = defaultdict(list)
@@ -390,11 +337,7 @@ class PlanAssembler:
         assessments: list[Assessment] = []
         for index, (atype, rows, stage, title) in enumerate(specs, start=1):
             lead = rows[0]
-            excerpt = self._excerpt(lead, excerpts)
-            grounding = self._grounding(excerpt)
             assessment_id = f"ASM-{index:03d}"
-            if grounding != GroundingStatus.SOURCE_SUPPORTED:
-                flags.append(GroundingFlag(item_id=assessment_id, item_type="assessment", status=grounding, detail="Assessment source flagged or missing"))
             difficulty = lead.difficulty
             if atype == AssessmentType.ROLE_SPECIFIC and experience_level.lower() == "beginner":
                 difficulty = DifficultyLevel.INTERMEDIATE
@@ -428,7 +371,6 @@ class PlanAssembler:
                     source_document_id=lead.source_document_id,
                     source_section_id=lead.source_section_id,
                     requirement_ids=[row.requirement_id for row in rows[:6]],
-                    grounding_status=grounding,
                     pass_threshold=0.8,
                 )
             )

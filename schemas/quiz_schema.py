@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from schemas.common_schema import DifficultyLevel, DistractorValidationStatus, GroundingStatus, QuestionType
+from schemas.common_schema import DifficultyLevel, DistractorValidationStatus, QuestionType
 
 
 class QuizQuestion(BaseModel):
@@ -20,5 +20,4 @@ class QuizQuestion(BaseModel):
     source_section_id: str
     difficulty: DifficultyLevel
     requirement_id: str
-    distractor_validation_status: DistractorValidationStatus = DistractorValidationStatus.PASSED
-    grounding_status: GroundingStatus = GroundingStatus.SOURCE_SUPPORTED
+    distractor_validation_status: DistractorValidationStatus = DistractorValidationStatus.PENDING_VERIFICATION

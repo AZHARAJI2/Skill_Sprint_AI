@@ -49,7 +49,6 @@ class ModuleGenerator:
                                 "source_section_id": original.source_section_id,
                                 "requirement_ids": original.requirement_ids,
                                 "stage": original.stage,
-                                "grounding_status": original.grounding_status,
                             }
                         )
                     )

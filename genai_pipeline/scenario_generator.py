@@ -51,7 +51,6 @@ class ScenarioTaskGenerator:
                                 "due_stage": original.due_stage,
                                 "role_title": original.role_title,
                                 "is_scenario": original.is_scenario,
-                                "grounding_status": original.grounding_status,
                             }
                         )
                     )

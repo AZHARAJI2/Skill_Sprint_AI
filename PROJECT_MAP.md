@@ -158,7 +158,7 @@ All classes follow Single Responsibility Principle. Every class and public metho
 | `LearningModule` | Pydantic + SQLAlchemy | `BaseModel` | title, purpose, objectives, key_concepts, source_docs, duration, activities, assessment_method, completion_criteria, stage, difficulty |
 | `ChecklistItem` | Pydantic + SQLAlchemy | `BaseModel` | activity, required_or_optional, due_stage, completion_status, source_doc_id, source_section_id, responsible_person |
 | `Task` | Pydantic + SQLAlchemy | `BaseModel` | description, expected_outcome, source_requirement_id, completion_criteria, difficulty, due_stage, role_id |
-| `QuizQuestion` | Pydantic + SQLAlchemy | `BaseModel` | question_text, question_type (MCQ/MR/TF/Scenario), options, correct_answer, explanation, source_doc_id, source_section_id, difficulty, distractor_validation_status |
+| `QuizQuestion` | Pydantic + SQLAlchemy | `BaseModel` | question_text, question_type (MCQ/MR/TF/Scenario), options, correct_answer, explanation, source_doc_id, source_section_id, difficulty, distractor_validation_status (**Phase 2 always sets `pending_verification`; Phase 3 alone may set `passed`/`failed`**) |
 | `Assessment` | Pydantic + SQLAlchemy | `BaseModel` | type (knowledge/practical/scenario/role-specific), rubric (criteria, weights, expected_performance, pass_condition), difficulty |
 | `ValidationReport` | Pydantic | `BaseModel` | plan_id, coverage_score, traceability_score, consistency_score, missing_count, unsupported_count, contradiction_count, per_item_results: list[ItemValidationResult], overall_status |
 | `ItemValidationResult` | Pydantic | `BaseModel` | item_id, item_type, verification_status (enum: Verified/VerifiedWithWarning/PartiallyVerified/SourceSupportMissing/RequirementMissing/UnsupportedRequirement/OutdatedSource/ContradictionDetected/ManualReviewRequired), details, source_references |
@@ -373,14 +373,14 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | 12 | Personalized onboarding plan generation per role/department/experience/timeline | ✅ DONE (`PlanGenerationService.generate_for_employee`) |
 | 13 | Multi-stage plan (Day 1, Week 1, Week 2, First 30/60/90 Days) | ✅ DONE (`OutputSchemaValidator` rejects single-stage dumps) |
 | 14 | Learning module generation (title, purpose, objectives, key concepts, source docs, duration, activities, assessment, completion criteria) | ✅ DONE (`ModuleGenerator` + `PlanAssembler`) |
-| 15 | Source-grounded generation — unsupported content flagged/removed/manual review | ✅ DONE (`GroundingFlag` / `grounding_status` on items) |
+| 15 | Source-grounded generation — unsupported content flagged/removed/manual review | ✅ DONE (citations required; InjectionGuard redacts untrusted text; **no** `grounding_status` on Pipeline 1 JSON — Phase 3 `verification_status`) |
 | 16 | Role-specific learning (genuinely different content per role) | ✅ DONE (VG-2.1: ten live plans differ by role) |
 | 17 | Checklist generation (activity, required/optional, due date/stage, status, source, responsible) | ✅ DONE |
 | 18 | Role-specific task generation (description, outcome, source req, completion criteria, difficulty, due stage) | ✅ DONE |
 | 19 | Scenario-based task generation from approved processes | ✅ DONE (`ScenarioTaskGenerator`; SOP-preferred scenario task) |
 | 20 | Quiz generation (MCQ, multiple response, True/False, scenario-based) | ✅ DONE |
 | 21 | Quiz traceability (source doc/section, correct answer, explanation, difficulty) | ✅ DONE |
-| 22 | Distractor validation — plausible but not misleadingly contradictory; correct answer validated by Python against source | ✅ DONE (`DistractorValidator`) |
+| 22 | Distractor validation — plausible but not misleadingly contradictory; correct answer validated by Python against source | PHASE 2: generate plausible distractors; `distractor_validation_status=pending_verification`. Final passed/failed is **Phase 3 only**. |
 | 23 | Assessment generation (knowledge, practical, scenario, role-specific) | ✅ DONE |
 | 24 | Assessment rubric (criterion, weight, expected performance, pass condition) | ✅ DONE |
 | 25 | Difficulty levels (Beginner/Intermediate/Advanced reflecting role+experience) | ✅ DONE (`RequirementExtractor.difficulty_for`) |
@@ -630,12 +630,12 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | F5 | Prompt Injection Challenge readiness | Phase 2 (step 42-43) + Phase 3 (hallucination detection) | PHASE 2 READY — `InjectionGuard` fences uploaded text as data; 11 corpus cases covered in `tests/test_injection.py`; Phase 3 hallucination still pending |
 | F6 | Contradiction Challenge readiness | Phase 3 (steps 33-34) | PENDING |
 | F7 | Source Traceability Challenge readiness | Phase 1 (metadata) + Phase 2 (citations) + Phase 3 (traceability score) | PHASE 1+2 READY — chunks store doc/section/page; generated items carry `source_document_id` + `source_section_id` checked by `OutputSchemaValidator`; Phase 3 traceability score still pending |
-| F8 | Hallucination Challenge readiness | Phase 2 (source grounding) + Phase 3 (hallucination detection) | PHASE 2 READY for `grounding_status` / `GroundingFlag`; Phase 3 `HallucinationDetector` still pending |
+| F8 | Hallucination Challenge readiness | Phase 2 (source grounding) + Phase 3 (hallucination detection) | PHASE 2 READY for citations + injection fencing; **does not self-certify** `grounding_status`. Phase 3 `HallucinationDetector` / `verification_status` still pending |
 | F9 | Live Code Modification readiness | All phases (OOP design enables single-class changes) | PENDING |
 | F10 | Deliberate Defect readiness (debug planted errors) | All phases (clean code, docstrings, SRP) | PENDING |
 | F11 | Meaningful GitHub commits across all 5 days from all members | All phases | IN PROGRESS — 13 Phase 2 commits (A'LAA MADYAN) fast-forwarded into `main`; Phase 1 split commits by Azhar Raji AL-Herwi; remaining members/days still required |
 | F12 | ABSOLUTE PROHIBITION on hard-coded plans/answers/scores/fakes | Phase 2 + Phase 3 (everything computed live) | PHASE 2 SATISFIED for generation — live `PlanAssembler` from matrix+chunks, fail-closed Gemini, no per-role hard-coded plans; Phase 3 scores still pending |
-| F14 | GenAI never replaces Python validation/business rules/security | Phase 2 + Phase 3 (strict pipeline separation) | PHASE 2 SATISFIED — schema/retry/injection/distractors are Python; Pipeline 2 remains Phase 3 with zero GenAI. Live run confirms the separation end-to-end: model wording merged only where IDs match, assembler coverage/citations always retained, fallback flagged in metadata |
+| F14 | GenAI never replaces Python validation/business rules/security | Phase 2 + Phase 3 (strict pipeline separation) | PHASE 2 SATISFIED — schema/retry/injection are Python; distractor **status** is not finalized in Pipeline 1. Pipeline 2 remains Phase 3 with zero GenAI. |
 | F15 | AI-assisted code must be reviewed/understood/explainable by team | All phases | PENDING |
 | F16 | AI_USAGE.md maintained by every team member | All phases (human responsibility) | PENDING |
 

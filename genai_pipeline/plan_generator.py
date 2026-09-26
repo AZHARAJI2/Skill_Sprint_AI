@@ -109,7 +109,6 @@ class PlanGenerator:
                             "source_section_id": item.source_section_id,
                             "requirement_ids": item.requirement_ids,
                             "stage": item.stage,
-                            "grounding_status": item.grounding_status,
                         }
                     )
                 )
@@ -122,7 +121,7 @@ class PlanGenerator:
                 "source_document_id": item.source_document_id,
                 "source_section_id": item.source_section_id,
                 "requirement_id": item.requirement_id,
-                "grounding_status": item.grounding_status,
+                "distractor_validation_status": item.distractor_validation_status,
             }) if other else item)
         tasks = []
         for item in assembled.tasks:
@@ -133,6 +132,5 @@ class PlanGenerator:
                 "source_requirement_id": item.source_requirement_id,
                 "due_stage": item.due_stage,
                 "role_title": item.role_title,
-                "grounding_status": item.grounding_status,
             }) if other else item)
         return assembled.model_copy(update={"modules": modules, "quizzes": quizzes, "tasks": tasks})

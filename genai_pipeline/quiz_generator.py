@@ -10,7 +10,7 @@ from genai_pipeline.base_provider import BaseGenAIProvider, GenerationConfig
 from genai_pipeline.plan_assembler import SourceExcerpt
 from genai_pipeline.prompt_manager import PromptManager
 from genai_pipeline.retry_manager import RetryManager
-from schemas.common_schema import DistractorValidationStatus, GroundingStatus
+from schemas.common_schema import DistractorValidationStatus
 from schemas.plan_schema import GeneratedPlan
 from schemas.quiz_schema import QuizQuestion
 
@@ -31,7 +31,7 @@ class DistractorValidator:
         question: QuizQuestion,
         excerpt: SourceExcerpt | None,
     ) -> QuizQuestion:
-        """Return a possibly repaired question with an explicit distractor_validation_status."""
+        """Generate plausible options; never self-certify. Phase 3 sets the final status."""
         source = (excerpt.text if excerpt else "") + " " + question.explanation
         source_tokens = self._tokens(source)
         correct_values = question.correct_answer if isinstance(question.correct_answer, list) else [question.correct_answer]
@@ -39,14 +39,18 @@ class DistractorValidator:
             if question.requirement_id.lower() not in source.lower() and not any(
                 value.lower() in (question.question_text + " " + question.explanation).lower() for value in correct_values
             ):
-                return question.model_copy(update={"distractor_validation_status": DistractorValidationStatus.FAILED_NOT_IN_SOURCE})
+                return question.model_copy(
+                    update={"distractor_validation_status": DistractorValidationStatus.PENDING_VERIFICATION}
+                )
 
         distractors = [option for option in question.options if option not in correct_values]
         for distractor in distractors:
             if self._is_contradictory_claim(distractor):
                 repaired = self._repair(question, excerpt)
-                return repaired.model_copy(update={"distractor_validation_status": DistractorValidationStatus.REPAIRED})
-        return question.model_copy(update={"distractor_validation_status": DistractorValidationStatus.PASSED})
+                return repaired.model_copy(
+                    update={"distractor_validation_status": DistractorValidationStatus.PENDING_VERIFICATION}
+                )
+        return question.model_copy(update={"distractor_validation_status": DistractorValidationStatus.PENDING_VERIFICATION})
 
     def _is_contradictory_claim(self, distractor: str) -> bool:
         lowered = distractor.lower()
@@ -109,7 +113,7 @@ class QuizGenerator:
                                 "source_document_id": original.source_document_id,
                                 "source_section_id": original.source_section_id,
                                 "requirement_id": original.requirement_id,
-                                "grounding_status": original.grounding_status,
+                                "distractor_validation_status": DistractorValidationStatus.PENDING_VERIFICATION,
                             }
                         )
                     )
@@ -121,7 +125,5 @@ class QuizGenerator:
         validated: list[QuizQuestion] = []
         for quiz in quizzes:
             excerpt = excerpts.get((quiz.source_document_id, quiz.source_section_id))
-            if excerpt and excerpt.flagged:
-                quiz = quiz.model_copy(update={"grounding_status": GroundingStatus.INJECTION_FLAGGED})
             validated.append(self.distractors.validate(quiz, excerpt))
         return validated

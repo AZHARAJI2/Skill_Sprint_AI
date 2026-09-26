@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from schemas.common_schema import AssessmentType, DifficultyLevel, GroundingStatus
+from schemas.common_schema import AssessmentType, DifficultyLevel
 
 
 class RubricCriterion(BaseModel):
@@ -28,5 +28,4 @@ class Assessment(BaseModel):
     source_document_id: str
     source_section_id: str
     requirement_ids: list[str] = Field(min_length=1)
-    grounding_status: GroundingStatus = GroundingStatus.SOURCE_SUPPORTED
     pass_threshold: float = Field(gt=0, le=1, default=0.8)
