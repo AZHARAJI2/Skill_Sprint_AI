@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-09-27 03:57:38 UTC",
+  "model_used": "gemini-3.5-flash-lite",
+  "prompt_version": "onboarding_plan_v2",
+  "timings": {
+    "pipeline_1_genai_sec": 29.794767699997465,
+    "pipeline_2_validation_sec": 0.017887500005599577,
+    "phase_3_comparison_sec": 0.0004961999948136508,
+    "total_wall_clock_sec": 29.813151399997878
+  },
+  "scores": {
+    "coverage_score": 100.0,
+    "traceability_score": 100.0,
+    "consistency_score": 100.0,
+    "overall_status": "Contradiction Detected",
+    "missing_count": 0,
+    "contradiction_count": 6,
+    "unsupported_count": 0
+  },
+  "counts": {
+    "modules": 26,
+    "checklists": 39,
+    "tasks": 25,
+    "quizzes": 8,
+    "assessments": 4,
+    "comparisons": 178
+  }
+}

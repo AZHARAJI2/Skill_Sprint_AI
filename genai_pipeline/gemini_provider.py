@@ -60,7 +60,7 @@ class GeminiProvider(BaseGenAIProvider):
                 "response_mime_type": "application/json",
             }
             budget = cfg.thinking_budget if cfg.thinking_budget is not None else getattr(settings, "gemini_thinking_budget", None)
-            if budget is not None and hasattr(types, "ThinkingConfig"):
+            if budget is not None and budget > 0 and hasattr(types, "ThinkingConfig"):
                 try:
                     gen_config_kwargs["thinking_config"] = types.ThinkingConfig(thinking_budget=budget)
                 except Exception as ex:

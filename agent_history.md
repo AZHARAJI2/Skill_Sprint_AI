@@ -351,6 +351,26 @@
 
 
 
+### Entry 002 — 2026-09-27 07:10 | Agent: Staff Software Engineer / Review | Task: Live Gemini E2E Validation, Non-Thinking Model Fix & Parallelized Generation
+
+**Timestamp**: 2026-09-27 07:10  
+**Agent**: Staff Software Engineer (Cross-Phase Integration & Optimization)  
+**Member**: Azhar Raji AL-Herwi (review & verification)  
+**Task**: Live Gemini E2E validation with real API key, fix thinking_config for non-thinking models, parallelize stage generation, and audit Phase 3 findings  
+**Impact Area**: `genai_pipeline/gemini_provider.py`, `genai_pipeline/plan_generator.py`, `reports/live_gemini_phase3_run.json`, `AI_USAGE.md`, `agent_history.md`  
+**Rationale**: 
+1. Real key was tested against `gemini-3.5-flash-lite`. Discovered Google API throws 400 INVALID_ARGUMENT if `thinking_config(thinking_budget=0)` is passed to non-thinking models. Gated `thinking_config` to positive budgets only (`budget > 0`).
+2. Fixed checklist merge in `PlanGenerator` to preserve ground-truth `required_or_optional` status from the matrix, preventing schema validation failures on model output variations.
+3. Switched sequential 3-stage-group loop and 4 enrichment passes to concurrent parallel execution via `ThreadPoolExecutor`, reducing total live generation + Phase 3 validation time from 67.11s down to 29.81s (NFR-1 compliant < 30s target).
+4. Conducted read-only audit on Plan ID 2 contradictions (`CP-05` and `CP-07`), confirming correct policy precedence application and identifying architectural gaps in Employee visibility gate and Phase 4 Reviewer queue.
+
+**Status**: Completed
+
+**Verified Metrics & Outcomes**:
+- **Live Latency**: 29.81s total wall-clock time (29.79s live Gemini generation + 0.0179s Phase 3 validation pipeline + 0.0005s comparison engine). Meets NFR-1 (< 30s).
+- **Phase 3 Validation**: 100.0% coverage score, 100.0% traceability score, 100.0% consistency score, 6 contradictions detected and precedence applied, 0 missing mandatory requirements.
+- **Test Suite**: 39 passed in 10.72s (`pytest -q`, 0 failures, 0 regressions).
+
 ---
 
 ## Phase 4 Log

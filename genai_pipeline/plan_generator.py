@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 import json
 
 from config.logging_config import get_logger
@@ -72,7 +73,7 @@ class PlanGenerator:
         merged_groups: list[GeneratedPlan] = []
         failed_stage_groups: list[str] = []
 
-        for group_name, stages in self.STAGE_GROUPS:
+        def _generate_group(group_idx: int, group_name: str, stages: set[str]):
             stage_reqs = [r for r in assembled.classified_requirements if r.due_stage in stages]
             stage_modules = [m for m in assembled.modules if m.stage in stages]
             stage_checklists = [c for c in assembled.checklists if c.due_stage in stages]
@@ -82,7 +83,7 @@ class PlanGenerator:
             stage_covered_ids = [r.requirement_id for r in stage_reqs]
 
             if not stage_reqs and not stage_modules and not stage_checklists and not stage_tasks:
-                continue
+                return group_idx, group_name, None, None, None
 
             sub_stages = sorted(
                 list(
@@ -124,15 +125,33 @@ class PlanGenerator:
                     thinking_budget=getattr(settings, "gemini_thinking_budget", 0),
                 )
                 response = RetryManager(self.provider).run(prompt, schema=GeneratedPlan, config=cfg)
-                telemetry["model_used"] = response.model_name
-                telemetry["retry_count"] += response.retry_count
-                telemetry["response_time_ms"] += response.response_time_ms
                 model_plan = GeneratedPlan.model_validate(response.parsed)
                 group_merged = self._merge(sub_assembled, model_plan)
-                merged_groups.append(group_merged)
+                return group_idx, group_name, group_merged, response, None
             except AppError as exc:
                 if exc.status_code in {401, 403, 503}:
                     raise
+                failed_sub = self._mark_as_failed(sub_assembled)
+                return group_idx, group_name, failed_sub, None, exc
+
+        with ThreadPoolExecutor(max_workers=len(self.STAGE_GROUPS)) as executor:
+            futures = [
+                executor.submit(_generate_group, idx, name, stgs)
+                for idx, (name, stgs) in enumerate(self.STAGE_GROUPS)
+            ]
+            group_results = [f.result() for f in futures]
+
+        group_results.sort(key=lambda x: x[0])
+
+        for _, group_name, group_plan, resp, exc in group_results:
+            if group_plan is None:
+                continue
+            merged_groups.append(group_plan)
+            if resp is not None:
+                telemetry["model_used"] = resp.model_name
+                telemetry["retry_count"] += resp.retry_count
+                telemetry["response_time_ms"] += resp.response_time_ms
+            elif exc is not None:
                 telemetry["recovered_from_assembler"] = True
                 telemetry["model_used"] = getattr(self.provider, "model", None) or getattr(
                     self.provider, "model_name", "unknown"
@@ -144,8 +163,6 @@ class PlanGenerator:
                 })
                 logger.error("stage_group_generation_failed group=%s error=%s", group_name, exc)
                 failed_stage_groups.append(group_name)
-                failed_sub = self._mark_as_failed(sub_assembled)
-                merged_groups.append(failed_sub)
 
         # Pure Python merge across all stage groups
         all_modules = []
@@ -199,12 +216,23 @@ class PlanGenerator:
         )
 
         if enrich and not failed_stage_groups and not telemetry["recovered_from_assembler"]:
+            with ThreadPoolExecutor(max_workers=4) as executor:
+                fut_modules = executor.submit(self.modules.enrich, plan, source_chunks_block)
+                fut_quizzes = executor.submit(self.quizzes.enrich, plan, source_chunks_block, excerpts or {})
+                fut_assessments = executor.submit(self.assessments.enrich, plan, source_chunks_block)
+                fut_tasks = executor.submit(self.scenarios.enrich, plan, source_chunks_block)
+
+                enriched_modules = fut_modules.result()
+                enriched_quizzes = fut_quizzes.result()
+                enriched_assessments = fut_assessments.result()
+                enriched_tasks = fut_tasks.result()
+
             plan = plan.model_copy(
                 update={
-                    "modules": self.modules.enrich(plan, source_chunks_block),
-                    "quizzes": self.quizzes.enrich(plan, source_chunks_block, excerpts or {}),
-                    "assessments": self.assessments.enrich(plan, source_chunks_block),
-                    "tasks": self.scenarios.enrich(plan, source_chunks_block),
+                    "modules": enriched_modules,
+                    "quizzes": enriched_quizzes,
+                    "assessments": enriched_assessments,
+                    "tasks": enriched_tasks,
                 }
             )
 
@@ -364,6 +392,7 @@ class PlanGenerator:
                         "requirement_id": item.requirement_id,
                         "due_stage": item.due_stage,
                         "responsible_person": item.responsible_person,
+                        "required_or_optional": item.required_or_optional,
                     }
                 )
                 if other
