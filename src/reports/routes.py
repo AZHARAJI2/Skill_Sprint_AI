@@ -28,7 +28,7 @@ def reports_page(
     type: str = "progress",
     plan_id: int | None = None,
     session: Session = Depends(get_session),
-    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer", "Manager")),
+    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer", "Manager", "Employee")),
 ) -> HTMLResponse:
     """Render the reports overview page with tabular data and optional chart."""
     report_type = type if type in _VALID_TYPES else "progress"
@@ -52,7 +52,7 @@ def reports_page(
 def export_csv(
     type: str = "progress",
     session: Session = Depends(get_session),
-    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer", "Manager")),
+    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer", "Manager", "Employee")),
 ) -> Response:
     """Download report as CSV.
 
@@ -74,7 +74,7 @@ def export_csv(
 def export_pdf(
     type: str = "progress",
     session: Session = Depends(get_session),
-    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer", "Manager")),
+    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer", "Manager", "Employee")),
 ) -> Response:
     """Download report as PDF (ReportLab).
 
@@ -96,7 +96,7 @@ def export_pdf(
 def export_excel(
     type: str = "progress",
     session: Session = Depends(get_session),
-    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer", "Manager")),
+    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer", "Manager", "Employee")),
 ) -> Response:
     """Download report as Excel (.xlsx).
 

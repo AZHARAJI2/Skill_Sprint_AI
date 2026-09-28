@@ -18,7 +18,7 @@
   {% if plan %}
   <div class="page-header-actions">
     <a href="/plans/{{ plan.id }}" class="btn btn-teal btn-sm">
-      <i class="bi bi-journal-text"></i>View Full Plan
+      <i class="bi bi-journal-text me-1"></i>View Full Plan
     </a>
   </div>
   {% endif %}
@@ -109,31 +109,53 @@
   <div class="col-md-8">
     <div class="card animate-fade">
       <div class="card-header d-flex align-items-center justify-content-between">
-        <span><i class="bi bi-journal-text"></i>Onboarding Plan</span>
+        <span><i class="bi bi-journal-text me-2" style="color:var(--teal)"></i>Onboarding Plan</span>
         {% if plan %}
         <div class="d-flex align-items-center gap-2">
           <span class="badge badge-navy">Plan #{{ plan.id }}</span>
-          <a href="/plans/{{ plan.id }}" class="btn btn-outline btn-sm"><i class="bi bi-arrows-fullscreen"></i>Full View</a>
+          <a href="/plans/{{ plan.id }}" class="btn btn-outline btn-sm"><i class="bi bi-arrows-fullscreen me-1"></i>Full View</a>
         </div>
         {% endif %}
       </div>
       <div class="card-body p-0">
         {% if plan and plan_detail %}
         <ul class="nav nav-tabs px-3 pt-2" id="planTab" role="tablist">
-          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabModules"><i class="bi bi-collection me-1"></i>Modules</button></li>
-          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabTasks"><i class="bi bi-check2-square me-1"></i>Tasks</button></li>
-          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabChecklist"><i class="bi bi-list-check me-1"></i>Checklist</button></li>
-          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabQuiz"><i class="bi bi-patch-question me-1"></i>Quizzes</button></li>
+          <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabModules">
+              <i class="bi bi-collection me-1"></i>Modules ({{ plan_detail.modules|length }})
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabTasks">
+              <i class="bi bi-check2-square me-1"></i>Tasks ({{ plan_detail.tasks|length }})
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabChecklist">
+              <i class="bi bi-list-check me-1"></i>Checklist ({{ plan_detail.checklists|length }})
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabQuiz">
+              <i class="bi bi-patch-question me-1"></i>Quizzes ({{ plan_detail.quizzes|length }})
+            </button>
+          </li>
         </ul>
-        <div class="tab-content px-3 pb-3 pt-1">
+        <div class="tab-content px-3 pb-3 pt-2">
           <!-- Modules -->
           <div class="tab-pane fade show active" id="tabModules">
-            {% for m in plan_detail.modules[:10] %}
+            {% for m in plan_detail.modules %}
             <div class="plan-item">
               <div class="plan-item-icon navy"><i class="bi bi-collection"></i></div>
               <div class="flex-grow-1">
                 <div class="plan-item-title">{{ m.title }}</div>
-                <div class="plan-item-sub">{{ m.purpose[:100] }}{% if m.purpose|length > 100 %}…{% endif %}</div>
+                <div class="plan-item-sub">{{ m.purpose }}</div>
+                <div class="d-flex align-items-center gap-2 mt-1">
+                  <code style="font-size:0.72rem;color:var(--teal)">{{ m.source_document_id }} §{{ m.source_section_id }}</code>
+                  {% if m.duration_minutes %}
+                  <span style="font-size:0.72rem;color:var(--text-muted)"><i class="bi bi-clock me-1"></i>{{ m.duration_minutes }}m</span>
+                  {% endif %}
+                </div>
               </div>
               <div class="d-flex flex-column align-items-end gap-1">
                 <span class="badge badge-navy" style="font-size:0.7rem;">{{ m.stage }}</span>
@@ -145,28 +167,57 @@
             {% endfor %}
           </div>
 
-          <!-- Tasks -->
+          <!-- Tasks & Assignments (التكاليف / المهام) -->
           <div class="tab-pane fade" id="tabTasks">
-            {% for t in plan_detail.tasks[:10] %}
-            <div class="plan-item">
-              <div class="plan-item-icon teal"><i class="bi bi-arrow-right-circle"></i></div>
-              <div class="flex-grow-1">
-                <div class="plan-item-title">{{ t.description[:90] }}{% if t.description|length > 90 %}…{% endif %}</div>
-                <div class="plan-item-sub">Due: {{ t.due_stage }} · {{ t.difficulty }}</div>
+            <div class="d-flex align-items-center justify-content-between mb-3 pt-2">
+              <span style="font-size:0.85rem;font-weight:700;color:var(--navy);">
+                <i class="bi bi-list-task me-1" style="color:var(--teal)"></i>Role-Specific Practical Assignments &amp; Tasks (التكليفات والمهام العملية)
+              </span>
+              <span class="badge badge-navy">{{ plan_detail.tasks|length }} Total Tasks</span>
+            </div>
+
+            {% for t in plan_detail.tasks %}
+            <div class="task-item-card">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge badge-navy" style="font-family:monospace;font-size:0.75rem;">{{ t.task_id }}</span>
+                  <span class="badge badge-teal">{{ t.due_stage }}</span>
+                  <span class="badge badge-muted">{{ t.difficulty }}</span>
+                  {% if t.is_scenario %}
+                  <span class="badge badge-warning"><i class="bi bi-diagram-3 me-1"></i>Scenario Task</span>
+                  {% endif %}
+                </div>
+                <code style="font-size:0.75rem;background:#F1F5F9;padding:0.2rem 0.5rem;border-radius:4px;color:var(--navy);">
+                  <i class="bi bi-file-earmark-text me-1"></i>{{ t.source_document_id }} §{{ t.source_section_id }}
+                </code>
+              </div>
+
+              <div class="task-item-desc">{{ t.description }}</div>
+
+              <div class="task-meta-grid">
+                <div>
+                  <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.04em;">Expected Outcome</div>
+                  <div style="color:var(--navy);font-weight:500;margin-top:0.15rem;">{{ t.expected_outcome }}</div>
+                </div>
+                <div>
+                  <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.04em;">Completion Criteria</div>
+                  <div style="color:var(--teal);font-weight:500;margin-top:0.15rem;">{{ t.completion_criteria }}</div>
+                </div>
               </div>
             </div>
             {% else %}
-            <div class="empty-state"><div class="empty-icon"><i class="bi bi-check2-square"></i></div><p>No tasks in this plan yet.</p></div>
+            <div class="empty-state"><div class="empty-icon"><i class="bi bi-check2-square"></i></div><p>No tasks or assignments found in this plan.</p></div>
             {% endfor %}
           </div>
 
           <!-- Checklist -->
           <div class="tab-pane fade" id="tabChecklist">
-            {% for c in plan_detail.checklists[:15] %}
+            {% for c in plan_detail.checklists %}
             <div class="plan-item">
               <div class="plan-item-icon success"><i class="bi bi-check-circle"></i></div>
               <div class="flex-grow-1">
                 <div class="plan-item-title" style="font-size:0.85rem;">{{ c.activity }}</div>
+                <div class="plan-item-sub">Stage: {{ c.due_stage }} · Responsible: {{ c.responsible_person }}</div>
               </div>
               <span class="badge {{ 'badge-danger' if c.required_or_optional == 'required' else 'badge-muted' }}">
                 {{ c.required_or_optional }}
@@ -177,17 +228,91 @@
             {% endfor %}
           </div>
 
-          <!-- Quizzes -->
+          <!-- Quizzes (الكوزات التفاعلية) -->
           <div class="tab-pane fade" id="tabQuiz">
-            {% for q in plan_detail.quizzes[:8] %}
-            <div class="plan-item">
-              <div class="plan-item-icon warning"><i class="bi bi-question-circle"></i></div>
-              <div class="flex-grow-1">
-                <div class="plan-item-title" style="font-size:0.85rem;">{{ q.question_text[:120] }}{% if q.question_text|length > 120 %}…{% endif %}</div>
-                <div class="plan-item-sub d-flex gap-2 mt-1">
-                  <span class="badge badge-navy">{{ q.question_type }}</span>
+            <!-- Quiz Control Header Bar -->
+            <div class="quiz-header-bar d-flex align-items-center justify-content-between flex-wrap gap-3 mt-2">
+              <div>
+                <div style="font-weight:700;color:var(--navy);font-size:0.95rem;">
+                  <i class="bi bi-patch-question-fill me-1" style="color:var(--teal)"></i>Interactive Knowledge Check
+                </div>
+                <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:0.15rem;">
+                  Test your understanding · <strong style="color:var(--navy)">Passing Score: ≥ {{ passing_score or 70 }}%</strong>
+                  <span class="text-muted ms-1">(وفق معايير PROJECT_MAP.md)</span>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                  <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);">Current Score</div>
+                  <div style="font-size:1.15rem;font-weight:800;color:var(--navy);">
+                    <span id="quiz-correct-count">0</span> / <span id="quiz-total-count">{{ plan_detail.quizzes|length }}</span>
+                    <span id="quiz-score-pct" style="font-size:0.9rem;color:var(--teal);margin-left:0.25rem;">(0%)</span>
+                  </div>
+                </div>
+
+                <div id="quiz-status-badge" class="badge badge-muted px-3 py-2" style="font-size:0.8rem;">
+                  Not Started
+                </div>
+
+                <button type="button" id="quiz-reset-btn" class="btn btn-outline btn-sm" title="Reset all answers">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                </button>
+              </div>
+            </div>
+
+            <!-- Quiz Completion Banner (Dynamic) -->
+            <div id="quiz-completion-banner" class="alert d-none mb-3 animate-fade" role="alert">
+              <div class="d-flex align-items-center gap-2">
+                <i id="quiz-banner-icon" class="bi" style="font-size:1.3rem;"></i>
+                <div>
+                  <div id="quiz-banner-title" style="font-weight:700;font-size:0.92rem;"></div>
+                  <div id="quiz-banner-text" style="font-size:0.82rem;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Questions List -->
+            {% for q in plan_detail.quizzes %}
+            {% set q_idx = loop.index0 %}
+            <div class="quiz-card" id="quiz-q-card-{{ q_idx }}" data-qid="{{ q.question_id }}">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge badge-navy">Q{{ loop.index }}</span>
+                  <span class="badge badge-teal">{{ q.question_type }}</span>
                   <span class="badge badge-muted">{{ q.difficulty }}</span>
                 </div>
+                <code style="font-size:0.75rem;background:#F1F5F9;padding:0.2rem 0.5rem;border-radius:4px;color:var(--navy);">
+                  <i class="bi bi-book me-1"></i>{{ q.source_document_id }} §{{ q.source_section_id }}
+                </code>
+              </div>
+
+              <div class="quiz-q-text">{{ q.question_text }}</div>
+
+              <!-- Options List -->
+              <div class="quiz-options-list" id="opts-q-{{ q_idx }}">
+                {% for opt in q.options %}
+                <button type="button"
+                        class="quiz-option-btn"
+                        data-qidx="{{ q_idx }}"
+                        data-oidx="{{ loop.index0 }}"
+                        data-optval="{{ opt }}">
+                  <span class="quiz-opt-letter" style="width:24px;height:24px;border-radius:50%;background:#F1F5F9;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--navy);flex-shrink:0;">
+                    {{ 'ABCD'[loop.index0] if loop.index0 < 4 else (loop.index0 + 1) }}
+                  </span>
+                  <span class="quiz-opt-text flex-grow-1">{{ opt }}</span>
+                  <i class="bi quiz-opt-icon d-none" style="font-size:1.1rem;"></i>
+                </button>
+                {% endfor %}
+              </div>
+
+              <!-- Explanation Box (Initially Hidden) -->
+              <div class="quiz-explanation-box d-none" id="expl-q-{{ q_idx }}">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <i class="bi bi-info-circle-fill"></i>
+                  <strong class="expl-verdict"></strong>
+                </div>
+                <div class="expl-text">{{ q.explanation }}</div>
               </div>
             </div>
             {% else %}
@@ -208,7 +333,7 @@
   <!-- Sidebar: Recommendations + Weak Areas -->
   <div class="col-md-4">
     <div class="card animate-fade mb-3">
-      <div class="card-header"><i class="bi bi-lightbulb"></i>Adaptive Recommendations</div>
+      <div class="card-header"><i class="bi bi-lightbulb me-2" style="color:var(--teal)"></i>Adaptive Recommendations</div>
       <div class="card-body">
         {% if recommendations %}
           {% for rec in recommendations %}
@@ -223,7 +348,7 @@
           {% endfor %}
         {% else %}
         <p style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:1rem 0;">
-          <i class="bi bi-lightbulb" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>
+          <i class="bi bi-lightbulb" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;color:var(--teal)"></i>
           Complete some modules to get personalized suggestions.
         </p>
         {% endif %}
@@ -232,7 +357,7 @@
 
     {% if weak_areas %}
     <div class="card animate-fade">
-      <div class="card-header"><i class="bi bi-graph-down-arrow"></i>Areas to Improve</div>
+      <div class="card-header"><i class="bi bi-graph-down-arrow me-2" style="color:var(--teal)"></i>Areas to Improve</div>
       <div class="card-body">
         {% for area in weak_areas %}
         <div class="mb-3">
@@ -251,7 +376,7 @@
     <div class="card animate-fade">
       <div class="card-body">
         <div class="empty-state" style="padding:1.5rem 1rem;">
-          <div class="empty-icon" style="font-size:2rem;"><i class="bi bi-trophy"></i></div>
+          <div class="empty-icon" style="font-size:2rem;"><i class="bi bi-trophy" style="color:var(--teal)"></i></div>
           <p><strong>Great job!</strong><br>No weak areas identified yet.</p>
         </div>
       </div>
@@ -259,5 +384,221 @@
     {% endif %}
   </div>
 </div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if plan and plan_detail and plan_detail.quizzes %}
+<script>
+(function() {
+  const QUIZ_DATA = [
+    {% for q in plan_detail.quizzes %}
+    {
+      question_id: {{ q.question_id | tojson }},
+      correct_answer: {{ q.correct_answer | tojson }},
+      explanation: {{ q.explanation | tojson }},
+      question_type: {{ q.question_type | tojson }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const PASSING_SCORE = {{ passing_score or 70 }};
+  const STORAGE_KEY = 'skillsprint_quiz_plan_{{ plan.id }}';
+
+  let userAnswers = {};
+
+  // Load persisted answers
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      userAnswers = JSON.parse(saved);
+    }
+  } catch (e) {
+    userAnswers = {};
+  }
+
+  function normalize(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).trim().toLowerCase();
+  }
+
+  function isAnswerCorrect(qData, selectedVal) {
+    const corr = qData.correct_answer;
+    if (Array.isArray(corr)) {
+      return corr.map(normalize).includes(normalize(selectedVal));
+    }
+    return normalize(corr) === normalize(selectedVal);
+  }
+
+  function updateScoreDisplay() {
+    const total = QUIZ_DATA.length;
+    const answeredCount = Object.keys(userAnswers).length;
+    let correctCount = 0;
+
+    Object.values(userAnswers).forEach(ans => {
+      if (ans.correct) correctCount++;
+    });
+
+    const pct = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+
+    const correctEl = document.getElementById('quiz-correct-count');
+    const scorePctEl = document.getElementById('quiz-score-pct');
+    const badgeEl = document.getElementById('quiz-status-badge');
+    const bannerEl = document.getElementById('quiz-completion-banner');
+    const bannerIcon = document.getElementById('quiz-banner-icon');
+    const bannerTitle = document.getElementById('quiz-banner-title');
+    const bannerText = document.getElementById('quiz-banner-text');
+
+    if (correctEl) correctEl.textContent = correctCount;
+    if (scorePctEl) scorePctEl.textContent = `(${pct}%)`;
+
+    if (answeredCount === 0) {
+      if (badgeEl) {
+        badgeEl.className = 'badge badge-muted px-3 py-2';
+        badgeEl.textContent = 'Not Started';
+      }
+      if (bannerEl) bannerEl.classList.add('d-none');
+    } else if (answeredCount < total) {
+      if (badgeEl) {
+        badgeEl.className = 'badge badge-teal px-3 py-2';
+        badgeEl.textContent = `In Progress (${answeredCount}/${total})`;
+      }
+      if (bannerEl) bannerEl.classList.add('d-none');
+    } else {
+      // Completed all questions
+      const passed = pct >= PASSING_SCORE;
+      if (badgeEl) {
+        badgeEl.className = passed ? 'badge badge-success px-3 py-2' : 'badge badge-danger px-3 py-2';
+        badgeEl.innerHTML = passed ? `<i class="bi bi-trophy-fill me-1"></i>Passed (${pct}%)` : `<i class="bi bi-exclamation-triangle-fill me-1"></i>Needs Review (${pct}%)`;
+      }
+      if (bannerEl && bannerIcon && bannerTitle && bannerText) {
+        bannerEl.classList.remove('d-none');
+        if (passed) {
+          bannerEl.className = 'alert alert-success mb-3 animate-fade d-block';
+          bannerIcon.className = 'bi bi-check-circle-fill text-success';
+          bannerTitle.textContent = `🎉 Congratulations! Quiz Passed (${pct}%)`;
+          bannerText.textContent = `You exceeded the minimum passing score of ${PASSING_SCORE}%. Your understanding of company policies and role requirements is confirmed!`;
+        } else {
+          bannerEl.className = 'alert alert-danger mb-3 animate-fade d-block';
+          bannerIcon.className = 'bi bi-exclamation-octagon-fill text-danger';
+          bannerTitle.textContent = `⚠️ Passing Threshold Not Met (${pct}%)`;
+          bannerText.textContent = `Your score is ${pct}%, which is below the minimum required score of ${PASSING_SCORE}%. Review the source documents highlighted in the explanations below and click Reset to try again.`;
+        }
+      }
+    }
+  }
+
+  function applyAnswerUI(qidx, selectedVal, persist = true) {
+    const qData = QUIZ_DATA[qidx];
+    if (!qData) return;
+
+    const correct = isAnswerCorrect(qData, selectedVal);
+    if (persist) {
+      userAnswers[qidx] = { selected: selectedVal, correct: correct };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(userAnswers));
+      } catch (e) {}
+    }
+
+    const container = document.getElementById(`opts-q-${qidx}`);
+    if (!container) return;
+
+    const buttons = container.querySelectorAll('.quiz-option-btn');
+    buttons.forEach(btn => {
+      const btnVal = btn.dataset.optval;
+      const isThisSelected = normalize(btnVal) === normalize(selectedVal);
+      const isThisCorrect = isAnswerCorrect(qData, btnVal);
+      const icon = btn.querySelector('.quiz-opt-icon');
+
+      btn.classList.add('locked');
+
+      if (isThisSelected) {
+        if (correct) {
+          btn.classList.add('correct');
+          if (icon) {
+            icon.className = 'bi bi-check-circle-fill text-success quiz-opt-icon';
+            icon.classList.remove('d-none');
+          }
+        } else {
+          btn.classList.add('incorrect');
+          if (icon) {
+            icon.className = 'bi bi-x-circle-fill text-danger quiz-opt-icon';
+            icon.classList.remove('d-none');
+          }
+        }
+      } else if (!correct && isThisCorrect) {
+        // Highlight the correct answer in green so the user learns
+        btn.classList.add('correct');
+        if (icon) {
+          icon.className = 'bi bi-check-circle-fill text-success quiz-opt-icon';
+          icon.classList.remove('d-none');
+        }
+      }
+    });
+
+    // Show explanation
+    const explBox = document.getElementById(`expl-q-${qidx}`);
+    if (explBox) {
+      explBox.classList.remove('d-none');
+      explBox.className = correct ? 'quiz-explanation-box correct animate-fade' : 'quiz-explanation-box incorrect animate-fade';
+      const verdict = explBox.querySelector('.expl-verdict');
+      if (verdict) {
+        verdict.textContent = correct ? '✓ Correct Answer! (إجابة صحيحة)' : '✗ Incorrect (إجابة غير صحيحة - راجع الشرح والمصدر أدناه)';
+      }
+    }
+  }
+
+  // Restore saved state
+  Object.keys(userAnswers).forEach(qidx => {
+    const ans = userAnswers[qidx];
+    if (ans && ans.selected !== undefined) {
+      applyAnswerUI(parseInt(qidx), ans.selected, false);
+    }
+  });
+  updateScoreDisplay();
+
+  // Attach click listeners to option buttons
+  document.querySelectorAll('.quiz-option-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const qidx = parseInt(this.dataset.qidx);
+      if (userAnswers[qidx] !== undefined) {
+        return; // Question already answered
+      }
+      const selectedVal = this.dataset.optval;
+      applyAnswerUI(qidx, selectedVal, true);
+      updateScoreDisplay();
+    });
+  });
+
+  // Reset button
+  const resetBtn = document.getElementById('quiz-reset-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+      if (confirm('Do you want to reset all quiz answers and retake the test?')) {
+        userAnswers = {};
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch (e) {}
+
+        // Reset UI
+        document.querySelectorAll('.quiz-option-btn').forEach(btn => {
+          btn.classList.remove('correct', 'incorrect', 'selected', 'locked');
+          const icon = btn.querySelector('.quiz-opt-icon');
+          if (icon) icon.classList.add('d-none');
+        });
+
+        document.querySelectorAll('.quiz-explanation-box').forEach(box => {
+          box.classList.add('d-none');
+        });
+
+        const banner = document.getElementById('quiz-completion-banner');
+        if (banner) banner.classList.add('d-none');
+
+        updateScoreDisplay();
+      }
+    });
+  }
+})();
+</script>
 {% endif %}
 {% endblock %}

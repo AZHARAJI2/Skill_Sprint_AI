@@ -68,19 +68,34 @@ def dashboard_router(request: Request, user: User = Depends(get_current_user)) -
 @router.get("/dashboard/employee", response_class=HTMLResponse)
 def employee_dashboard(
     request: Request,
+    employee_id: int | None = None,
     session: Session = Depends(get_session),
-    user: User = Depends(require_role("Employee", "Admin", "Manager")),
+    user: User = Depends(require_role("Employee", "Admin", "Manager", "Training Manager")),
 ) -> HTMLResponse:
     """Employee dashboard with real progress, recommendations, and weak areas (Tasks 50, 53-56)."""
     svc = DashboardService(session)
-    employee = None
-    if user.employee_id:
-        employee = EmployeeService(session).get(user.employee_id)
 
-    progress = svc.employee_progress(user.employee_id) if user.employee_id else None
-    plan = svc.get_latest_plan(user.employee_id) if user.employee_id else None
-    recommendations = svc.adaptive_recommendations(user.employee_id) if user.employee_id else []
-    weak_areas = svc.weak_areas(user.employee_id) if user.employee_id else []
+    # Determine target employee ID
+    target_emp_id = user.employee_id
+    if user.app_role in ("Admin", "Manager", "Training Manager", "Reviewer") and employee_id:
+        target_emp_id = employee_id
+    elif not target_emp_id and user.app_role in ("Admin", "Manager", "Training Manager", "Reviewer"):
+        first_plan = session.query(OnboardingPlan).first()
+        if first_plan:
+            target_emp_id = first_plan.employee_id
+        else:
+            first_emp = EmployeeService(session).list_employees()
+            if first_emp:
+                target_emp_id = first_emp[0].id
+
+    employee = None
+    if target_emp_id:
+        employee = EmployeeService(session).get(target_emp_id)
+
+    progress = svc.employee_progress(target_emp_id) if target_emp_id else None
+    plan = svc.get_latest_plan(target_emp_id) if target_emp_id else None
+    recommendations = svc.adaptive_recommendations(target_emp_id) if target_emp_id else []
+    weak_areas = svc.weak_areas(target_emp_id) if target_emp_id else []
 
     # Parse structured_json for the tab panels
     plan_detail = None
@@ -102,6 +117,7 @@ def employee_dashboard(
             "plan_detail": plan_detail,
             "recommendations": [{"type": r.type, "message": r.message, "priority": r.priority} for r in recommendations],
             "weak_areas": [{"topic": w.topic, "score": w.score} for w in weak_areas],
+            "passing_score": 70,
         },
     )
 

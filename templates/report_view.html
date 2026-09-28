@@ -1,69 +1,106 @@
 {% extends "base.html" %}
-{% block title %}Reports — SkillSprint AI{% endblock %}
+{% block title %}Reports &amp; Export — SkillSprint AI{% endblock %}
 {% block content %}
+
+<!-- Page Header -->
 <div class="page-header animate-fade">
-  <h1><i class="bi bi-bar-chart me-2"></i>Reports &amp; Export</h1>
-  <div class="subtitle">Employee progress, coverage, hallucinations, traceability, and comparison reports</div>
+  <div>
+    <h1><i class="bi bi-bar-chart-line-fill me-2" style="color:var(--teal)"></i>Reports &amp; Export</h1>
+    <div class="subtitle">Comprehensive analytical reporting across employees, roles, compliance, and audit logs</div>
+  </div>
+  <div class="page-header-actions">
+    <span class="badge badge-navy px-3 py-2" style="font-size:0.82rem;">
+      <i class="bi bi-calendar3 me-1"></i>Live Data Engine
+    </span>
+  </div>
 </div>
 
 <div class="row g-4">
-  <!-- Report types -->
-  <div class="col-md-4">
-    <div class="card animate-fade">
-      <div class="card-header"><i class="bi bi-list-ul me-2"></i>Report Types</div>
-      <div class="card-body d-flex flex-column gap-2">
+  <!-- Left Column: Report Selection & Export -->
+  <div class="col-lg-4 col-md-5">
+    <!-- Report Types Card -->
+    <div class="card animate-fade mb-3">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <span><i class="bi bi-grid-fill me-2" style="color:var(--teal)"></i>Report Types</span>
+        <span class="badge badge-teal">6 Available</span>
+      </div>
+      <div class="card-body p-2 d-flex flex-column gap-2">
         {% set reports_menu = [
-          ('progress', 'bi-person-check', 'Employee Progress', 'badge-info'),
-          ('coverage', 'bi-shield-check', 'Role Coverage', 'badge-verified'),
-          ('hallucination', 'bi-exclamation-triangle', 'Hallucination Flags', 'badge-danger'),
-          ('traceability', 'bi-link-45deg', 'Source Traceability', 'badge-pending'),
-          ('comparison', 'bi-arrow-left-right', 'GenAI/Python Comparison', 'badge-warning'),
-          ('audit', 'bi-journal-text', 'Audit Trail', 'badge-muted'),
+          ('progress', 'bi-person-lines-fill', 'Employee Progress', 'Overall training completion & progress', 'badge-teal'),
+          ('coverage', 'bi-shield-check', 'Role Coverage', 'Mandatory role matrix compliance', 'badge-navy'),
+          ('hallucination', 'bi-shield-exclamation', 'Hallucination Flags', 'Unsupported content & injection warnings', 'badge-danger'),
+          ('traceability', 'bi-link-45deg', 'Source Traceability', 'Citation scores tied to parsed corpus', 'badge-info'),
+          ('comparison', 'bi-arrow-left-right', 'GenAI / Python Audit', 'Benchmark alignment against ground truth', 'badge-warning'),
+          ('audit', 'bi-journal-text', 'System Audit Trail', 'User actions & tamper-evident logs', 'badge-muted'),
         ] %}
-        {% for key, icon, label, badge in reports_menu %}
-        <a id="report-{{ key }}-btn" href="/reports?type={{ key }}" class="btn btn-outline-light text-start d-flex align-items-center gap-2">
-          <i class="bi {{ icon }}" style="font-size:1.1rem"></i>
-          <span>{{ label }}</span>
-          <span class="badge {{ badge }} ms-auto">{{ key }}</span>
+
+        {% for key, icon, label, desc, badge_cls in reports_menu %}
+        <a id="report-{{ key }}-btn" href="/reports?type={{ key }}"
+           class="report-nav-item {% if report_type == key %}active{% endif %}">
+          <div class="report-icon-box {% if report_type == key %}active{% endif %}">
+            <i class="bi {{ icon }}"></i>
+          </div>
+          <div class="flex-grow-1 text-truncate">
+            <div class="report-nav-title">{{ label }}</div>
+            <div class="report-nav-desc">{{ desc }}</div>
+          </div>
+          <i class="bi bi-chevron-right report-chevron"></i>
         </a>
         {% endfor %}
       </div>
     </div>
 
-    <div class="card animate-fade mt-3">
-      <div class="card-header"><i class="bi bi-download me-2"></i>Export</div>
+    <!-- Export Card -->
+    <div class="card animate-fade">
+      <div class="card-header">
+        <i class="bi bi-cloud-arrow-down-fill me-2" style="color:var(--teal)"></i>Export Active Dataset
+      </div>
       <div class="card-body">
-        <p class="text-muted mb-3" style="font-size:0.85rem">Select a report type and export format:</p>
-        <div class="d-flex gap-2 flex-wrap">
-          <a id="export-csv-btn" href="/reports/export/csv?type={{ report_type or 'progress' }}" class="btn btn-success btn-sm flex-grow-1">
-            <i class="bi bi-filetype-csv me-1"></i>CSV
+        <p class="text-secondary mb-3" style="font-size:0.83rem">
+          Download the active <strong style="color:var(--navy)">{{ report_title }}</strong> dataset in your preferred format:
+        </p>
+        <div class="d-grid gap-2">
+          <a id="export-csv-btn" href="/reports/export/csv?type={{ report_type or 'progress' }}" class="btn btn-teal btn-sm text-start d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-filetype-csv me-2"></i>Export as CSV (.csv)</span>
+            <i class="bi bi-download"></i>
           </a>
-          <a id="export-pdf-btn" href="/reports/export/pdf?type={{ report_type or 'progress' }}" class="btn btn-danger btn-sm flex-grow-1">
-            <i class="bi bi-filetype-pdf me-1"></i>PDF
+          <a id="export-excel-btn" href="/reports/export/excel?type={{ report_type or 'progress' }}" class="btn btn-primary btn-sm text-start d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-filetype-xlsx me-2"></i>Export as Excel (.xlsx)</span>
+            <i class="bi bi-download"></i>
           </a>
-          <a id="export-excel-btn" href="/reports/export/excel?type={{ report_type or 'progress' }}" class="btn btn-primary btn-sm flex-grow-1">
-            <i class="bi bi-filetype-xlsx me-1"></i>Excel
+          <a id="export-pdf-btn" href="/reports/export/pdf?type={{ report_type or 'progress' }}" class="btn btn-danger btn-sm text-start d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-filetype-pdf me-2"></i>Export as PDF Report (.pdf)</span>
+            <i class="bi bi-download"></i>
           </a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Report content -->
-  <div class="col-md-8">
+  <!-- Right Column: Table & Visualization -->
+  <div class="col-lg-8 col-md-7">
+    <!-- Report Table Card -->
     <div class="card animate-fade">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <span><i class="bi bi-table me-2"></i>{{ report_title }}</span>
-        <span class="badge badge-info">{{ rows|length if rows else 0 }} rows</span>
+      <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-table" style="color:var(--teal)"></i>
+          <span style="font-weight:700">{{ report_title }}</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge badge-navy">{{ rows|length if rows else 0 }} records</span>
+          <span class="badge badge-teal">{{ report_type.title() }}</span>
+        </div>
       </div>
       <div class="card-body p-0">
         {% if rows %}
-        <div class="table-responsive" style="max-height:600px;overflow-y:auto">
-          <table class="table mb-0">
-            <thead>
+        <div class="table-responsive" style="max-height:480px;overflow-y:auto">
+          <table class="table mb-0 align-middle">
+            <thead style="position:sticky;top:0;background:#F8FAFC;z-index:2;box-shadow:0 1px 2px rgba(0,0,0,0.05)">
               <tr>
                 {% for col in columns %}
-                <th>{{ col }}</th>
+                <th style="font-size:0.76rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-secondary);padding:0.75rem 1rem;">
+                  {{ col }}
+                </th>
                 {% endfor %}
               </tr>
             </thead>
@@ -71,20 +108,22 @@
             {% for row in rows %}
             <tr>
               {% for col in columns %}
-              <td style="font-size:0.82rem">
+              <td style="font-size:0.83rem;padding:0.65rem 1rem;">
                 {% set val = row.get(col, '') %}
                 {% if val is none or val == '' %}
-                <span class="text-muted">—</span>
-                {% elif val in ('Verified', 'Match', 'passed', 'completed') %}
-                <span class="badge badge-verified">{{ val }}</span>
-                {% elif val in ('Manual Review Required', 'Contradiction Detected', 'Mismatch', 'failed') %}
-                <span class="badge badge-danger">{{ val }}</span>
-                {% elif val in ('Partially Verified', 'pending_verification', 'in_progress') %}
-                <span class="badge badge-warning">{{ val }}</span>
-                {% elif val | string | length > 80 %}
-                {{ val | string | truncate(80) }}
+                <span style="color:var(--text-muted)">—</span>
+                {% elif val in ('Verified', 'Match', 'passed', 'completed', 'Clean / Verified', 'Fully Verified') %}
+                <span class="badge badge-success"><i class="bi bi-check-circle me-1"></i>{{ val }}</span>
+                {% elif val in ('Manual Review Required', 'Contradiction Detected', 'Mismatch', 'failed', 'Source Support Missing', 'Unsupported Requirement') %}
+                <span class="badge badge-danger"><i class="bi bi-exclamation-triangle me-1"></i>{{ val }}</span>
+                {% elif val in ('Partially Verified', 'pending_verification', 'in_progress', 'Requires Attention', 'Behind Schedule') %}
+                <span class="badge badge-warning"><i class="bi bi-clock me-1"></i>{{ val }}</span>
+                {% elif val is number and ('Score' in col or '%' in col) %}
+                <strong style="color:{{ 'var(--accent-success)' if val >= 70 else ('var(--accent-warning)' if val >= 50 else 'var(--accent-danger)') }}">{{ val }}%</strong>
+                {% elif val | string | length > 75 %}
+                <span title="{{ val }}">{{ val | string | truncate(75) }}</span>
                 {% else %}
-                {{ val }}
+                <span style="color:var(--text-primary)">{{ val }}</span>
                 {% endif %}
               </td>
               {% endfor %}
@@ -96,17 +135,24 @@
         {% else %}
         <div class="empty-state py-5">
           <div class="empty-icon"><i class="bi bi-bar-chart-line"></i></div>
-          <p>Select a report type from the left panel to view data.</p>
+          <p><strong>No data available for this report.</strong><br>Select another report type or run plan generation to populate data.</p>
         </div>
         {% endif %}
       </div>
     </div>
 
+    <!-- Chart Visualization Card -->
     {% if chart_json %}
     <div class="card animate-fade mt-4">
-      <div class="card-header"><i class="bi bi-graph-up me-2"></i>Visualization</div>
-      <div class="card-body">
-        <div id="report-chart" style="height:350px"></div>
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <div>
+          <i class="bi bi-graph-up me-2" style="color:var(--teal)"></i>
+          <span>Analytics &amp; Data Visualization</span>
+        </div>
+        <span class="badge badge-navy">Interactive Chart</span>
+      </div>
+      <div class="card-body" style="padding:1.25rem;">
+        <div id="report-chart" style="width:100%;height:360px;min-height:360px;"></div>
       </div>
     </div>
     {% endif %}
@@ -117,27 +163,70 @@
 {% block scripts %}
 {% if chart_json %}
 <script>
-const chartData = {{ chart_json | safe }};
-Plotly.newPlot('report-chart', chartData.traces, {
-  paper_bgcolor: 'transparent',
-  plot_bgcolor:  'transparent',
-  font: { family: 'Inter, sans-serif', color: '#8b949e', size: 11 },
-  xaxis: { gridcolor: 'rgba(255,255,255,0.06)', zerolinecolor: 'rgba(255,255,255,0.1)' },
-  yaxis: { gridcolor: 'rgba(255,255,255,0.06)', zerolinecolor: 'rgba(255,255,255,0.1)' },
-  margin: { t: 20, b: 40, l: 50, r: 20 },
-  ...chartData.layout
-}, { responsive: true, displayModeBar: false });
+(function() {
+  function renderChart() {
+    if (typeof Plotly === 'undefined' || !document.getElementById('report-chart')) {
+      setTimeout(renderChart, 50);
+      return;
+    }
+
+    try {
+      const chartData = {{ chart_json | safe }};
+      const layout = {
+        paper_bgcolor: 'transparent',
+        plot_bgcolor:  '#F8FAFC',
+        font: { family: 'Inter, sans-serif', color: '#1E3A5F', size: 11 },
+        xaxis: {
+          gridcolor: '#E2E8F0',
+          linecolor: '#CBD5E1',
+          tickfont: { color: '#475569', size: 10 }
+        },
+        yaxis: {
+          gridcolor: '#E2E8F0',
+          linecolor: '#CBD5E1',
+          tickfont: { color: '#475569', size: 10 }
+        },
+        margin: { t: 30, b: 50, l: 60, r: 25 },
+        ...chartData.layout
+      };
+
+      Plotly.newPlot('report-chart', chartData.traces, layout, {
+        responsive: true,
+        displayModeBar: false
+      });
+
+      window.addEventListener('resize', () => {
+        if (document.getElementById('report-chart')) {
+          Plotly.Plots.resize('report-chart');
+        }
+      });
+    } catch (err) {
+      console.error('Error rendering report chart:', err);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderChart);
+  } else {
+    renderChart();
+  }
+})();
 </script>
 {% endif %}
 
 <script>
-// Update export links when report type changes
+// Dynamic update of export URLs if changed client-side
 document.querySelectorAll('[id^="report-"]').forEach(link => {
   link.addEventListener('click', () => {
-    const type = new URL(link.href).searchParams.get('type');
-    document.getElementById('export-csv-btn').href   = `/reports/export/csv?type=${type}`;
-    document.getElementById('export-pdf-btn').href   = `/reports/export/pdf?type=${type}`;
-    document.getElementById('export-excel-btn').href = `/reports/export/excel?type=${type}`;
+    const type = new URL(link.href, window.location.origin).searchParams.get('type');
+    if (type) {
+      const csvBtn = document.getElementById('export-csv-btn');
+      const pdfBtn = document.getElementById('export-pdf-btn');
+      const xlsBtn = document.getElementById('export-excel-btn');
+      if (csvBtn) csvBtn.href = `/reports/export/csv?type=${type}`;
+      if (pdfBtn) pdfBtn.href = `/reports/export/pdf?type=${type}`;
+      if (xlsBtn) xlsBtn.href = `/reports/export/excel?type=${type}`;
+    }
   });
 });
 </script>

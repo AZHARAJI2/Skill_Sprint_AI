@@ -25,25 +25,25 @@
 {% if validation %}
 <div class="row g-3 mb-4 animate-fade">
   <div class="col-md-3">
-    <div class="stat-card {{ 'green' if validation.coverage_score >= 95 else ('amber' if validation.coverage_score >= 70 else 'red') }}">
+    <div class="stat-card {{ 'success' if validation.coverage_score >= 95 else ('warning' if validation.coverage_score >= 70 else 'danger') }}">
       <div class="stat-label">Coverage Score</div>
       <div class="stat-value">{{ validation.coverage_score | round(1) }}<span style="font-size:1rem">%</span></div>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="stat-card {{ 'green' if validation.traceability_score >= 95 else ('amber' if validation.traceability_score >= 70 else 'red') }}">
+    <div class="stat-card {{ 'success' if validation.traceability_score >= 95 else ('warning' if validation.traceability_score >= 70 else 'danger') }}">
       <div class="stat-label">Traceability</div>
       <div class="stat-value">{{ validation.traceability_score | round(1) }}<span style="font-size:1rem">%</span></div>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="stat-card {{ 'green' if validation.consistency_score >= 95 else ('amber' if validation.consistency_score >= 70 else 'red') }}">
+    <div class="stat-card {{ 'success' if validation.consistency_score >= 95 else ('warning' if validation.consistency_score >= 70 else 'danger') }}">
       <div class="stat-label">Consistency</div>
       <div class="stat-value">{{ validation.consistency_score | round(1) }}<span style="font-size:1rem">%</span></div>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="stat-card {{ 'green' if validation.overall_status == 'Verified' else ('amber' if validation.overall_status == 'Verified with Warnings' else 'red') }}">
+    <div class="stat-card {{ 'success' if validation.overall_status == 'Verified' else ('warning' if validation.overall_status == 'Verified with Warnings' else 'danger') }}">
       <div class="stat-label">Overall Status</div>
       <div class="stat-value" style="font-size:1.1rem">{{ validation.overall_status or '—' }}</div>
     </div>
@@ -142,9 +142,9 @@
     <div class="col-md-6">
       <div class="card h-100">
         <div class="card-header d-flex gap-2">
-          <span class="badge badge-pending">{{ q.question_type }}</span>
+          <span class="badge badge-teal">{{ q.question_type }}</span>
           <span class="badge badge-muted">{{ q.difficulty }}</span>
-          <span class="badge {{ 'badge-warning' if q.distractor_validation_status == 'pending_verification' else 'badge-verified' }} ms-auto">{{ q.distractor_validation_status }}</span>
+          <span class="badge {{ 'badge-warning' if q.distractor_validation_status == 'pending_verification' else 'badge-success' }} ms-auto">{{ q.distractor_validation_status }}</span>
         </div>
         <div class="card-body">
           <p style="font-size:0.875rem;font-weight:600">{{ q.question_text[:200] }}</p>

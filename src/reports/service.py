@@ -100,7 +100,7 @@ class ReportService:
             x=[r["Name"] for r in rows],
             y=[r["Coverage Score"] or 0 for r in rows],
             name="Coverage %",
-            color="#7c3aed",
+            color="#0F766E",
             title="Coverage Score by Employee",
         )
         return {"title": "Employee Progress Report", "columns": list(rows[0].keys()) if rows else [], "rows": rows, "chart_json": chart}
@@ -144,7 +144,7 @@ class ReportService:
             x=[r["Role"] for r in rows],
             y=[r["Coverage Score (%)"] for r in rows],
             name="Coverage %",
-            color="#059669",
+            color="#1E3A5F",
             title="Mandatory Coverage by Role",
         )
         return {"title": "Role Coverage Report", "columns": list(rows[0].keys()) if rows else [], "rows": rows, "chart_json": chart}
@@ -167,11 +167,30 @@ class ReportService:
                         "Details": (item.get("details") or "")[:150],
                         "Source References": ", ".join(item.get("source_references", []))[:100],
                     })
+
+        status_counts: dict[str, int] = {}
+        for r in rows:
+            st = r.get("Status") or "Flagged"
+            status_counts[st] = status_counts.get(st, 0) + 1
+
+        if status_counts:
+            chart = self._donut_chart(
+                list(status_counts.keys()),
+                list(status_counts.values()),
+                "Flagged Content by Status",
+            )
+        else:
+            chart = self._donut_chart(
+                ["Fully Verified"],
+                [100],
+                "Content Integrity (0 Hallucinations Detected)",
+            )
+
         return {
             "title": "Hallucination & Unsupported Content Report",
             "columns": ["Plan ID", "Item ID", "Item Type", "Status", "Details", "Source References"],
             "rows": rows,
-            "chart_json": None,
+            "chart_json": chart,
         }
 
     def _report_traceability(self) -> dict[str, Any]:
@@ -194,7 +213,7 @@ class ReportService:
             x=[f"Plan {r['Plan ID']}" for r in rows],
             y=[r["Traceability Score (%)"] for r in rows],
             name="Traceability %",
-            color="#2563eb",
+            color="#0284C7",
             title="Source Traceability Score by Plan",
         )
         return {"title": "Source Traceability Report", "columns": list(rows[0].keys()) if rows else [], "rows": rows, "chart_json": chart}
@@ -209,11 +228,22 @@ class ReportService:
             # Fallback: generate from matrix + latest reports
             rows = self._generate_comparison_rows()
 
+        match_counts: dict[str, int] = {}
+        for r in rows:
+            m = r.get("Match") or "Match"
+            match_counts[m] = match_counts.get(m, 0) + 1
+
+        chart = self._donut_chart(
+            list(match_counts.keys()) or ["Match"],
+            list(match_counts.values()) or [1],
+            "GenAI vs Python Alignment",
+        )
+
         return {
             "title": "GenAI/Python Comparison Report",
             "columns": ["Requirement ID", "Python Expected", "GenAI Result", "Match", "Source", "Status"],
             "rows": rows,
-            "chart_json": None,
+            "chart_json": chart,
         }
 
     def _report_audit(self) -> dict[str, Any]:
@@ -235,11 +265,29 @@ class ReportService:
             }
             for e in entries
         ]
+
+        action_counts: dict[str, int] = {}
+        for r in rows:
+            act = r.get("Action") or "Other"
+            action_counts[act] = action_counts.get(act, 0) + 1
+
+        top_acts = sorted(action_counts.items(), key=lambda x: x[1], reverse=True)[:8]
+        if top_acts:
+            chart = self._bar_chart(
+                x=[a[0] for a in top_acts],
+                y=[a[1] for a in top_acts],
+                name="Count",
+                color="#0F766E",
+                title="Recent Audit Events by Action",
+            )
+        else:
+            chart = None
+
         return {
             "title": "Audit Trail Report",
             "columns": ["Timestamp", "Actor", "Action", "Entity Type", "Entity ID", "Log Level"],
             "rows": rows,
-            "chart_json": None,
+            "chart_json": chart,
         }
 
     # ------------------------------------------------------------------
@@ -381,9 +429,38 @@ class ReportService:
         """Produce a Plotly-compatible JSON string for a bar chart."""
         trace = {
             "x": x, "y": y, "type": "bar", "name": name,
-            "marker": {"color": color, "opacity": 0.85},
+            "marker": {"color": color, "opacity": 0.9, "line": {"color": "#1E3A5F", "width": 1}},
         }
-        layout = {"title": {"text": title, "font": {"color": "#f0f6fc", "size": 13}}}
+        layout = {
+            "title": {"text": title, "font": {"color": "#1E3A5F", "size": 13}},
+            "font": {"family": "Inter, sans-serif", "color": "#0F172A"},
+            "paper_bgcolor": "transparent",
+            "plot_bgcolor": "transparent",
+        }
+        return json.dumps({"traces": [trace], "layout": layout})
+
+    def _donut_chart(self, labels: list[str], values: list[int | float], title: str) -> str:
+        """Produce a Plotly-compatible JSON string for a donut chart."""
+        colors = ["#0F766E", "#1E3A5F", "#0284C7", "#D97706", "#EF4444", "#7C3AED", "#059669", "#64748B"]
+        trace = {
+            "labels": labels,
+            "values": values,
+            "type": "pie",
+            "hole": 0.52,
+            "textinfo": "label+percent",
+            "textfont": {"family": "Inter, sans-serif", "size": 11, "color": "#1E3A5F"},
+            "marker": {
+                "colors": colors[:len(labels)],
+                "line": {"color": "#FFFFFF", "width": 2}
+            }
+        }
+        layout = {
+            "title": {"text": title, "font": {"color": "#1E3A5F", "size": 13}},
+            "font": {"family": "Inter, sans-serif", "color": "#0F172A"},
+            "paper_bgcolor": "transparent",
+            "plot_bgcolor": "transparent",
+            "showlegend": True,
+        }
         return json.dumps({"traces": [trace], "layout": layout})
 
     def _parse_d6_markdown(self, path: Path) -> list[dict]:

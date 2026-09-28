@@ -746,3 +746,192 @@ code {
   .stat-value { font-size: 1.6rem; }
   .navbar { padding: 0 1rem; }
 }
+
+/* ═══════════════════════════════════════
+   REPORTS & EXPORT SPECIFIC
+═══════════════════════════════════════ */
+.report-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.report-nav-item:hover {
+  background: #F1F5F9;
+  border-color: var(--teal);
+  color: var(--navy);
+  transform: translateX(3px);
+}
+.report-nav-item.active {
+  background: #F0FDFA;
+  border-color: var(--teal);
+  color: var(--navy);
+  box-shadow: 0 2px 6px rgba(15, 118, 110, 0.12);
+}
+.report-icon-box {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: #F1F5F9;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all var(--transition);
+}
+.report-icon-box.active, .report-nav-item:hover .report-icon-box {
+  background: var(--teal);
+  color: #FFFFFF;
+}
+.report-nav-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.2;
+}
+.report-nav-desc {
+  font-size: 0.73rem;
+  color: var(--text-secondary);
+  margin-top: 0.15rem;
+}
+.report-chevron {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: transform var(--transition);
+}
+.report-nav-item:hover .report-chevron, .report-nav-item.active .report-chevron {
+  color: var(--teal);
+  transform: translateX(2px);
+}
+
+/* ═══════════════════════════════════════
+   QUIZ COMPONENT (Interactive)
+═══════════════════════════════════════ */
+.quiz-header-bar {
+  background: #F8FAFC;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.quiz-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  transition: box-shadow var(--transition);
+}
+.quiz-card:hover {
+  box-shadow: var(--shadow-md);
+}
+.quiz-q-number {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.quiz-q-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin: 0.6rem 0 1rem 0;
+  line-height: 1.45;
+}
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.quiz-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: #FFFFFF;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.86rem;
+  transition: all var(--transition);
+  user-select: none;
+}
+.quiz-option-btn:hover:not(.locked) {
+  border-color: var(--teal);
+  background: #F0FDFA;
+}
+.quiz-option-btn.selected {
+  border-color: var(--navy);
+  background: #EFF6FF;
+}
+.quiz-option-btn.correct {
+  border-color: #10B981 !important;
+  background: #ECFDF5 !important;
+  color: #065F46 !important;
+  font-weight: 600;
+}
+.quiz-option-btn.incorrect {
+  border-color: #EF4444 !important;
+  background: #FEF2F2 !important;
+  color: #991B1B !important;
+  font-weight: 600;
+}
+.quiz-explanation-box {
+  margin-top: 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+.quiz-explanation-box.correct {
+  background: #ECFDF5;
+  border-left: 4px solid #10B981;
+  color: #065F46;
+}
+.quiz-explanation-box.incorrect {
+  background: #FEF2F2;
+  border-left: 4px solid #EF4444;
+  color: #991B1B;
+}
+
+/* ═══════════════════════════════════════
+   TASK DETAIL CARD
+═══════════════════════════════════════ */
+.task-item-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  background: #FFFFFF;
+  transition: all var(--transition);
+}
+.task-item-card:hover {
+  border-color: var(--teal);
+  box-shadow: var(--shadow-sm);
+}
+.task-item-desc {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.task-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  background: #F8FAFC;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+}
+
