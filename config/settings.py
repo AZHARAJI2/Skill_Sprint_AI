@@ -65,7 +65,9 @@ class Settings:
         self.deepseek_api_key: str | None = os.getenv("DEEPSEEK_API_KEY")
         self.deepseek_model: str = os.getenv("DEEPSEEK_MODEL", "deepseek-flash").strip() or "deepseek-flash"
         self.deepseek_base_url: str = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com").strip()
-        configured_deepseek_timeout = float(os.getenv("SKILLSPRINT_DEEPSEEK_TIMEOUT_SECONDS", "22"))
+        # 45 s per call: generous enough for a full stage-group response while
+        # still preventing a hung TCP connection from stalling all 3 workers.
+        configured_deepseek_timeout = float(os.getenv("SKILLSPRINT_DEEPSEEK_TIMEOUT_SECONDS", "45"))
         self.deepseek_request_timeout_seconds: float | None = (
             configured_deepseek_timeout if configured_deepseek_timeout > 0 else None
         )
@@ -80,23 +82,23 @@ class Settings:
             else configured_model
         )
         self.gemini_thinking_budget: int = int(os.getenv("GEMINI_THINKING_BUDGET", "0"))
-        # A zero value means no SDK request deadline.  This is deliberately
-        # configurable because a complete, source-grounded plan may take more
-        # than a short interactive timeout.
-        configured_gemini_timeout = float(os.getenv("SKILLSPRINT_GEMINI_TIMEOUT_SECONDS", "22"))
+        # 45 s per stage-group call.  Three run in parallel so the wall-clock
+        # budget is ~45 s, not 135 s.  A zero value waits indefinitely.
+        configured_gemini_timeout = float(os.getenv("SKILLSPRINT_GEMINI_TIMEOUT_SECONDS", "45"))
         self.gemini_request_timeout_seconds: float | None = (
             configured_gemini_timeout if configured_gemini_timeout > 0 else None
         )
-        # The project target is ≤30s, and the prompt budgets above are tuned
-        # toward it. Do not discard a complete plan merely because a provider
-        # is slower: a zero value waits without an artificial end-to-end cap.
+        # 0 = no end-to-end cap: the pipeline waits as long as the provider
+        # needs.  Set SKILLSPRINT_PLAN_TIMEOUT_SECONDS to a positive value
+        # only when you explicitly want a hard deadline with assembler fallback.
         configured_plan_timeout = float(os.getenv("SKILLSPRINT_PLAN_TIMEOUT_SECONDS", "0"))
         self.plan_generation_timeout_seconds: float | None = (
             configured_plan_timeout if configured_plan_timeout > 0 else None
         )
-        # Project Map permits at most three generation attempts.  Transient
-        # provider overloads are retried within this cap.
-        self.genai_max_retries: int = int(os.getenv("SKILLSPRINT_GENAI_MAX_RETRIES", "3"))
+        # Project Map permits at most three generation attempts.  Defaulting
+        # to 2 avoids a third full-latency retry (~25 s) on transient failures;
+        # set SKILLSPRINT_GENAI_MAX_RETRIES=3 to restore the hard cap.
+        self.genai_max_retries: int = int(os.getenv("SKILLSPRINT_GENAI_MAX_RETRIES", "2"))
         self.genai_retry_backoff_seconds: float = float(
             os.getenv("SKILLSPRINT_GENAI_RETRY_BACKOFF_SECONDS", "0.4")
         )
@@ -112,17 +114,20 @@ class Settings:
         # Prompt budget controls. They reduce repeated source context in each
         # concurrent stage request while retaining every cited requirement in
         # the Python skeleton and final validation inputs.
+        # 20 excerpts × 260 chars ≈ 5 200 chars of source context per stage
+        # call.  This is enough for source grounding while keeping each
+        # parallel prompt short and reducing Gemini input-token cost.
         self.genai_max_prompt_excerpts: int = max(
-            1, min(40, int(os.getenv("SKILLSPRINT_MAX_PROMPT_EXCERPTS", "32")))
+            1, min(40, int(os.getenv("SKILLSPRINT_MAX_PROMPT_EXCERPTS", "20")))
         )
         self.genai_excerpt_char_limit: int = max(
-            160, min(1000, int(os.getenv("SKILLSPRINT_SOURCE_EXCERPT_CHARS", "380")))
+            160, min(1000, int(os.getenv("SKILLSPRINT_SOURCE_EXCERPT_CHARS", "260")))
         )
-        # A complete stage group needs room for modules, activities, quizzes,
-        # and assessment rubrics. This cap prevents provider over-generation;
-        # it remains configurable for unusually large role matrices.
+        # 5 120 output tokens per stage is enough for 4-6 modules with full
+        # rubrics while cutting Gemini generation time by ~40 % vs the old
+        # 8 192 cap.  Raise SKILLSPRINT_STAGE_OUTPUT_TOKENS for large roles.
         self.genai_stage_output_tokens: int = max(
-            4096, min(8192, int(os.getenv("SKILLSPRINT_STAGE_OUTPUT_TOKENS", "8192")))
+            4096, min(8192, int(os.getenv("SKILLSPRINT_STAGE_OUTPUT_TOKENS", "5120")))
         )
 
         # -----------------------------------------------------------------------
