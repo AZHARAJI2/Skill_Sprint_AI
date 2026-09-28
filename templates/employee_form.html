@@ -82,11 +82,11 @@
                 <div class="d-flex align-items-center gap-2">
                   <i class="bi bi-shield-lock-fill fs-5" style="color:var(--teal)"></i>
                   <span class="fw-bold" style="color:var(--navy); font-size: 0.95rem;">
-                    Automatic Account Credentials (إنشاء بيانات الدخول تلقائياً)
+                    Automatic Account Credentials
                   </span>
                 </div>
                 <span class="badge" style="background-color: var(--teal) !important; color: white;">
-                  <i class="bi bi-check2-circle me-1"></i>Auto-Generated / تلقائي
+                  <i class="bi bi-check2-circle me-1"></i>Auto-Generated
                 </span>
               </div>
               <p class="small text-secondary mb-2" style="font-size: 0.84rem;">
@@ -98,7 +98,7 @@
                 <div class="col-md-6">
                   <div class="p-2 rounded bg-white border" style="border-color: #CCFBF1 !important;">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                      <span class="small text-muted fw-semibold" style="font-size:0.78rem;"><i class="bi bi-person me-1"></i>Username Rule / اسم المستخدم:</span>
+                      <span class="small text-muted fw-semibold" style="font-size:0.78rem;"><i class="bi bi-person me-1"></i>Username Rule:</span>
                       <span class="badge bg-light text-muted border" style="font-size:0.68rem;">Format: {first_name}-{dept}</span>
                     </div>
                     <div class="d-flex align-items-center justify-content-between">
@@ -110,7 +110,7 @@
                 <div class="col-md-6">
                   <div class="p-2 rounded bg-white border" style="border-color: #CCFBF1 !important;">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                      <span class="small text-muted fw-semibold" style="font-size:0.78rem;"><i class="bi bi-key me-1"></i>Temporary Password / كلمة المرور:</span>
+                      <span class="small text-muted fw-semibold" style="font-size:0.78rem;"><i class="bi bi-key me-1"></i>Temporary Password:</span>
                       <span class="badge bg-light text-muted border" style="font-size:0.68rem;">Format: SkillSprint!{ID}</span>
                     </div>
                     <div class="d-flex align-items-center justify-content-between">
@@ -136,7 +136,7 @@
                 <div class="col-md-6">
                   <label for="employee-temporary-password" class="form-label small mb-1">Custom Temporary Password</label>
                   <input id="employee-temporary-password" class="form-control form-control-sm" type="password" minlength="8" autocomplete="new-password" placeholder="Leave blank to use auto-generated password">
-                  <div class="form-text" style="font-size:0.72rem;">Min 8 characters. Stored securely as bcrypt hash.</div>
+                  <div class="form-text" style="font-size:0.72rem;">Min 8 characters. Stored securely as a password hash.</div>
                 </div>
               </div>
             </div>
@@ -170,11 +170,11 @@
           <div class="d-flex align-items-center gap-2">
             <i class="bi bi-people-fill fs-5" style="color:var(--teal)"></i>
             <span class="fw-bold" style="color:var(--navy); font-size: 0.95rem;">
-              Auto-Generated Credentials for Bulk File Imports (إنشاء الحسابات تلقائياً لجميع موظفي الملف)
+              Auto-Generated Credentials for Bulk File Imports
             </span>
           </div>
           <span class="badge" style="background-color: var(--teal) !important; color: white;">
-            <i class="bi bi-lightning-charge me-1"></i>Auto-Provisioned / تلقائي
+            <i class="bi bi-lightning-charge me-1"></i>Auto-Provisioned
           </span>
         </div>
         <p class="small text-secondary mb-2" style="font-size: 0.84rem;">
@@ -186,7 +186,7 @@
           <table class="table table-sm table-borderless mb-0" style="font-size: 0.82rem;">
             <thead style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
               <tr>
-                <th class="ps-3 py-1.5 text-secondary">File Row Data (بيانات الموظف بالملف)</th>
+                <th class="ps-3 py-1.5 text-secondary">File Row Data</th>
                 <th class="py-1.5 text-secondary">Auto-Generated Username</th>
                 <th class="py-1.5 text-secondary">Auto-Generated Temporary Password</th>
               </tr>
@@ -402,10 +402,10 @@
           </div>
 
           <div class="bg-white rounded border p-3 mb-3" style="border-color:#DCFCE7 !important;">
-            <div class="fw-semibold small text-secondary mb-2"><i class="bi bi-key-fill me-1" style="color:var(--teal)"></i>Auto-Generated Sign-In Credentials (بيانات الدخول التلقائية):</div>
+            <div class="fw-semibold small text-secondary mb-2"><i class="bi bi-key-fill me-1" style="color:var(--teal)"></i>Auto-Generated Sign-In Credentials:</div>
             <div class="row g-3 align-items-center">
               <div class="col-md-5">
-                <span class="small text-muted d-block" style="font-size:0.75rem;">Username (اسم المستخدم):</span>
+                <span class="small text-muted d-block" style="font-size:0.75rem;">Username:</span>
                 <div class="d-flex align-items-center gap-2 mt-1">
                   <code class="fs-6 fw-bold px-2 py-1 rounded" style="background:#F0FDFA;color:#0F766E;">${escapeHtml(username)}</code>
                   <button type="button" class="btn btn-sm btn-outline-secondary btn-copy" data-text="${escapeHtml(username)}" title="Copy username">
@@ -414,7 +414,7 @@
                 </div>
               </div>
               <div class="col-md-5">
-                <span class="small text-muted d-block" style="font-size:0.75rem;">Initial Password (كلمة المرور المؤقتة):</span>
+                <span class="small text-muted d-block" style="font-size:0.75rem;">Initial Password:</span>
                 <div class="d-flex align-items-center gap-2 mt-1">
                   <code class="fs-6 fw-bold px-2 py-1 rounded" style="background:#FEF3C7;color:#B45309;">${escapeHtml(initialPassword)}</code>
                   <button type="button" class="btn btn-sm btn-outline-secondary btn-copy" data-text="${escapeHtml(initialPassword)}" title="Copy password">

@@ -6,6 +6,8 @@ from concurrent.futures import ThreadPoolExecutor
 import json
 import time
 
+from pydantic import ValidationError
+
 from config.logging_config import get_logger
 from config.settings import settings
 from genai_pipeline.assessment_generator import AssessmentGenerator
@@ -137,7 +139,10 @@ class PlanGenerator:
 
             prompt_kwargs = {
                 "employee_json": employee_json,
-                "requirements_json": json.dumps([r.model_dump(mode="json") for r in stage_reqs]),
+                # The skeleton already carries IDs and citations. Send only
+                # fields that help the model write the learning content so we
+                # do not repeat validation-only data in every stage request.
+                "requirements_json": self._compact_requirements_json(stage_reqs),
                 # Do not send the entire corpus to every parallel request.
                 # Each group receives only the source excerpts cited by its
                 # requirements, which controls token use and reduces noise.
@@ -154,7 +159,7 @@ class PlanGenerator:
             try:
                 cfg = GenerationConfig(
                     temperature=0.15,
-                    max_output_tokens=8192,
+                    max_output_tokens=settings.genai_stage_output_tokens,
                     thinking_budget=getattr(settings, "gemini_thinking_budget", 0),
                     timeout_seconds=(
                         max(1.0, deadline_monotonic - time.monotonic())
@@ -162,11 +167,12 @@ class PlanGenerator:
                         else None
                     ),
                     deadline_monotonic=deadline_monotonic,
+                    json_mode=True,
                 )
                 response = RetryManager(
                     self.provider, max_attempts=settings.genai_max_retries
-                ).run(prompt, schema=GeneratedPlan, config=cfg, deadline_monotonic=deadline_monotonic)
-                model_plan = GeneratedPlan.model_validate(response.parsed)
+                ).run(prompt, schema=None, config=cfg, deadline_monotonic=deadline_monotonic)
+                model_plan = self._repair_partial_group_response(sub_assembled, response.parsed)
                 group_merged = self._merge(sub_assembled, model_plan)
                 return group_idx, group_name, group_merged, response, None
             except AppError as exc:
@@ -328,6 +334,94 @@ class PlanGenerator:
                 for item in payload.get(collection, [])
             ]
         return json.dumps(payload)
+
+    @staticmethod
+    def _repair_partial_group_response(assembled: GeneratedPlan, response: dict) -> GeneratedPlan:
+        """Merge a partially valid model response onto a validated Python skeleton.
+
+        The model is allowed to improve natural-language fields only. Every
+        identifier, source citation, requirement link, and any malformed or
+        omitted item stays with the deterministic source-grounded skeleton.
+        This avoids rejecting a complete plan because one generated item has a
+        non-essential schema omission, while still retrying replies that do not
+        refer to a single expected item.
+        """
+        if not isinstance(response, dict):
+            raise AppError("Model response must be a JSON object.", status_code=502)
+        for wrapper in ("plan", "onboarding_plan", "data"):
+            wrapped = response.get(wrapper)
+            if isinstance(wrapped, dict):
+                response = wrapped
+                break
+
+        collections = (
+            ("modules", "module_id"),
+            ("checklists", "item_id"),
+            ("tasks", "task_id"),
+            ("quizzes", "question_id"),
+            ("assessments", "assessment_id"),
+        )
+        repaired: dict[str, list] = {}
+        matched_items = 0
+        for collection, identifier in collections:
+            incoming = response.get(collection, [])
+            incoming_by_id = {
+                item.get(identifier): item
+                for item in incoming
+                if isinstance(item, dict) and item.get(identifier)
+            } if isinstance(incoming, list) else {}
+            repaired_items = []
+            for original in getattr(assembled, collection):
+                candidate = incoming_by_id.get(getattr(original, identifier))
+                if not candidate:
+                    repaired_items.append(original)
+                    continue
+                payload = original.model_dump(mode="json")
+                # Only known fields can update the skeleton. Immutable source
+                # and linkage fields are re-applied by _merge immediately after.
+                payload.update({key: value for key, value in candidate.items() if key in payload})
+                try:
+                    repaired_items.append(type(original).model_validate(payload))
+                    matched_items += 1
+                except ValidationError:
+                    repaired_items.append(original)
+            repaired[collection] = repaired_items
+
+        if matched_items == 0:
+            raise AppError(
+                "Model JSON did not contain any expected plan item identifiers.", status_code=502
+            )
+        return assembled.model_copy(update=repaired)
+
+    @staticmethod
+    def _compact_requirements_json(requirements: list) -> str:
+        """Serialize only generation-relevant requirement fields for one stage.
+
+        The full classified matrix remains in the assembled plan and is passed
+        to Python validation after generation. This is a prompt-size reduction,
+        never a reduction in required coverage or source traceability.
+        """
+        fields = (
+            "requirement_id",
+            "requirement_text",
+            "mandatory",
+            "priority",
+            "due_stage",
+            "source_document_id",
+            "source_section_id",
+            "competency",
+            "assessment_requirement",
+            "difficulty",
+        )
+        return json.dumps(
+            [
+                {
+                    name: (value.value if hasattr(value := getattr(requirement, name), "value") else value)
+                    for name in fields
+                }
+                for requirement in requirements
+            ]
+        )
 
     @staticmethod
     def _mark_as_failed(sub_assembled: GeneratedPlan) -> GeneratedPlan:

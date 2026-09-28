@@ -136,13 +136,15 @@ class AuthService:
         preferred_username: str | None = None,
         temporary_password: str | None = None,
         reset_password: bool = False,
+        normalize_username: bool = False,
         actor: str = "system",
     ) -> tuple[User, str | None]:
         """Create or activate the Employee login linked to an employee profile.
 
         New accounts use a preferred username when supplied, otherwise a name
         derived from the employee's first name and department initial. Existing
-        usernames are left unchanged so seeded demo logins stay valid.
+        usernames are retained unless an administrator explicitly normalizes
+        legacy employee accounts.
         A generated password is returned only when a new password was set.
         """
         linked_user = self.users.get_by_employee_id(employee.id)
@@ -161,6 +163,11 @@ class AuthService:
             return linked_user, password
 
         changed = False
+        if normalize_username:
+            normalized_username = self._available_employee_username(employee, linked_user.id)
+            if linked_user.username != normalized_username:
+                linked_user.username = normalized_username
+                changed = True
         if linked_user.app_role != "Employee":
             linked_user.app_role = "Employee"
             changed = True

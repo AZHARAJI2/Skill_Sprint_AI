@@ -193,10 +193,11 @@
         </div>
         <div class="card-body">
           {% if a.rubric %}
-          {% for criterion in (a.rubric.criteria if a.rubric.criteria is defined else []) %}
+          {% for criterion in a.rubric %}
           <div class="mb-2 pb-2" style="border-bottom:1px solid var(--border)">
             <div style="font-size:0.8rem;font-weight:600">{{ criterion.criterion }}</div>
-            <div style="font-size:0.75rem;color:var(--text-muted)">Weight: {{ criterion.weight }}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Weight: {{ (criterion.weight * 100)|int }}% · Expected: {{ criterion.expected_performance }}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Pass condition: {{ criterion.pass_condition }}</div>
           </div>
           {% endfor %}
           {% endif %}

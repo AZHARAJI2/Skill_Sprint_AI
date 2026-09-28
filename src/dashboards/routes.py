@@ -79,6 +79,7 @@ def dashboard_router(request: Request, user: User = Depends(get_current_user)) -
 def employee_dashboard(
     request: Request,
     employee_id: int | None = None,
+    plan_id: int | None = None,
     session: Session = Depends(get_session),
     user: User = Depends(require_role("Employee", "Admin", "Manager", "Training Manager")),
 ) -> HTMLResponse:
@@ -104,6 +105,13 @@ def employee_dashboard(
 
     progress = svc.employee_progress(target_emp_id) if target_emp_id else None
     plan = svc.get_latest_plan(target_emp_id) if target_emp_id else None
+    if plan_id is not None:
+        selected_plan = PlanRepository(session).get(plan_id)
+        if selected_plan is None:
+            raise AppError("Plan not found", status_code=404)
+        if selected_plan.employee_id != target_emp_id:
+            raise AppError("Forbidden", status_code=403)
+        plan = selected_plan
     recommendations = svc.adaptive_recommendations(target_emp_id) if target_emp_id else []
     weak_areas = svc.weak_areas(target_emp_id) if target_emp_id else []
 
@@ -111,6 +119,7 @@ def employee_dashboard(
     plan_detail = None
     item_statuses: dict[str, str] = {}
     quiz_items: list[dict] = []
+    assessment_items: list[dict] = []
     if plan and plan.structured_json:
         try:
             from schemas.plan_schema import GeneratedPlan as GP
@@ -119,6 +128,7 @@ def employee_dashboard(
             plan_detail = _StructuredProxy(plan.structured_json)
         item_statuses = _item_statuses(session, plan.id)
         quiz_items = ProgressTrackingService(session).get_sanitized_quiz_items(plan.id)
+        assessment_items = ProgressTrackingService(session).get_assessment_items(plan.id)
 
     plan_is_actionable = bool(
         plan
@@ -140,8 +150,10 @@ def employee_dashboard(
             "passing_score": 70,
             "item_statuses": item_statuses,
             "quiz_items": quiz_items,
+            "assessment_items": assessment_items,
             "plan_is_actionable": plan_is_actionable,
-            "can_confirm_progress": user.app_role in {"Admin", "Training Manager", "Reviewer", "Manager"},
+            "can_update_progress": user.app_role in {"Admin", "Training Manager"},
+            "can_confirm_progress": user.app_role in {"Admin", "Training Manager"},
         },
     )
 
@@ -287,6 +299,12 @@ def plan_view(
         from src.errors import AppError
 
         raise AppError("Forbidden", status_code=403)
+    if user.app_role == "Employee":
+        # The employee dashboard is the learning experience: it provides
+        # interactive quizzes, answer feedback, progress persistence, and
+        # assessment actions. The full plan view remains a read-only staff
+        # review surface so answer keys are not accidentally exposed.
+        return RedirectResponse(url=f"/dashboard/employee?plan_id={plan.id}", status_code=303)
 
     detail = None
     if plan.structured_json:

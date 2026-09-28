@@ -52,7 +52,10 @@ class Settings:
         self.command_code_base_url: str = os.getenv(
             "COMMAND_CODE_BASE_URL", "https://api.commandcode.ai/provider/v1"
         ).strip()
-        configured_command_code_timeout = float(os.getenv("SKILLSPRINT_COMMAND_CODE_TIMEOUT_SECONDS", "22"))
+        # A complete source-grounded plan can legitimately exceed a short
+        # provider deadline. Keep this unlimited by default; operators may set
+        # a positive value when their hosting platform needs one.
+        configured_command_code_timeout = float(os.getenv("SKILLSPRINT_COMMAND_CODE_TIMEOUT_SECONDS", "0"))
         self.command_code_request_timeout_seconds: float | None = (
             configured_command_code_timeout if configured_command_code_timeout > 0 else None
         )
@@ -84,9 +87,10 @@ class Settings:
         self.gemini_request_timeout_seconds: float | None = (
             configured_gemini_timeout if configured_gemini_timeout > 0 else None
         )
-        # Default 28s so Pipeline 1 + Pipeline 2 stay inside the 30s NFR.
-        # Set SKILLSPRINT_PLAN_TIMEOUT_SECONDS=0 to wait without an end-to-end cap.
-        configured_plan_timeout = float(os.getenv("SKILLSPRINT_PLAN_TIMEOUT_SECONDS", "28"))
+        # The project target is ≤30s, and the prompt budgets above are tuned
+        # toward it. Do not discard a complete plan merely because a provider
+        # is slower: a zero value waits without an artificial end-to-end cap.
+        configured_plan_timeout = float(os.getenv("SKILLSPRINT_PLAN_TIMEOUT_SECONDS", "0"))
         self.plan_generation_timeout_seconds: float | None = (
             configured_plan_timeout if configured_plan_timeout > 0 else None
         )
@@ -105,6 +109,21 @@ class Settings:
         # Three independent stage groups are generated concurrently. This
         # reduces wall-clock time without changing the complete-plan schema.
         self.genai_parallel_workers: int = max(1, min(3, int(os.getenv("SKILLSPRINT_GENAI_PARALLEL_WORKERS", "3"))))
+        # Prompt budget controls. They reduce repeated source context in each
+        # concurrent stage request while retaining every cited requirement in
+        # the Python skeleton and final validation inputs.
+        self.genai_max_prompt_excerpts: int = max(
+            1, min(40, int(os.getenv("SKILLSPRINT_MAX_PROMPT_EXCERPTS", "32")))
+        )
+        self.genai_excerpt_char_limit: int = max(
+            160, min(1000, int(os.getenv("SKILLSPRINT_SOURCE_EXCERPT_CHARS", "380")))
+        )
+        # A complete stage group needs room for modules, activities, quizzes,
+        # and assessment rubrics. This cap prevents provider over-generation;
+        # it remains configurable for unusually large role matrices.
+        self.genai_stage_output_tokens: int = max(
+            4096, min(8192, int(os.getenv("SKILLSPRINT_STAGE_OUTPUT_TOKENS", "8192")))
+        )
 
         # -----------------------------------------------------------------------
         # Progress-tracking configuration (SRS Steps 17, 18, 50, 53, 54)

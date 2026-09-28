@@ -162,10 +162,10 @@ class PlanGenerationService:
                 continue
             seen.add(key)
             excerpt = excerpts.get(key)
-            text = (excerpt.text if excerpt else "")[:500]
+            text = (excerpt.text if excerpt else "")[:settings.genai_excerpt_char_limit]
             scan = self.assembler.injection_guard.scan(text, document_id=key[0], section_id=key[1])
             blocks[key] = scan.fenced_text
-            if len(blocks) >= 40:
+            if len(blocks) >= settings.genai_max_prompt_excerpts:
                 break
         return blocks
 

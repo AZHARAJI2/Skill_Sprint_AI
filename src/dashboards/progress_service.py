@@ -772,6 +772,35 @@ class ProgressTrackingService:
             )
         return safe_items
 
+    def get_assessment_items(self, plan_id: int) -> list[dict]:
+        """Return employee-visible assessment instructions from persisted records.
+
+        Assessments are sourced from their own records instead of the plan JSON
+        so they remain visible if a legacy plan cannot be parsed by the current
+        Pydantic schema. Rubrics contain evaluation criteria, not answer keys.
+        """
+        assessments: list[AssessmentRecord] = (
+            self._session.query(AssessmentRecord)
+            .filter(AssessmentRecord.plan_id == plan_id)
+            .all()
+        )
+        return [
+            {
+                "assessment_id": payload.get("assessment_id", str(record.id)),
+                "title": payload.get("title", "Assessment"),
+                "assessment_type": payload.get("assessment_type", record.assessment_type or ""),
+                "difficulty": payload.get("difficulty", ""),
+                "stage": payload.get("stage", ""),
+                "pass_threshold": payload.get("pass_threshold", 0.8),
+                "rubric": payload.get("rubric", []),
+                "source_document_id": payload.get("source_document_id", record.payload.get("source_document_id", "")),
+                "source_section_id": payload.get("source_section_id", record.payload.get("source_section_id", "")),
+                "completion_status": payload.get("completion_status", "not_started"),
+            }
+            for record in assessments
+            for payload in [record.payload or {}]
+        ]
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------

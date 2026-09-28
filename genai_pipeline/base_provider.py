@@ -17,6 +17,7 @@ class GenerationConfig(BaseModel):
     thinking_budget: int | None = None
     timeout_seconds: float | None = None
     deadline_monotonic: float | None = None
+    json_mode: bool = False
 
 
 

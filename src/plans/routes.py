@@ -181,6 +181,8 @@ def submit_plan_quiz(
     """Grade an employee quiz on the server and record an auditable result."""
     plan = PlanGenerationService(session).get_plan(plan_id)
     _assert_plan_access(plan, user)
+    if (plan.structured_json or {}).get("generation_status") == "failed_after_retries":
+        raise AppError("This review draft cannot be used for employee progress until a complete plan replaces it.", status_code=409)
     if user.app_role == "Employee" and plan.employee_id != user.employee_id:
         raise AppError("Forbidden", status_code=403)
     return ProgressTrackingService(session).grade_quiz(plan_id, submission.answers, actor=user.username)
@@ -200,6 +202,8 @@ def check_quiz_answer(
     """
     plan = PlanGenerationService(session).get_plan(plan_id)
     _assert_plan_access(plan, user)
+    if (plan.structured_json or {}).get("generation_status") == "failed_after_retries":
+        raise AppError("This review draft cannot be used for employee progress until a complete plan replaces it.", status_code=409)
     try:
         return ProgressTrackingService(session).check_single_answer(
             plan_id, body.question_id, body.selected
@@ -216,13 +220,13 @@ def complete_plan_item(
     session: Session = Depends(get_session),
     user: User = Depends(get_current_user),
 ) -> dict:
-    """Persist employee completion; practical work is routed for confirmation."""
+    """Persist staff-recorded completion; practical work is routed for confirmation."""
     plan = PlanGenerationService(session).get_plan(plan_id)
     _assert_plan_access(plan, user)
-    if user.app_role not in {"Employee", "Admin", "Training Manager", "Manager"}:
+    if user.app_role not in {"Admin", "Training Manager"}:
         raise AppError("Forbidden for this role", status_code=403)
     if (plan.structured_json or {}).get("generation_status") == "failed_after_retries":
-        raise AppError("This fallback plan must be approved before employees can record progress.", status_code=409)
+        raise AppError("This fallback plan must be approved before staff can record progress.", status_code=409)
     service = ProgressTrackingService(session)
     blocked, reason = service.check_prerequisites(item_type, item_id, plan_id)
     if blocked:
@@ -237,9 +241,9 @@ def confirm_plan_item(
     item_id: str,
     decision: CompletionConfirmation,
     session: Session = Depends(get_session),
-    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer", "Manager")),
+    user: User = Depends(require_role("Admin", "Training Manager")),
 ) -> dict:
-    """Store a manager/reviewer confirmation or rejection with an audit entry."""
+    """Store a trainer or administrator confirmation with an audit entry."""
     plan = PlanGenerationService(session).get_plan(plan_id)
     return ProgressTrackingService(session).confirm_item_completion(
         plan_id,

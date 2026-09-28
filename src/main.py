@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError as PydanticValidationError
@@ -54,9 +54,19 @@ app.include_router(search_router)
 # ---------------------------------------------------------------------------
 
 @app.exception_handler(AppError)
-async def app_error_handler(_request: Request, exc: AppError) -> JSONResponse:
-    """Convert typed application errors into JSON bodies."""
+async def app_error_handler(request: Request, exc: AppError):
+    """Return API errors as JSON and expired browser sessions to sign-in."""
     logger.warning("api_error status=%s message=%s details=%s", exc.status_code, exc.message, exc.details)
+    accepts_html = "text/html" in request.headers.get("accept", "")
+    if (
+        exc.status_code == 401
+        and accepts_html
+        and not request.url.path.startswith("/api/")
+        and request.url.path != "/login"
+    ):
+        response = RedirectResponse(url="/login", status_code=303)
+        response.delete_cookie("skillsprint_token")
+        return response
     return JSONResponse(
         status_code=exc.status_code,
         content={"error": exc.message, "details": exc.details},

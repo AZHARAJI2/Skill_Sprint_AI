@@ -148,7 +148,7 @@
           </li>
           <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabAssessments">
-              <i class="bi bi-clipboard2-check me-1"></i>Assessments ({{ plan_detail.assessments|length }})
+              <i class="bi bi-clipboard2-check me-1"></i>Assessments ({{ assessment_items|length }})
             </button>
           </li>
         </ul>
@@ -179,7 +179,7 @@
                 <span class="badge badge-muted" style="font-size:0.7rem;">{{ m.difficulty }}</span>
                 {% set state = item_statuses.get('module:' ~ m.module_id, 'not_started') %}
                 <span class="badge {{ 'badge-success' if state == 'completed' else ('badge-warning' if state == 'pending_confirmation' else 'badge-muted') }}" style="font-size:0.7rem;">{{ state.replace('_', ' ').title() }}</span>
-                {% if plan_is_actionable and state != 'completed' and user.app_role != 'Employee' %}
+                {% if plan_is_actionable and can_update_progress and state != 'completed' %}
                 <button type="button" class="btn btn-teal btn-sm progress-complete" data-type="module" data-id="{{ m.module_id }}">Mark complete</button>
                 {% endif %}
               </div>
@@ -189,11 +189,11 @@
             {% endfor %}
           </div>
 
-          <!-- Tasks & Assignments (التكاليف / المهام) -->
+          <!-- Tasks & Assignments -->
           <div class="tab-pane fade" id="tabTasks">
             <div class="d-flex align-items-center justify-content-between mb-3 pt-2">
               <span style="font-size:0.85rem;font-weight:700;color:var(--navy);">
-                <i class="bi bi-list-task me-1" style="color:var(--teal)"></i>Role-Specific Practical Assignments &amp; Tasks (التكليفات والمهام العملية)
+                <i class="bi bi-list-task me-1" style="color:var(--teal)"></i>Role-Specific Practical Assignments &amp; Tasks
               </span>
               <span class="badge badge-navy">{{ plan_detail.tasks|length }} Total Tasks</span>
             </div>
@@ -229,7 +229,7 @@
               {% set state = item_statuses.get('task:' ~ t.task_id, 'not_started') %}
               <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
                 <span class="badge {{ 'badge-success' if state == 'completed' else ('badge-warning' if state == 'pending_confirmation' else 'badge-muted') }}">{{ state.replace('_', ' ').title() }}</span>
-                {% if plan_is_actionable and state == 'not_started' and user.app_role != 'Employee' %}
+                {% if plan_is_actionable and can_update_progress and state == 'not_started' %}
                 <button type="button" class="btn btn-teal btn-sm progress-complete" data-type="task" data-id="{{ t.task_id }}">Mark complete</button>
                 {% elif can_confirm_progress and state == 'pending_confirmation' %}
                 <button type="button" class="btn btn-teal btn-sm progress-confirm" data-type="task" data-id="{{ t.task_id }}" data-confirmed="true">Confirm</button>
@@ -257,7 +257,7 @@
               {% set state = item_statuses.get('checklist:' ~ c.item_id, 'not_started') %}
               <div class="d-flex flex-column align-items-end gap-1 ms-2">
                 <span class="badge {{ 'badge-success' if state == 'completed' else 'badge-muted' }}">{{ state.replace('_', ' ').title() }}</span>
-                {% if plan_is_actionable and state != 'completed' and user.app_role != 'Employee' %}
+                {% if plan_is_actionable and can_update_progress and state != 'completed' %}
                 <button type="button" class="btn btn-teal btn-sm progress-complete" data-type="checklist" data-id="{{ c.item_id }}">Mark complete</button>
                 {% endif %}
               </div>
@@ -267,7 +267,7 @@
             {% endfor %}
           </div>
 
-          <!-- Quizzes (الكوزات التفاعلية) -->
+          <!-- Interactive quizzes -->
           <div class="tab-pane fade" id="tabQuiz">
             <!-- Quiz Control Header Bar -->
             <div class="quiz-header-bar d-flex align-items-center justify-content-between flex-wrap gap-3 mt-2">
@@ -277,7 +277,6 @@
                 </div>
                 <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:0.15rem;">
                   Test your understanding · <strong style="color:var(--navy)">Passing Score: ≥ {{ passing_score or 70 }}%</strong>
-                  <span class="text-muted ms-1">(وفق معايير PROJECT_MAP.md)</span>
                 </div>
               </div>
 
@@ -299,9 +298,9 @@
                 </button>
               </div>
             </div>
-            {% if user.app_role != 'Employee' and plan_is_actionable and quiz_items %}
+            {% if plan_is_actionable and quiz_items %}
             <div class="d-flex justify-content-end mt-3">
-              <button type="button" id="quiz-submit-btn" class="btn btn-teal btn-sm">Submit quiz (Trainer view)</button>
+              <button type="button" id="quiz-submit-btn" class="btn btn-teal btn-sm">Submit Quiz</button>
             </div>
             {% endif %}
 
@@ -366,15 +365,30 @@
           </div>
 
           <div class="tab-pane fade" id="tabAssessments">
-            {% for a in plan_detail.assessments %}
-            {% set state = item_statuses.get('assessment:' ~ a.assessment_id, 'not_started') %}
-            <div class="plan-item">
-              <div class="plan-item-icon navy"><i class="bi bi-clipboard2-check"></i></div>
-              <div class="flex-grow-1"><div class="plan-item-title">{{ a.title }}</div><div class="plan-item-sub">{{ a.assessment_type }} · {{ a.stage }} · Pass threshold {{ (a.pass_threshold * 100)|int }}%</div></div>
-              <div class="d-flex flex-column align-items-end gap-1">
-                <span class="badge {{ 'badge-success' if state == 'completed' else ('badge-warning' if state == 'pending_confirmation' else 'badge-muted') }}">{{ state.replace('_', ' ').title() }}</span>
-                {% if plan_is_actionable and state == 'not_started' and user.app_role != 'Employee' %}<button type="button" class="btn btn-teal btn-sm progress-complete" data-type="assessment" data-id="{{ a.assessment_id }}">Mark complete</button>{% endif %}
-                {% if can_confirm_progress and state == 'pending_confirmation' %}<button type="button" class="btn btn-teal btn-sm progress-confirm" data-type="assessment" data-id="{{ a.assessment_id }}" data-confirmed="true">Confirm</button>{% endif %}
+            {% for a in assessment_items %}
+            {% set state = a.completion_status or item_statuses.get('assessment:' ~ a.assessment_id, 'not_started') %}
+            <div class="task-item-card">
+              <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-3">
+                <div>
+                  <div class="plan-item-title">{{ a.title }}</div>
+                  <div class="plan-item-sub mt-1">{{ a.assessment_type }} · {{ a.stage }} · {{ a.difficulty }} · Pass threshold {{ (a.pass_threshold * 100)|int }}%</div>
+                </div>
+                <div class="d-flex flex-column align-items-end gap-2">
+                  <span class="badge {{ 'badge-success' if state == 'completed' else ('badge-warning' if state == 'pending_confirmation' else 'badge-muted') }}">{{ state.replace('_', ' ').title() }}</span>
+                  {% if plan_is_actionable and can_update_progress and state == 'not_started' %}<button type="button" class="btn btn-teal btn-sm progress-complete" data-type="assessment" data-id="{{ a.assessment_id }}">{% if a.assessment_type in ('practical', 'scenario') %}Request Review{% else %}Mark Complete{% endif %}</button>{% endif %}
+                  {% if can_confirm_progress and state == 'pending_confirmation' %}<button type="button" class="btn btn-teal btn-sm progress-confirm" data-type="assessment" data-id="{{ a.assessment_id }}" data-confirmed="true">Confirm</button>{% endif %}
+                </div>
+              </div>
+              <div class="small text-muted mb-2"><i class="bi bi-file-earmark-text me-1"></i>{{ a.source_document_id }} §{{ a.source_section_id }}</div>
+              <div class="border rounded p-3 bg-light-subtle">
+                <div class="fw-semibold mb-2"><i class="bi bi-list-check me-1"></i>Assessment Rubric</div>
+                {% for criterion in a.rubric %}
+                <div class="mb-2 pb-2 border-bottom">
+                  <div class="fw-semibold">{{ criterion.criterion }} <span class="text-muted fw-normal">({{ (criterion.weight * 100)|int }}%)</span></div>
+                  <div class="small">Expected: {{ criterion.expected_performance }}</div>
+                  <div class="small text-muted">Pass condition: {{ criterion.pass_condition }}</div>
+                </div>
+                {% endfor %}
               </div>
             </div>
             {% else %}<div class="empty-state"><div class="empty-icon"><i class="bi bi-clipboard2-check"></i></div><p>No assessments in this plan.</p></div>{% endfor %}
@@ -540,7 +554,7 @@
     if (explBox) {
       explBox.classList.remove('d-none');
       explBox.className = 'quiz-explanation-box ' + (isCorrect ? 'correct' : 'incorrect') + ' animate-fade';
-      explBox.innerHTML = `<strong>${isCorrect ? '✓ Correct! (إجابة صحيحة)' : '✗ Incorrect (إجابة غير صحيحة)'}</strong>${explanation ? '<br><span style="font-size:0.84rem;margin-top:0.25rem;display:inline-block;">' + explanation + '</span>' : ''}`;
+      explBox.innerHTML = `<strong>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</strong>${explanation ? '<br><span style="font-size:0.84rem;margin-top:0.25rem;display:inline-block;">' + explanation + '</span>' : ''}`;
     }
   }
 
@@ -656,7 +670,7 @@
   const resetBtn = document.getElementById('quiz-reset-btn');
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
-      if (confirm('Reset all quiz answers and retake? (إعادة الاختبار من البداية)')) {
+      if (confirm('Reset all quiz answers and retake?')) {
         resetQuiz();
       }
     });

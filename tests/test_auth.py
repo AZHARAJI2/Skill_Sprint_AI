@@ -34,6 +34,20 @@ def test_authenticate_rejects_bad_password(session: Session) -> None:
     assert exc.value.status_code == 401
 
 
+def test_password_change_requires_current_password_and_updates_login(session: Session) -> None:
+    """A user can change only their password after proving they know the current one."""
+    service = AuthService(session)
+    user = service.create_user("employee-a", "initial-pass", "Employee")
+    with pytest.raises(AppError) as exc:
+        service.change_password(user, "wrong-pass", "new-safe-pass")
+    assert exc.value.status_code == 401
+
+    service.change_password(user, "initial-pass", "new-safe-pass")
+    assert service.authenticate("employee-a", "new-safe-pass").username == "employee-a"
+    with pytest.raises(AppError):
+        service.authenticate("employee-a", "initial-pass")
+
+
 def test_api_login_and_rbac_forbidden() -> None:
     """VG-1.7: five-role skeleton — Employee cannot upload documents."""
     engine = create_engine(
@@ -69,3 +83,17 @@ def test_api_login_and_rbac_forbidden() -> None:
     assert me.json()["role"] == "Employee"
     app.dependency_overrides.clear()
     db.close()
+
+
+def test_expired_browser_session_redirects_to_login() -> None:
+    """A stale browser cookie never leaves the user on a raw JSON error page."""
+    client = TestClient(app)
+    response = client.get(
+        "/dashboard",
+        headers={"Accept": "text/html"},
+        cookies={"skillsprint_token": "not-a-valid-token"},
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert response.headers["location"] == "/login"
+    assert "skillsprint_token=\"\"" in response.headers["set-cookie"]

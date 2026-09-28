@@ -63,7 +63,11 @@ class RetryManager:
                 # so retry it within the hard three-attempt Project Map cap.
                 if isinstance(exc, AppError) and exc.status_code in {400, 401, 403, 429}:
                     raise
-                last_error = str(exc)
+                detail = exc.details if isinstance(exc, AppError) else None
+                detail_error = detail.get("error") if isinstance(detail, dict) else None
+                # Give the next retry the actual schema/parser reason, without
+                # putting an unbounded provider response into a new prompt.
+                last_error = str(detail_error or exc)[:1200]
                 logger.warning("genai_retry_failed attempt=%s/%s error=%s", attempt, self.max_attempts, last_error)
                 if attempt < self.max_attempts and getattr(self.provider, "network_backed", False):
                     delay = settings.genai_retry_backoff_seconds * attempt
@@ -76,6 +80,12 @@ class RetryManager:
                 )
         logger.error("genai_retry_exhausted attempts=%s last_error=%s", self.max_attempts, last_error)
         if last_status_code == 503:
+            if last_error and "time budget" in last_error.casefold():
+                raise AppError(
+                    "The complete plan exceeded the configured generation time limit. Set SKILLSPRINT_PLAN_TIMEOUT_SECONDS=0 to wait without a cap, then generate again.",
+                    status_code=503,
+                    details={"attempts": self.max_attempts, "last_error": last_error},
+                )
             raise AppError(
                 "The configured AI provider is temporarily unavailable after three attempts. Wait a moment and generate the complete plan again.",
                 status_code=503,

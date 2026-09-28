@@ -62,7 +62,7 @@ class DeepSeekProvider(BaseGenAIProvider):
             "temperature": cfg.temperature,
             "max_tokens": cfg.max_output_tokens,
         }
-        if schema is not None:
+        if schema is not None or cfg.json_mode:
             body["response_format"] = {"type": "json_object"}
 
         started = time.perf_counter()
@@ -130,7 +130,7 @@ class DeepSeekProvider(BaseGenAIProvider):
 
     @staticmethod
     def _parse_json(raw_text: str) -> dict[str, Any]:
-        """Parse a JSON object, tolerating a markdown fence from a misbehaving model."""
+        """Parse a JSON object, tolerating fences or explanatory surrounding text."""
         text = raw_text.strip()
         if text.startswith("```"):
             text = text.removeprefix("```").strip()
@@ -138,7 +138,16 @@ class DeepSeekProvider(BaseGenAIProvider):
                 text = text[4:].strip()
             if text.endswith("```"):
                 text = text[:-3].strip()
-        parsed = json.loads(text)
+        try:
+            parsed = json.loads(text)
+        except json.JSONDecodeError:
+            # Some OpenAI-compatible models return a valid JSON object after a
+            # short prose prefix despite JSON mode. Decode the first object
+            # instead of discarding an otherwise usable response.
+            object_start = text.find("{")
+            if object_start < 0:
+                raise
+            parsed, _ = json.JSONDecoder().raw_decode(text[object_start:])
         if not isinstance(parsed, dict):
             raise ValueError("DeepSeek JSON root must be an object")
         return parsed

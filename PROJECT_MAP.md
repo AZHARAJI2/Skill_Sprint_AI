@@ -618,7 +618,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 
 | NFR | Target | Implementation Approach | Verification |
 |---|---|---|---|
-| Performance | Plan generation + validation ≤30s | Three concurrent stage-group GenAI calls; compact skeleton + per-group excerpts; 28s generation budget with assembler fallback on timeout; Pipeline 2 validators stay Python-only and sequential | Time the end-to-end `/api/plans/generate/{id}` flow for a standard role (Phase 3 validators benchmarked at ~0.08s) |
+| Performance | Plan generation + validation ≤30s | Three concurrent stage-group GenAI calls; compact skeleton + per-group excerpts; compact generation-only requirement fields; configurable excerpt/output budgets; Pipeline 2 validators stay Python-only and sequential. A configurable generation limit can be used by hosting operators, but defaults to uncapped so a complete source-grounded plan is never discarded solely because a provider is slow. | Time the end-to-end `/api/plans/generate/{id}` flow for a standard role (Phase 3 validators benchmarked at ~0.08s) |
 | Scalability | ≥1000 employees, ≥100 roles, ≥1000 docs | Repository pattern + indexed DB queries; no in-memory full-corpus loads | Load test with synthetic profiles |
 | Usability | Intuitive for 5 user types | Bootstrap 5.3 responsive layout; role-specific dashboards; clear navigation | Manual UX walkthrough per role |
 | Accuracy | 100% mandatory coverage before approval | ValidationPipeline enforces; "Verified" status requires 100% coverage + valid sources + zero contradictions | VG-3.1 through VG-3.10 ✅ |
