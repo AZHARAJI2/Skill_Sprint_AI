@@ -14,8 +14,10 @@
       </div>
     </div>
     <div class="ms-auto d-flex gap-2">
-      <a href="/api/plans/{{ plan.id }}" target="_blank" class="btn btn-outline-light btn-sm"><i class="bi bi-code-slash me-1"></i>JSON</a>
+      <a href="/api/plans/{{ plan.id }}" target="_blank" class="btn btn-outline btn-sm"><i class="bi bi-code-slash me-1"></i>JSON</a>
+      {% if user.app_role in ('Admin', 'Training Manager', 'Reviewer', 'Manager') %}
       <a href="/reports?plan_id={{ plan.id }}" class="btn btn-primary btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Export</a>
+      {% endif %}
     </div>
   </div>
 </div>
