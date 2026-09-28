@@ -1,13 +1,136 @@
 {% extends "base.html" %}
-{% block title %}Role dashboard{% endblock %}
+{% block title %}Role Dashboard — SkillSprint AI{% endblock %}
 {% block content %}
-<h1 class="h3">Role dashboard</h1>
-<table class="table table-striped">
-  <thead><tr><th>Role</th><th>Department</th><th>Employees</th></tr></thead>
-  <tbody>
-  {% for row in by_role %}
-    <tr><td>{{ row.title }}</td><td>{{ row.department }}</td><td>{{ row.employees }}</td></tr>
-  {% endfor %}
-  </tbody>
-</table>
+<div class="page-header animate-fade">
+  <h1><i class="bi bi-diagram-3 me-2"></i>Role Dashboard</h1>
+  <div class="subtitle">Onboarding requirements &amp; completion statistics by job role</div>
+</div>
+
+<!-- Summary stats -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card violet animate-fade">
+      <div class="stat-icon"><i class="bi bi-briefcase"></i></div>
+      <div class="stat-value mt-2">{{ by_role|length }}</div>
+      <div class="stat-label">Total Roles</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card blue animate-fade">
+      <div class="stat-icon"><i class="bi bi-people"></i></div>
+      <div class="stat-value mt-2">{{ by_role|sum(attribute='employees') }}</div>
+      <div class="stat-label">Total Employees</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card green animate-fade">
+      <div class="stat-icon"><i class="bi bi-check2-all"></i></div>
+      <div class="stat-value mt-2">{{ by_role|selectattr('employees','gt',0)|list|length }}</div>
+      <div class="stat-label">Staffed Roles</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Role cards -->
+  <div class="col-md-8">
+    <div class="card animate-fade">
+      <div class="card-header"><i class="bi bi-grid-3x3-gap me-2"></i>Role Overview</div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Role Title</th>
+                <th>Department</th>
+                <th>Employees</th>
+                <th>Matrix Reqs</th>
+                <th>Mandatory</th>
+                <th>Coverage</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for row in by_role %}
+            <tr>
+              <td><strong style="font-size:0.875rem">{{ row.title }}</strong></td>
+              <td><span class="badge badge-info">{{ row.department }}</span></td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge {{ 'badge-verified' if row.employees > 0 else 'badge-muted' }}">{{ row.employees }}</span>
+                </div>
+              </td>
+              <td style="font-size:0.85rem">{{ row.matrix_count }}</td>
+              <td style="font-size:0.85rem">{{ row.mandatory_count }}</td>
+              <td style="min-width:120px">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:6px">
+                    <div class="progress-bar {{ 'bg-green' if row.coverage_pct >= 90 else ('bg-amber' if row.coverage_pct >= 60 else 'bg-red') }}"
+                         style="width:{{ row.coverage_pct }}%"></div>
+                  </div>
+                  <span style="font-size:0.75rem;min-width:2.5rem">{{ row.coverage_pct }}%</span>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-3">No roles found. Run <code>python -m database.seed</code>.</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="col-md-4">
+    <div class="card animate-fade h-100">
+      <div class="card-header"><i class="bi bi-pie-chart me-2"></i>Employees by Role</div>
+      <div class="card-body">
+        <div id="role-chart" style="height:300px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Department breakdown -->
+<div class="card mt-4 animate-fade">
+  <div class="card-header"><i class="bi bi-building me-2"></i>Department Breakdown</div>
+  <div class="card-body">
+    <div class="row g-3">
+      {% for dept, rows in by_department.items() %}
+      <div class="col-md-4 col-6">
+        <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem">
+          <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem">{{ dept }}</div>
+          <div style="font-size:1.5rem;font-weight:700">{{ rows|sum(attribute='employees') }}</div>
+          <div style="font-size:0.8rem;color:var(--text-secondary)">{{ rows|length }} role{{ 's' if rows|length != 1 }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const roleData = {{ role_chart_json | safe }};
+Plotly.newPlot('role-chart', [{
+  type: 'pie',
+  labels: roleData.labels,
+  values: roleData.values,
+  hole: 0.5,
+  textinfo: 'percent+label',
+  textfont: { size: 10, color: '#f0f6fc' },
+  marker: {
+    colors: ['#7c3aed','#4f46e5','#2563eb','#0891b2','#059669','#d97706','#dc2626','#8b5cf6','#06b6d4','#10b981'],
+    line: { color: '#0d1117', width: 2 }
+  }
+}], {
+  paper_bgcolor: 'transparent',
+  plot_bgcolor: 'transparent',
+  showlegend: false,
+  margin: { t: 10, b: 10, l: 10, r: 10 },
+  font: { family: 'Inter, sans-serif', color: '#8b949e' }
+});
+</script>
 {% endblock %}

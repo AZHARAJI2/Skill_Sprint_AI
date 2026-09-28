@@ -1,6 +1,144 @@
 {% extends "base.html" %}
-{% block title %}Reports{% endblock %}
+{% block title %}Reports — SkillSprint AI{% endblock %}
 {% block content %}
-<h1 class="h3">Reports</h1>
-<p>Export and reporting land in Phase 4. This is the layout shell.</p>
+<div class="page-header animate-fade">
+  <h1><i class="bi bi-bar-chart me-2"></i>Reports &amp; Export</h1>
+  <div class="subtitle">Employee progress, coverage, hallucinations, traceability, and comparison reports</div>
+</div>
+
+<div class="row g-4">
+  <!-- Report types -->
+  <div class="col-md-4">
+    <div class="card animate-fade">
+      <div class="card-header"><i class="bi bi-list-ul me-2"></i>Report Types</div>
+      <div class="card-body d-flex flex-column gap-2">
+        {% set reports_menu = [
+          ('progress', 'bi-person-check', 'Employee Progress', 'badge-info'),
+          ('coverage', 'bi-shield-check', 'Role Coverage', 'badge-verified'),
+          ('hallucination', 'bi-exclamation-triangle', 'Hallucination Flags', 'badge-danger'),
+          ('traceability', 'bi-link-45deg', 'Source Traceability', 'badge-pending'),
+          ('comparison', 'bi-arrow-left-right', 'GenAI/Python Comparison', 'badge-warning'),
+          ('audit', 'bi-journal-text', 'Audit Trail', 'badge-muted'),
+        ] %}
+        {% for key, icon, label, badge in reports_menu %}
+        <a id="report-{{ key }}-btn" href="/reports?type={{ key }}" class="btn btn-outline-light text-start d-flex align-items-center gap-2">
+          <i class="bi {{ icon }}" style="font-size:1.1rem"></i>
+          <span>{{ label }}</span>
+          <span class="badge {{ badge }} ms-auto">{{ key }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card animate-fade mt-3">
+      <div class="card-header"><i class="bi bi-download me-2"></i>Export</div>
+      <div class="card-body">
+        <p class="text-muted mb-3" style="font-size:0.85rem">Select a report type and export format:</p>
+        <div class="d-flex gap-2 flex-wrap">
+          <a id="export-csv-btn" href="/reports/export/csv?type={{ report_type or 'progress' }}" class="btn btn-success btn-sm flex-grow-1">
+            <i class="bi bi-filetype-csv me-1"></i>CSV
+          </a>
+          <a id="export-pdf-btn" href="/reports/export/pdf?type={{ report_type or 'progress' }}" class="btn btn-danger btn-sm flex-grow-1">
+            <i class="bi bi-filetype-pdf me-1"></i>PDF
+          </a>
+          <a id="export-excel-btn" href="/reports/export/excel?type={{ report_type or 'progress' }}" class="btn btn-primary btn-sm flex-grow-1">
+            <i class="bi bi-filetype-xlsx me-1"></i>Excel
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report content -->
+  <div class="col-md-8">
+    <div class="card animate-fade">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <span><i class="bi bi-table me-2"></i>{{ report_title }}</span>
+        <span class="badge badge-info">{{ rows|length if rows else 0 }} rows</span>
+      </div>
+      <div class="card-body p-0">
+        {% if rows %}
+        <div class="table-responsive" style="max-height:600px;overflow-y:auto">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                {% for col in columns %}
+                <th>{{ col }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+            {% for row in rows %}
+            <tr>
+              {% for col in columns %}
+              <td style="font-size:0.82rem">
+                {% set val = row.get(col, '') %}
+                {% if val is none or val == '' %}
+                <span class="text-muted">—</span>
+                {% elif val in ('Verified', 'Match', 'passed', 'completed') %}
+                <span class="badge badge-verified">{{ val }}</span>
+                {% elif val in ('Manual Review Required', 'Contradiction Detected', 'Mismatch', 'failed') %}
+                <span class="badge badge-danger">{{ val }}</span>
+                {% elif val in ('Partially Verified', 'pending_verification', 'in_progress') %}
+                <span class="badge badge-warning">{{ val }}</span>
+                {% elif val | string | length > 80 %}
+                {{ val | string | truncate(80) }}
+                {% else %}
+                {{ val }}
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state py-5">
+          <div class="empty-icon"><i class="bi bi-bar-chart-line"></i></div>
+          <p>Select a report type from the left panel to view data.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if chart_json %}
+    <div class="card animate-fade mt-4">
+      <div class="card-header"><i class="bi bi-graph-up me-2"></i>Visualization</div>
+      <div class="card-body">
+        <div id="report-chart" style="height:350px"></div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if chart_json %}
+<script>
+const chartData = {{ chart_json | safe }};
+Plotly.newPlot('report-chart', chartData.traces, {
+  paper_bgcolor: 'transparent',
+  plot_bgcolor:  'transparent',
+  font: { family: 'Inter, sans-serif', color: '#8b949e', size: 11 },
+  xaxis: { gridcolor: 'rgba(255,255,255,0.06)', zerolinecolor: 'rgba(255,255,255,0.1)' },
+  yaxis: { gridcolor: 'rgba(255,255,255,0.06)', zerolinecolor: 'rgba(255,255,255,0.1)' },
+  margin: { t: 20, b: 40, l: 50, r: 20 },
+  ...chartData.layout
+}, { responsive: true, displayModeBar: false });
+</script>
+{% endif %}
+
+<script>
+// Update export links when report type changes
+document.querySelectorAll('[id^="report-"]').forEach(link => {
+  link.addEventListener('click', () => {
+    const type = new URL(link.href).searchParams.get('type');
+    document.getElementById('export-csv-btn').href   = `/reports/export/csv?type=${type}`;
+    document.getElementById('export-pdf-btn').href   = `/reports/export/pdf?type=${type}`;
+    document.getElementById('export-excel-btn').href = `/reports/export/excel?type=${type}`;
+  });
+});
+</script>
 {% endblock %}

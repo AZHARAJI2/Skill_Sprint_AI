@@ -20,23 +20,38 @@ from src.employees.matrix_routes import router as matrix_router
 from src.employees.routes import router as employee_router
 from src.errors import AppError
 from src.plans.routes import router as plan_router
+from src.reports.routes import router as reports_router
+from src.reviews.routes import router as review_router
+from src.search.routes import router as search_router
 
 configure_logging()
 logger = get_logger("api")
 settings.ensure_runtime_dirs()
 create_schema()
 
-app = FastAPI(title="SkillSprint AI", version="0.1.0")
+app = FastAPI(
+    title="SkillSprint AI",
+    version="1.0.0",
+    description="Generative AI onboarding intelligence for NovaCart (Phases 1-4 complete).",
+)
 app.mount("/static", StaticFiles(directory=str(settings.project_root / "static")), name="static")
 templates = Jinja2Templates(directory=str(settings.project_root / "templates"))
 
+# Routers (order matters: specific paths before parameterised ones)
 app.include_router(auth_router)
 app.include_router(dashboard_router)
 app.include_router(document_router)
 app.include_router(employee_router)
 app.include_router(matrix_router)
 app.include_router(plan_router)
+app.include_router(review_router)
+app.include_router(reports_router)
+app.include_router(search_router)
 
+
+# ---------------------------------------------------------------------------
+# Error handlers
+# ---------------------------------------------------------------------------
 
 @app.exception_handler(AppError)
 async def app_error_handler(_request: Request, exc: AppError) -> JSONResponse:
@@ -76,13 +91,16 @@ async def unhandled_error_handler(_request: Request, exc: Exception) -> JSONResp
     return JSONResponse(status_code=500, content={"error": "Internal server error"})
 
 
+# ---------------------------------------------------------------------------
+# Health
+# ---------------------------------------------------------------------------
+
 @app.get("/health")
 def health() -> dict:
     """Liveness probe used by tests and hosting platforms."""
-    return {"status": "ok", "app": settings.app_name, "company": settings.company_name}
+    return {"status": "ok", "app": settings.app_name, "company": settings.company_name, "phase": 4}
 
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)

@@ -1,6 +1,200 @@
 {% extends "base.html" %}
-{% block title %}Plan{% endblock %}
+{% block title %}Plan View — SkillSprint AI{% endblock %}
 {% block content %}
-<h1 class="h3">Onboarding plan</h1>
-<p>Plans are generated in Phase 2 and validated in Phase 3. This shell exists so navigation does not 404.</p>
+<div class="page-header animate-fade">
+  <div class="d-flex align-items-center gap-3">
+    <div>
+      <h1><i class="bi bi-journal-text me-2"></i>Onboarding Plan #{{ plan.id }}</h1>
+      <div class="subtitle">
+        Employee #{{ plan.employee_id }} · {{ plan.model_used or 'Assembler' }} ·
+        <span class="badge badge-info">{{ plan.prompt_version or 'v1' }}</span>
+        <span class="badge {{ 'badge-verified' if plan.verification_status == 'Verified' else ('badge-danger' if plan.verification_status == 'Manual Review Required' else 'badge-warning') }}">
+          {{ plan.verification_status or plan.status }}
+        </span>
+      </div>
+    </div>
+    <div class="ms-auto d-flex gap-2">
+      <a href="/api/plans/{{ plan.id }}" target="_blank" class="btn btn-outline-light btn-sm"><i class="bi bi-code-slash me-1"></i>JSON</a>
+      <a href="/reports?plan_id={{ plan.id }}" class="btn btn-primary btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Export</a>
+    </div>
+  </div>
+</div>
+
+{% if detail %}
+<!-- Score summary -->
+{% if validation %}
+<div class="row g-3 mb-4 animate-fade">
+  <div class="col-md-3">
+    <div class="stat-card {{ 'green' if validation.coverage_score >= 95 else ('amber' if validation.coverage_score >= 70 else 'red') }}">
+      <div class="stat-label">Coverage Score</div>
+      <div class="stat-value">{{ validation.coverage_score | round(1) }}<span style="font-size:1rem">%</span></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card {{ 'green' if validation.traceability_score >= 95 else ('amber' if validation.traceability_score >= 70 else 'red') }}">
+      <div class="stat-label">Traceability</div>
+      <div class="stat-value">{{ validation.traceability_score | round(1) }}<span style="font-size:1rem">%</span></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card {{ 'green' if validation.consistency_score >= 95 else ('amber' if validation.consistency_score >= 70 else 'red') }}">
+      <div class="stat-label">Consistency</div>
+      <div class="stat-value">{{ validation.consistency_score | round(1) }}<span style="font-size:1rem">%</span></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card {{ 'green' if validation.overall_status == 'Verified' else ('amber' if validation.overall_status == 'Verified with Warnings' else 'red') }}">
+      <div class="stat-label">Overall Status</div>
+      <div class="stat-value" style="font-size:1.1rem">{{ validation.overall_status or '—' }}</div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card animate-fade">
+  <div class="card-body">
+    <ul class="nav nav-tabs mb-0" id="planViewTab">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pv-modules">Modules ({{ detail.modules|length }})</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#pv-tasks">Tasks ({{ detail.tasks|length }})</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#pv-checklists">Checklist ({{ detail.checklists|length }})</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#pv-quizzes">Quizzes ({{ detail.quizzes|length }})</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#pv-assessments">Assessments ({{ detail.assessments|length }})</button></li>
+    </ul>
+  </div>
+</div>
+
+<div class="tab-content mt-3 animate-fade">
+  <div class="tab-pane fade show active" id="pv-modules">
+    <div class="row g-3">
+    {% for m in detail.modules %}
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between">
+          <span>{{ m.title[:60] }}</span>
+          <div class="d-flex gap-1">
+            <span class="badge badge-info">{{ m.stage }}</span>
+            <span class="badge badge-muted">{{ m.difficulty }}</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:0.85rem;color:var(--text-secondary)">{{ m.purpose[:200] }}{% if m.purpose and m.purpose|length > 200 %}…{% endif %}</p>
+          {% if m.objectives %}
+          <ul style="font-size:0.8rem;padding-left:1.25rem;color:var(--text-secondary)">
+            {% for obj in m.objectives[:3] %}
+            <li>{{ obj[:80] }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          <div class="d-flex gap-2 mt-2">
+            <code style="font-size:0.7rem">{{ m.source_document_id }}</code>
+            <code style="font-size:0.7rem">{{ m.source_section_id }}</code>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}<p class="text-muted">No modules.</p>{% endfor %}
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="pv-tasks">
+    <div class="card">
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th>Description</th><th>Stage</th><th>Difficulty</th><th>Source</th></tr></thead>
+          <tbody>
+          {% for t in detail.tasks %}
+          <tr>
+            <td style="font-size:0.875rem">{{ t.description[:100] }}{% if t.description|length > 100 %}…{% endif %}</td>
+            <td><span class="badge badge-info">{{ t.due_stage }}</span></td>
+            <td><span class="badge badge-muted">{{ t.difficulty }}</span></td>
+            <td><code style="font-size:0.7rem">{{ t.source_requirement_id }}</code></td>
+          </tr>
+          {% else %}<tr><td colspan="4" class="text-muted text-center py-3">No tasks.</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="pv-checklists">
+    <div class="card">
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th>Activity</th><th>Required</th><th>Stage</th><th>Responsible</th></tr></thead>
+          <tbody>
+          {% for c in detail.checklists %}
+          <tr>
+            <td style="font-size:0.875rem">{{ c.activity[:100] }}{% if c.activity|length > 100 %}…{% endif %}</td>
+            <td><span class="badge {{ 'badge-danger' if c.required_or_optional == 'required' else 'badge-muted' }}">{{ c.required_or_optional }}</span></td>
+            <td style="font-size:0.8rem">{{ c.due_stage }}</td>
+            <td style="font-size:0.8rem">{{ c.responsible_person or '—' }}</td>
+          </tr>
+          {% else %}<tr><td colspan="4" class="text-muted text-center py-3">No checklist items.</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="pv-quizzes">
+    <div class="row g-3">
+    {% for q in detail.quizzes %}
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header d-flex gap-2">
+          <span class="badge badge-pending">{{ q.question_type }}</span>
+          <span class="badge badge-muted">{{ q.difficulty }}</span>
+          <span class="badge {{ 'badge-warning' if q.distractor_validation_status == 'pending_verification' else 'badge-verified' }} ms-auto">{{ q.distractor_validation_status }}</span>
+        </div>
+        <div class="card-body">
+          <p style="font-size:0.875rem;font-weight:600">{{ q.question_text[:200] }}</p>
+          {% if q.options %}
+          <ul style="font-size:0.8rem;padding-left:1.25rem;color:var(--text-secondary)">
+            {% for opt in q.options[:4] %}
+            <li>{{ opt[:80] }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          <div style="font-size:0.8rem;color:var(--accent-green);margin-top:0.5rem">
+            <i class="bi bi-check-circle me-1"></i>{{ q.correct_answer[:60] if q.correct_answer else '—' }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}<p class="text-muted">No quizzes.</p>{% endfor %}
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="pv-assessments">
+    <div class="row g-3">
+    {% for a in detail.assessments %}
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header d-flex gap-2">
+          <span class="badge badge-violet" style="background:rgba(124,58,237,0.2);color:#a5b4fc;border:1px solid rgba(124,58,237,0.3)">{{ a.assessment_type }}</span>
+          <span class="badge badge-muted">{{ a.difficulty }}</span>
+        </div>
+        <div class="card-body">
+          {% if a.rubric %}
+          {% for criterion in (a.rubric.criteria if a.rubric.criteria is defined else []) %}
+          <div class="mb-2 pb-2" style="border-bottom:1px solid var(--border)">
+            <div style="font-size:0.8rem;font-weight:600">{{ criterion.criterion }}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Weight: {{ criterion.weight }}</div>
+          </div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% else %}<p class="text-muted">No assessments.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="empty-state animate-fade">
+  <div class="empty-icon"><i class="bi bi-journal-x"></i></div>
+  <p>Plan structured JSON not available.</p>
+</div>
+{% endif %}
 {% endblock %}

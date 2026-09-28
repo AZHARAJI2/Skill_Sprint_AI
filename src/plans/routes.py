@@ -70,3 +70,59 @@ def get_plan(
     if user.app_role == "Employee" and user.employee_id != plan.employee_id:
         raise AppError("Forbidden", status_code=403)
     return _plan_payload(plan)
+
+
+# ---------------------------------------------------------------------------
+# Phase 4 — Policy update detection & selective regeneration (Tasks 57-59)
+# ---------------------------------------------------------------------------
+
+@router.get("/policy-impact/{document_id}", summary="Impact analysis for a document update")
+def policy_impact(
+    document_id: str,
+    session: Session = Depends(get_session),
+    user: User = Depends(require_role("Admin", "Training Manager")),
+) -> dict:
+    """Return all plans and items affected by a change to the given document (Task 57-58)."""
+    from src.plans.policy_update import PolicyUpdateService
+    impact = PolicyUpdateService(session).analyse_impact(document_id)
+    return {
+        "document_id": impact.document_id,
+        "old_version": impact.old_version,
+        "new_version": impact.new_version,
+        "affected_plan_ids": impact.affected_plan_ids,
+        "total_affected": impact.total_affected,
+        "analysis_timestamp": impact.analysis_timestamp,
+        "affected_items": [
+            {
+                "item_id": i.item_id,
+                "item_type": i.item_type,
+                "plan_id": i.plan_id,
+                "source_document_id": i.source_document_id,
+                "source_section_id": i.source_section_id,
+                "title": i.title,
+            }
+            for i in impact.affected_items
+        ],
+    }
+
+
+@router.post("/selective-regenerate/{document_id}", summary="Request selective regeneration")
+def selective_regenerate(
+    document_id: str,
+    session: Session = Depends(get_session),
+    user: User = Depends(require_role("Admin", "Training Manager")),
+) -> dict:
+    """Mark only affected items for regeneration when a source document changes (Task 59)."""
+    from src.plans.policy_update import PolicyUpdateService
+    impact = PolicyUpdateService(session).request_selective_regeneration(
+        document_id, actor=user.username
+    )
+    return {
+        "document_id": impact.document_id,
+        "affected_plan_ids": impact.affected_plan_ids,
+        "total_affected": impact.total_affected,
+        "message": (
+            f"{impact.total_affected} items marked for selective regeneration "
+            f"across {len(impact.affected_plan_ids)} plan(s)."
+        ),
+    }

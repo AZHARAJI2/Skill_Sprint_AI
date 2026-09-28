@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Search — SkillSprint AI{% endblock %}
+{% block content %}
+<div class="page-header animate-fade">
+  <h1><i class="bi bi-search me-2"></i>Search &amp; Filter</h1>
+  <div class="subtitle">Search across employees, roles, documents, modules, plans, and validation results</div>
+</div>
+
+<form method="get" action="/search" class="animate-fade">
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="search-bar">
+        <i class="bi bi-search search-icon"></i>
+        <input id="search-query" type="text" name="q" value="{{ query or '' }}" placeholder="Search employees, documents, modules, requirements…" autocomplete="off">
+      </div>
+    </div>
+    <div class="col-md-2">
+      <select id="search-entity" name="entity" class="form-select">
+        <option value="" {% if not entity %}selected{% endif %}>All entities</option>
+        <option value="employee"  {% if entity == 'employee'  %}selected{% endif %}>Employees</option>
+        <option value="document"  {% if entity == 'document'  %}selected{% endif %}>Documents</option>
+        <option value="module"    {% if entity == 'module'    %}selected{% endif %}>Modules</option>
+        <option value="plan"      {% if entity == 'plan'      %}selected{% endif %}>Plans</option>
+        <option value="requirement" {% if entity == 'requirement' %}selected{% endif %}>Requirements</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select id="search-department" name="department" class="form-select">
+        <option value="">All departments</option>
+        {% for dept in departments %}
+        <option value="{{ dept }}" {% if department == dept %}selected{% endif %}>{{ dept }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button id="search-submit-btn" type="submit" class="btn btn-primary w-100">
+        <i class="bi bi-search me-1"></i>Search
+      </button>
+    </div>
+  </div>
+</form>
+
+{% if query %}
+<!-- Result counts -->
+<div class="d-flex align-items-center gap-3 mb-3 animate-fade">
+  <span class="text-muted" style="font-size:0.85rem">
+    Found <strong>{{ total_results }}</strong> results for "<em>{{ query }}</em>"
+    {% if entity %} in <strong>{{ entity }}s</strong>{% endif %}
+  </span>
+</div>
+
+{% if results.employees %}
+<div class="card animate-fade mb-4">
+  <div class="card-header"><i class="bi bi-people me-2"></i>Employees ({{ results.employees|length }})</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th>Code</th><th>Name</th><th>Role</th><th>Department</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for e in results.employees %}
+      <tr>
+        <td><code>{{ e.employee_code }}</code></td>
+        <td>{{ e.name }}</td>
+        <td style="font-size:0.8rem">{{ e.role_title or '—' }}</td>
+        <td style="font-size:0.8rem">{{ e.department }}</td>
+        <td><span class="badge badge-muted">{{ e.training_status }}</span></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% if results.documents %}
+<div class="card animate-fade mb-4">
+  <div class="card-header"><i class="bi bi-files me-2"></i>Documents ({{ results.documents|length }})</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th>Doc ID</th><th>Title</th><th>Category</th><th>Version</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for d in results.documents %}
+      <tr>
+        <td><code>{{ d.document_id }}</code></td>
+        <td style="font-size:0.875rem">{{ d.title }}</td>
+        <td><span class="badge badge-info">{{ d.category }}</span></td>
+        <td style="font-size:0.8rem">{{ d.version or '—' }}</td>
+        <td><span class="badge {{ 'badge-verified' if d.status == 'active' else 'badge-muted' }}">{{ d.status }}</span></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% if results.modules %}
+<div class="card animate-fade mb-4">
+  <div class="card-header"><i class="bi bi-collection me-2"></i>Modules ({{ results.modules|length }})</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th>Plan</th><th>Title</th><th>Stage</th><th>Difficulty</th><th>Source</th></tr></thead>
+      <tbody>
+      {% for m in results.modules %}
+      <tr>
+        <td><a href="/plans/{{ m.plan_id }}" class="badge badge-pending">#{{ m.plan_id }}</a></td>
+        <td style="font-size:0.875rem">{{ m.title[:80] }}</td>
+        <td><span class="badge badge-info">{{ m.stage or '—' }}</span></td>
+        <td><span class="badge badge-muted">{{ m.difficulty or '—' }}</span></td>
+        <td><code style="font-size:0.7rem">{{ m.source_document_id }}</code></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% if results.plans %}
+<div class="card animate-fade mb-4">
+  <div class="card-header"><i class="bi bi-journal-text me-2"></i>Plans ({{ results.plans|length }})</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th>Plan ID</th><th>Employee</th><th>Model</th><th>Status</th><th>Verification</th><th></th></tr></thead>
+      <tbody>
+      {% for p in results.plans %}
+      <tr>
+        <td><code>#{{ p.id }}</code></td>
+        <td style="font-size:0.8rem">{{ p.employee_id }}</td>
+        <td style="font-size:0.75rem">{{ p.model_used or 'Assembler' }}</td>
+        <td><span class="badge badge-muted">{{ p.status }}</span></td>
+        <td><span class="badge {{ 'badge-verified' if p.verification_status == 'Verified' else 'badge-pending' }}">{{ p.verification_status or '—' }}</span></td>
+        <td><a href="/plans/{{ p.id }}" class="btn btn-info btn-sm" style="font-size:0.7rem;padding:0.2rem 0.6rem">View</a></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% if results.requirements %}
+<div class="card animate-fade mb-4">
+  <div class="card-header"><i class="bi bi-card-list me-2"></i>Requirements ({{ results.requirements|length }})</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th>Req ID</th><th>Role</th><th>Text</th><th>Mandatory</th><th>Priority</th></tr></thead>
+      <tbody>
+      {% for r in results.requirements %}
+      <tr>
+        <td><code style="font-size:0.75rem">{{ r.requirement_id }}</code></td>
+        <td style="font-size:0.8rem">{{ r.role }}</td>
+        <td style="font-size:0.82rem">{{ r.requirement_text[:100] }}{% if r.requirement_text|length > 100 %}…{% endif %}</td>
+        <td><span class="badge {{ 'badge-danger' if r.mandatory else 'badge-muted' }}">{{ 'Required' if r.mandatory else 'Optional' }}</span></td>
+        <td><span class="badge badge-muted">{{ r.priority }}</span></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% if total_results == 0 %}
+<div class="empty-state animate-fade">
+  <div class="empty-icon"><i class="bi bi-search"></i></div>
+  <p>No results found for "<em>{{ query }}</em>". Try a different keyword or entity filter.</p>
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state animate-fade">
+  <div class="empty-icon"><i class="bi bi-search"></i></div>
+  <p>Enter a search term above to find employees, documents, modules, plans, or requirements.</p>
+</div>
+{% endif %}
+{% endblock %}
