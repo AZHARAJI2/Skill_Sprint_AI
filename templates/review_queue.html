@@ -1,59 +1,102 @@
 {% extends "base.html" %}
 {% block title %}Review Queue — SkillSprint AI{% endblock %}
 {% block content %}
+
 <div class="page-header animate-fade">
-  <h1><i class="bi bi-clipboard-check me-2"></i>Human Review Queue</h1>
-  <div class="subtitle">Items requiring manual review — approve, reject, edit, or request regeneration</div>
+  <div>
+    <h1><i class="bi bi-clipboard-check me-2" style="color:var(--teal)"></i>Human Review Queue</h1>
+    <div class="subtitle">Items requiring manual review — approve, reject, edit, or request regeneration</div>
+  </div>
+  {% if queue %}
+  <div class="page-header-actions">
+    <span class="badge badge-danger" style="font-size:0.85rem;padding:0.45em 1em;">
+      {{ queue|length }} item{{ 's' if queue|length != 1 }} pending
+    </span>
+  </div>
+  {% endif %}
 </div>
 
 {% if queue %}
-<div class="d-flex align-items-center gap-3 mb-4 animate-fade">
-  <div class="badge badge-danger" style="font-size:0.9rem;padding:0.4em 0.9em">{{ queue|length }} item{{ 's' if queue|length != 1 }} pending</div>
-  <div class="ms-auto d-flex gap-2">
-    <select id="filter-type" class="form-select form-select-sm" style="width:auto">
-      <option value="">All types</option>
+<!-- Filters -->
+<div class="card animate-fade mb-4" style="padding:1rem 1.25rem;">
+  <div class="d-flex align-items-center gap-3 flex-wrap">
+    <span style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);white-space:nowrap;">
+      <i class="bi bi-funnel me-1"></i>Filter by:
+    </span>
+    <select id="filter-type" class="form-select form-select-sm" style="width:auto;min-width:130px;">
+      <option value="">All item types</option>
       <option value="module">Module</option>
       <option value="task">Task</option>
-      <option value="quiz_question">Quiz</option>
+      <option value="quiz_question">Quiz Question</option>
       <option value="checklist">Checklist</option>
       <option value="assessment">Assessment</option>
     </select>
-    <select id="filter-status" class="form-select form-select-sm" style="width:auto">
+    <select id="filter-status" class="form-select form-select-sm" style="width:auto;min-width:180px;">
       <option value="">All statuses</option>
       <option value="Manual Review Required">Manual Review Required</option>
       <option value="Contradiction Detected">Contradiction Detected</option>
       <option value="Source Support Missing">Source Support Missing</option>
       <option value="Partially Verified">Partially Verified</option>
     </select>
+    <span id="visible-count" style="font-size:0.8rem;color:var(--text-muted);margin-left:auto;">
+      Showing {{ queue|length }} items
+    </span>
   </div>
 </div>
 
-<div id="queue-table" class="card animate-fade">
+<!-- Queue Table -->
+<div class="card animate-fade">
   <div class="card-body p-0">
     <div class="table-responsive">
-      <table class="table mb-0">
-        <thead><tr>
-          <th>Item ID</th><th>Type</th><th>Plan</th><th>Status</th><th>Reviewer Status</th><th>Timestamp</th><th>Actions</th>
-        </tr></thead>
+      <table class="table mb-0" id="queue-table">
+        <thead>
+          <tr>
+            <th>Item ID</th>
+            <th>Type</th>
+            <th>Plan</th>
+            <th>Validation Status</th>
+            <th>Reviewer Status</th>
+            <th>Timestamp</th>
+            <th style="min-width:160px;">Actions</th>
+          </tr>
+        </thead>
         <tbody id="queue-body">
         {% for item in queue %}
         <tr class="queue-row" data-type="{{ item.item_type }}" data-status="{{ item.verification_status }}">
           <td><code>{{ item.item_id }}</code></td>
-          <td><span class="badge badge-info">{{ item.item_type }}</span></td>
+          <td>
+            <span class="badge
+              {% if item.item_type == 'module' %}badge-navy
+              {% elif item.item_type == 'task' %}badge-teal
+              {% elif item.item_type == 'quiz_question' %}badge-info
+              {% elif item.item_type == 'checklist' %}badge-warning
+              {% else %}badge-muted{% endif %}">
+              <i class="bi bi-
+                {% if item.item_type == 'module' %}collection
+                {% elif item.item_type == 'task' %}check2-square
+                {% elif item.item_type == 'quiz_question' %}patch-question
+                {% elif item.item_type == 'checklist' %}list-check
+                {% else %}file{% endif %} me-1"></i>
+              {{ item.item_type.replace('_',' ').title() }}
+            </span>
+          </td>
           <td><span class="badge badge-muted">#{{ item.plan_id }}</span></td>
           <td>
             <span class="badge
               {% if item.verification_status == 'Contradiction Detected' %}badge-danger
               {% elif item.verification_status == 'Source Support Missing' %}badge-warning
               {% elif item.verification_status == 'Manual Review Required' %}badge-pending
+              {% elif item.verification_status == 'Partially Verified' %}badge-info
               {% else %}badge-muted{% endif %}">
               {{ item.verification_status }}
             </span>
           </td>
           <td><span class="badge badge-muted">{{ item.reviewer_status }}</span></td>
-          <td style="font-size:0.75rem;color:var(--text-muted)">{{ item.timestamp[:16] if item.timestamp else '—' }}</td>
+          <td style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap;">
+            <i class="bi bi-clock me-1"></i>{{ item.timestamp[:16] if item.timestamp else '—' }}
+          </td>
           <td>
-            <div class="d-flex gap-1 flex-wrap">
+            <div class="action-btn-group">
               <button class="btn btn-success btn-sm action-btn"
                 data-action="approve" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}"
                 data-original='{{ item.original_result | tojson }}'
@@ -84,9 +127,9 @@
 <div class="card animate-fade">
   <div class="card-body">
     <div class="empty-state">
-      <div class="empty-icon"><i class="bi bi-check-circle"></i></div>
-      <p><strong>All clear!</strong> No items are awaiting human review.<br>
-      Items enter this queue when Pipeline 2 assigns a non-Verified status.</p>
+      <div class="empty-icon" style="color:var(--accent-success);"><i class="bi bi-check-circle-fill"></i></div>
+      <p><strong style="color:var(--navy);">All clear!</strong><br>No items are awaiting human review.<br>
+      <span style="color:var(--text-muted);font-size:0.82rem;">Items enter this queue when Pipeline 2 assigns a non-Verified status.</span></p>
     </div>
   </div>
 </div>
@@ -94,27 +137,39 @@
 
 <!-- Action Modal -->
 <div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="actionModalLabel">Review Action</h5>
+        <h5 class="modal-title" id="actionModalLabel">
+          <span id="modal-action-icon"></span>
+          <span id="actionModalLabel-text">Review Action</span>
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <p id="modal-desc" class="text-muted mb-3"></p>
+        <div class="alert alert-info mb-3" id="modal-desc" style="font-size:0.85rem;"></div>
+
         <div id="edit-section" class="d-none mb-3">
-          <label class="form-label">Edited Content (JSON)</label>
-          <textarea id="edit-content" class="form-control" rows="5" style="font-family:var(--font-mono);font-size:0.8rem"></textarea>
+          <label class="form-label"><i class="bi bi-pencil-square me-1"></i>Edited Content (JSON)</label>
+          <textarea id="edit-content" class="form-control" rows="5"
+                    style="font-family:var(--font-mono);font-size:0.8rem;"></textarea>
         </div>
+
         <div>
-          <label class="form-label" id="comment-label">Comment</label>
-          <textarea id="action-comment" class="form-control" rows="3" placeholder="Add a note…"></textarea>
+          <label class="form-label" id="comment-label"><i class="bi bi-chat-left-text me-1"></i>Comment</label>
+          <textarea id="action-comment" class="form-control" rows="3"
+                    placeholder="Add a note or explanation…"></textarea>
         </div>
+
         <div id="action-result" class="mt-3 d-none"></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" id="modal-confirm-btn" class="btn btn-primary">Confirm</button>
+        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+          <i class="bi bi-x me-1"></i>Cancel
+        </button>
+        <button type="button" id="modal-confirm-btn" class="btn btn-primary">
+          <i class="bi bi-check me-1"></i>Confirm
+        </button>
       </div>
     </div>
   </div>
@@ -125,26 +180,35 @@
 <script>
 let currentAction = null, currentItem = null, currentType = null, currentOriginal = null;
 const modal = new bootstrap.Modal(document.getElementById('actionModal'));
-const actionLabels = { approve:'Approve', reject:'Reject', edit:'Edit', regenerate:'Regenerate' };
-const actionClasses = { approve:'btn-success', reject:'btn-danger', edit:'btn-warning', regenerate:'btn-info' };
+const actionConfig = {
+  approve:    { label:'Approve',    icon:'bi-check-circle',    cls:'btn-success', alertType:'success' },
+  reject:     { label:'Reject',     icon:'bi-x-circle',       cls:'btn-danger',  alertType:'danger' },
+  edit:       { label:'Edit',       icon:'bi-pencil-square',  cls:'btn-warning', alertType:'warning' },
+  regenerate: { label:'Regenerate', icon:'bi-arrow-clockwise',cls:'btn-info',    alertType:'info' },
+};
 
 document.querySelectorAll('.action-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    currentAction = btn.dataset.action;
-    currentItem   = btn.dataset.item;
-    currentType   = btn.dataset.type;
+    currentAction   = btn.dataset.action;
+    currentItem     = btn.dataset.item;
+    currentType     = btn.dataset.type;
     try { currentOriginal = JSON.parse(btn.dataset.original); } catch { currentOriginal = {}; }
 
-    document.getElementById('actionModalLabel').textContent = `${actionLabels[currentAction]}: ${currentItem}`;
-    document.getElementById('modal-desc').textContent = `You are about to ${currentAction} item ${currentItem} (${currentType}).`;
+    const cfg = actionConfig[currentAction];
+    document.getElementById('actionModalLabel-text').textContent = `${cfg.label}: ${currentItem}`;
+    document.getElementById('modal-action-icon').innerHTML = `<i class="bi ${cfg.icon} me-2" style="color:var(--accent-${currentAction === 'approve' ? 'success' : currentAction === 'reject' ? 'danger' : currentAction === 'edit' ? 'warning' : 'info'})"></i>`;
+    document.getElementById('modal-desc').className = `alert alert-${cfg.alertType} mb-3`;
+    document.getElementById('modal-desc').innerHTML = `You are about to <strong>${cfg.label.toLowerCase()}</strong> item <code>${currentItem}</code> (type: ${currentType}).`;
     document.getElementById('edit-section').classList.toggle('d-none', currentAction !== 'edit');
-    document.getElementById('comment-label').textContent = currentAction === 'reject' ? 'Reason (required)' : 'Comment (optional)';
+    document.getElementById('comment-label').innerHTML = currentAction === 'reject'
+      ? '<i class="bi bi-chat-left-text me-1"></i>Reason <span style="color:var(--accent-danger)">*required</span>'
+      : '<i class="bi bi-chat-left-text me-1"></i>Comment <span style="color:var(--text-muted)">(optional)</span>';
     document.getElementById('action-comment').value = '';
     document.getElementById('action-result').classList.add('d-none');
 
     const confirmBtn = document.getElementById('modal-confirm-btn');
-    confirmBtn.className = `btn ${actionClasses[currentAction]}`;
-    confirmBtn.textContent = actionLabels[currentAction];
+    confirmBtn.className = `btn ${cfg.cls}`;
+    confirmBtn.innerHTML = `<i class="bi ${cfg.icon} me-1"></i>${cfg.label}`;
     modal.show();
   });
 });
@@ -155,7 +219,7 @@ document.getElementById('modal-confirm-btn').addEventListener('click', async () 
 
   if (currentAction === 'edit') {
     try { body.edited_content = JSON.parse(document.getElementById('edit-content').value); }
-    catch { showResult('danger', 'Invalid JSON in edited content.'); return; }
+    catch { showResult('danger', '⚠ Invalid JSON in edited content.'); return; }
   }
 
   try {
@@ -165,8 +229,8 @@ document.getElementById('modal-confirm-btn').addEventListener('click', async () 
       body: JSON.stringify(body)
     });
     if (!resp.ok) { const e = await resp.json(); throw new Error(e.error || resp.statusText); }
-    showResult('success', `✓ Action "${currentAction}" recorded for ${currentItem}.`);
-    setTimeout(() => { modal.hide(); location.reload(); }, 1200);
+    showResult('success', `✓ Action "${currentAction}" recorded successfully for ${currentItem}.`);
+    setTimeout(() => { modal.hide(); location.reload(); }, 1400);
   } catch (err) {
     showResult('danger', `Error: ${err.message}`);
   }
@@ -187,11 +251,14 @@ function showResult(type, msg) {
 function filterQueue() {
   const type   = document.getElementById('filter-type')?.value  || '';
   const status = document.getElementById('filter-status')?.value || '';
+  let visible = 0;
   document.querySelectorAll('.queue-row').forEach(row => {
-    const matchType   = !type   || row.dataset.type   === type;
-    const matchStatus = !status || row.dataset.status === status;
-    row.style.display = matchType && matchStatus ? '' : 'none';
+    const match = (!type || row.dataset.type === type) && (!status || row.dataset.status === status);
+    row.style.display = match ? '' : 'none';
+    if (match) visible++;
   });
+  const cnt = document.getElementById('visible-count');
+  if (cnt) cnt.textContent = `Showing ${visible} item${visible !== 1 ? 's' : ''}`;
 }
 </script>
 {% endblock %}

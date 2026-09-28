@@ -1,197 +1,259 @@
 {% extends "base.html" %}
-{% block title %}Employee Dashboard — SkillSprint AI{% endblock %}
+{% block title %}My Dashboard — SkillSprint AI{% endblock %}
 {% block content %}
+
+<!-- Page Header -->
 <div class="page-header animate-fade">
-  <h1><i class="bi bi-person-circle me-2"></i>My Onboarding Dashboard</h1>
-  <div class="subtitle">
-    {% if employee %}Welcome, <strong>{{ employee.name }}</strong> · {{ employee.department }}{% else %}Personal progress overview{% endif %}
+  <div>
+    <h1><i class="bi bi-person-circle me-2" style="color:var(--teal)"></i>My Onboarding Dashboard</h1>
+    <div class="subtitle">
+      {% if employee %}
+        Welcome back, <strong style="color:var(--navy)">{{ employee.name }}</strong> · {{ employee.department }}
+        {% if employee.role %} · <span style="color:var(--teal)">{{ employee.role.title }}</span>{% endif %}
+      {% else %}
+        Personal onboarding progress overview
+      {% endif %}
+    </div>
   </div>
+  {% if plan %}
+  <div class="page-header-actions">
+    <a href="/plans/{{ plan.id }}" class="btn btn-teal btn-sm">
+      <i class="bi bi-journal-text"></i>View Full Plan
+    </a>
+  </div>
+  {% endif %}
 </div>
 
 {% if not employee %}
-<div class="empty-state">
-  <div class="empty-icon"><i class="bi bi-person-x"></i></div>
-  <p>No employee profile is linked to this login. Contact your administrator.</p>
+<div class="card animate-fade">
+  <div class="card-body">
+    <div class="empty-state">
+      <div class="empty-icon"><i class="bi bi-person-x"></i></div>
+      <p><strong>No employee profile linked.</strong><br>Contact your administrator to connect your profile.</p>
+    </div>
+  </div>
 </div>
 {% else %}
 
-<!-- Progress assessment banner -->
-<div class="card mb-4 animate-fade" style="background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(79,70,229,0.1) 100%); border-color: rgba(124,58,237,0.3);">
-  <div class="card-body d-flex align-items-center gap-4">
+<!-- Progress Banner -->
+<div class="card mb-4 animate-fade" style="border-left:4px solid {{ 'var(--accent-success)' if progress.overall_pct >= 70 else ('var(--accent-warning)' if progress.overall_pct >= 40 else 'var(--accent-danger)') }};">
+  <div class="card-body d-flex align-items-center gap-4" style="flex-wrap:wrap;">
     <div class="score-ring {{ 'score-good' if progress.overall_pct >= 70 else ('score-warning' if progress.overall_pct >= 40 else 'score-danger') }}">
       {{ progress.overall_pct }}%
     </div>
-    <div class="flex-grow-1">
-      <div class="d-flex align-items-center justify-content-between mb-1">
-        <strong>Overall Progress</strong>
-        <span class="badge {{ 'badge-verified' if progress.status == 'On Track' else ('badge-warning' if progress.status in ('Requires Attention','Assessment Required') else ('badge-danger' if progress.status == 'Behind Schedule' else 'badge-info')) }}">
+    <div class="flex-grow-1" style="min-width:200px;">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <span style="font-weight:700;font-size:0.95rem;color:var(--navy)">Overall Onboarding Progress</span>
+        <span class="badge {% if progress.status == 'Completed' %}badge-success
+          {% elif progress.status == 'On Track' %}badge-teal
+          {% elif progress.status in ('Requires Attention','Assessment Required') %}badge-warning
+          {% elif progress.status == 'Behind Schedule' %}badge-danger
+          {% else %}badge-muted{% endif %}">
           {{ progress.status }}
         </span>
       </div>
-      <div class="progress" style="height:10px">
+      <div class="progress" style="height:10px;margin-bottom:0.75rem;">
         <div class="progress-bar {{ 'bg-green' if progress.overall_pct >= 70 else ('bg-amber' if progress.overall_pct >= 40 else 'bg-red') }}"
-             role="progressbar" style="width: {{ progress.overall_pct }}%"
+             role="progressbar" style="width:{{ progress.overall_pct }}%"
              aria-valuenow="{{ progress.overall_pct }}" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
-      <div class="d-flex gap-3 mt-2" style="font-size:0.8rem;color:var(--text-muted)">
-        <span><i class="bi bi-collection me-1"></i>{{ progress.modules_done }}/{{ progress.modules_total }} modules</span>
-        <span><i class="bi bi-check2-square me-1"></i>{{ progress.tasks_done }}/{{ progress.tasks_total }} tasks</span>
-        <span><i class="bi bi-patch-question me-1"></i>Avg quiz {{ progress.avg_quiz_score }}%</span>
+      <div class="d-flex flex-wrap gap-3" style="font-size:0.8rem;color:var(--text-secondary);">
+        <span><i class="bi bi-collection me-1" style="color:var(--teal)"></i>{{ progress.modules_done }}/{{ progress.modules_total }} modules</span>
+        <span><i class="bi bi-check2-square me-1" style="color:var(--teal)"></i>{{ progress.tasks_done }}/{{ progress.tasks_total }} tasks</span>
+        <span><i class="bi bi-list-check me-1" style="color:var(--teal)"></i>{{ progress.checklists_done }}/{{ progress.checklists_total }} checklist</span>
+        <span><i class="bi bi-patch-question me-1" style="color:var(--teal)"></i>Avg quiz {{ progress.avg_quiz_score }}%</span>
       </div>
     </div>
-    <div class="text-end d-none d-md-block">
-      <div style="font-size:0.75rem;color:var(--text-muted)">Training Status</div>
-      <strong>{{ employee.training_status.replace('_',' ').title() }}</strong>
+    <div class="text-end d-none d-md-block" style="min-width:120px;">
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.25rem;">Training Status</div>
+      <strong style="color:var(--navy);font-size:0.9rem;">{{ employee.training_status.replace('_',' ').title() }}</strong>
     </div>
   </div>
 </div>
 
+<!-- Stats Row -->
 <div class="row g-3 mb-4">
-  <div class="col-md-3">
-    <div class="stat-card violet animate-fade">
+  <div class="col-md-3 col-6">
+    <div class="stat-card navy animate-fade">
       <div class="stat-icon"><i class="bi bi-collection"></i></div>
-      <div class="stat-value mt-2">{{ progress.modules_done }}<span style="font-size:1.2rem;color:var(--text-muted)">/{{ progress.modules_total }}</span></div>
-      <div class="stat-label">Modules Complete</div>
+      <div class="stat-value">{{ progress.modules_done }}<span style="font-size:1.2rem;color:var(--text-muted)">/{{ progress.modules_total }}</span></div>
+      <div class="stat-label">Modules Done</div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="stat-card blue animate-fade">
+  <div class="col-md-3 col-6">
+    <div class="stat-card teal animate-fade">
       <div class="stat-icon"><i class="bi bi-check2-square"></i></div>
-      <div class="stat-value mt-2">{{ progress.tasks_done }}<span style="font-size:1.2rem;color:var(--text-muted)">/{{ progress.tasks_total }}</span></div>
-      <div class="stat-label">Tasks Complete</div>
+      <div class="stat-value">{{ progress.tasks_done }}<span style="font-size:1.2rem;color:var(--text-muted)">/{{ progress.tasks_total }}</span></div>
+      <div class="stat-label">Tasks Done</div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="stat-card cyan animate-fade">
+  <div class="col-md-3 col-6">
+    <div class="stat-card {{ 'success' if progress.avg_quiz_score >= 70 else ('warning' if progress.avg_quiz_score >= 50 else 'danger') }} animate-fade">
       <div class="stat-icon"><i class="bi bi-patch-question"></i></div>
-      <div class="stat-value mt-2">{{ progress.avg_quiz_score }}<span style="font-size:1.2rem;color:var(--text-muted)">%</span></div>
+      <div class="stat-value">{{ progress.avg_quiz_score }}<span style="font-size:1.2rem;color:var(--text-muted)">%</span></div>
       <div class="stat-label">Avg Quiz Score</div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="stat-card {{ 'green' if progress.checklists_done == progress.checklists_total else 'amber' }} animate-fade">
+  <div class="col-md-3 col-6">
+    <div class="stat-card {{ 'success' if progress.checklists_done == progress.checklists_total and progress.checklists_total > 0 else 'warning' }} animate-fade">
       <div class="stat-icon"><i class="bi bi-list-check"></i></div>
-      <div class="stat-value mt-2">{{ progress.checklists_done }}<span style="font-size:1.2rem;color:var(--text-muted)">/{{ progress.checklists_total }}</span></div>
+      <div class="stat-value">{{ progress.checklists_done }}<span style="font-size:1.2rem;color:var(--text-muted)">/{{ progress.checklists_total }}</span></div>
       <div class="stat-label">Checklist Items</div>
     </div>
   </div>
 </div>
 
+<!-- Main content area -->
 <div class="row g-4">
-  <!-- Plan detail -->
+  <!-- Plan Detail Tabs -->
   <div class="col-md-8">
     <div class="card animate-fade">
       <div class="card-header d-flex align-items-center justify-content-between">
-        <span><i class="bi bi-journal-text me-2"></i>Onboarding Plan</span>
+        <span><i class="bi bi-journal-text"></i>Onboarding Plan</span>
         {% if plan %}
-        <span class="badge badge-info">Plan #{{ plan.id }}</span>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge badge-navy">Plan #{{ plan.id }}</span>
+          <a href="/plans/{{ plan.id }}" class="btn btn-outline btn-sm"><i class="bi bi-arrows-fullscreen"></i>Full View</a>
+        </div>
         {% endif %}
       </div>
       <div class="card-body p-0">
         {% if plan and plan_detail %}
-        <ul class="nav nav-tabs px-3 pt-3" id="planTab" role="tablist">
-          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabModules">Modules</button></li>
-          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabTasks">Tasks</button></li>
-          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabChecklist">Checklist</button></li>
-          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabQuiz">Quizzes</button></li>
+        <ul class="nav nav-tabs px-3 pt-2" id="planTab" role="tablist">
+          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabModules"><i class="bi bi-collection me-1"></i>Modules</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabTasks"><i class="bi bi-check2-square me-1"></i>Tasks</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabChecklist"><i class="bi bi-list-check me-1"></i>Checklist</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabQuiz"><i class="bi bi-patch-question me-1"></i>Quizzes</button></li>
         </ul>
-        <div class="tab-content px-3 pb-3">
+        <div class="tab-content px-3 pb-3 pt-1">
+          <!-- Modules -->
           <div class="tab-pane fade show active" id="tabModules">
             {% for m in plan_detail.modules[:10] %}
-            <div class="d-flex align-items-start gap-3 py-2" style="border-bottom:1px solid var(--border)">
-              <span class="badge badge-info mt-1">{{ m.stage }}</span>
-              <div>
-                <div class="fw-600">{{ m.title }}</div>
-                <div style="font-size:0.8rem;color:var(--text-muted)">{{ m.purpose[:100] }}{% if m.purpose|length > 100 %}…{% endif %}</div>
+            <div class="plan-item">
+              <div class="plan-item-icon navy"><i class="bi bi-collection"></i></div>
+              <div class="flex-grow-1">
+                <div class="plan-item-title">{{ m.title }}</div>
+                <div class="plan-item-sub">{{ m.purpose[:100] }}{% if m.purpose|length > 100 %}…{% endif %}</div>
               </div>
-              <span class="badge badge-muted ms-auto">{{ m.difficulty }}</span>
+              <div class="d-flex flex-column align-items-end gap-1">
+                <span class="badge badge-navy" style="font-size:0.7rem;">{{ m.stage }}</span>
+                <span class="badge badge-muted" style="font-size:0.7rem;">{{ m.difficulty }}</span>
+              </div>
             </div>
             {% else %}
-            <p class="text-muted py-3">No modules in this plan yet.</p>
+            <div class="empty-state"><div class="empty-icon"><i class="bi bi-collection"></i></div><p>No modules in this plan yet.</p></div>
             {% endfor %}
           </div>
+
+          <!-- Tasks -->
           <div class="tab-pane fade" id="tabTasks">
             {% for t in plan_detail.tasks[:10] %}
-            <div class="d-flex align-items-start gap-3 py-2" style="border-bottom:1px solid var(--border)">
-              <i class="bi bi-arrow-right-circle text-violet mt-1" style="color:var(--accent-violet)"></i>
-              <div>
-                <div class="fw-600" style="font-size:0.875rem">{{ t.description[:80] }}{% if t.description|length > 80 %}…{% endif %}</div>
-                <div style="font-size:0.775rem;color:var(--text-muted)">Due: {{ t.due_stage }} · {{ t.difficulty }}</div>
+            <div class="plan-item">
+              <div class="plan-item-icon teal"><i class="bi bi-arrow-right-circle"></i></div>
+              <div class="flex-grow-1">
+                <div class="plan-item-title">{{ t.description[:90] }}{% if t.description|length > 90 %}…{% endif %}</div>
+                <div class="plan-item-sub">Due: {{ t.due_stage }} · {{ t.difficulty }}</div>
               </div>
             </div>
             {% else %}
-            <p class="text-muted py-3">No tasks in this plan yet.</p>
+            <div class="empty-state"><div class="empty-icon"><i class="bi bi-check2-square"></i></div><p>No tasks in this plan yet.</p></div>
             {% endfor %}
           </div>
+
+          <!-- Checklist -->
           <div class="tab-pane fade" id="tabChecklist">
             {% for c in plan_detail.checklists[:15] %}
-            <div class="d-flex align-items-center gap-3 py-2" style="border-bottom:1px solid var(--border)">
-              <i class="bi bi-check-circle" style="color:var(--accent-green)"></i>
-              <div style="font-size:0.875rem">{{ c.activity }}</div>
-              <span class="badge {{ 'badge-danger' if c.required_or_optional == 'required' else 'badge-muted' }} ms-auto">{{ c.required_or_optional }}</span>
+            <div class="plan-item">
+              <div class="plan-item-icon success"><i class="bi bi-check-circle"></i></div>
+              <div class="flex-grow-1">
+                <div class="plan-item-title" style="font-size:0.85rem;">{{ c.activity }}</div>
+              </div>
+              <span class="badge {{ 'badge-danger' if c.required_or_optional == 'required' else 'badge-muted' }}">
+                {{ c.required_or_optional }}
+              </span>
             </div>
             {% else %}
-            <p class="text-muted py-3">No checklist items.</p>
+            <div class="empty-state"><div class="empty-icon"><i class="bi bi-list-check"></i></div><p>No checklist items.</p></div>
             {% endfor %}
           </div>
+
+          <!-- Quizzes -->
           <div class="tab-pane fade" id="tabQuiz">
             {% for q in plan_detail.quizzes[:8] %}
-            <div class="py-2" style="border-bottom:1px solid var(--border)">
-              <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge badge-pending">{{ q.question_type }}</span>
-                <span class="badge badge-muted">{{ q.difficulty }}</span>
+            <div class="plan-item">
+              <div class="plan-item-icon warning"><i class="bi bi-question-circle"></i></div>
+              <div class="flex-grow-1">
+                <div class="plan-item-title" style="font-size:0.85rem;">{{ q.question_text[:120] }}{% if q.question_text|length > 120 %}…{% endif %}</div>
+                <div class="plan-item-sub d-flex gap-2 mt-1">
+                  <span class="badge badge-navy">{{ q.question_type }}</span>
+                  <span class="badge badge-muted">{{ q.difficulty }}</span>
+                </div>
               </div>
-              <div style="font-size:0.875rem">{{ q.question_text[:120] }}{% if q.question_text|length > 120 %}…{% endif %}</div>
             </div>
             {% else %}
-            <p class="text-muted py-3">No quiz questions in this plan.</p>
+            <div class="empty-state"><div class="empty-icon"><i class="bi bi-patch-question"></i></div><p>No quiz questions in this plan.</p></div>
             {% endfor %}
           </div>
         </div>
         {% else %}
         <div class="empty-state">
           <div class="empty-icon"><i class="bi bi-journal-x"></i></div>
-          <p>No onboarding plan has been generated yet.<br>Contact your Training Manager.</p>
+          <p><strong>No onboarding plan generated yet.</strong><br>Contact your Training Manager to start your plan.</p>
         </div>
         {% endif %}
       </div>
     </div>
   </div>
 
-  <!-- Recommendations & weak areas -->
+  <!-- Sidebar: Recommendations + Weak Areas -->
   <div class="col-md-4">
     <div class="card animate-fade mb-3">
-      <div class="card-header"><i class="bi bi-lightbulb me-2"></i>Adaptive Recommendations</div>
+      <div class="card-header"><i class="bi bi-lightbulb"></i>Adaptive Recommendations</div>
       <div class="card-body">
         {% if recommendations %}
           {% for rec in recommendations %}
           <div class="rec-card {{ rec.priority }}">
             <div class="d-flex align-items-center gap-2 mb-1">
-              <i class="bi bi-{{ 'exclamation-triangle' if rec.priority == 'high' else ('dash-circle' if rec.priority == 'medium' else 'check-circle') }}" style="color:{{ 'var(--accent-red)' if rec.priority == 'high' else ('var(--accent-amber)' if rec.priority == 'medium' else 'var(--accent-green)') }}"></i>
-              <strong style="font-size:0.82rem">{{ rec.type }}</strong>
+              <i class="bi bi-{{ 'exclamation-triangle-fill' if rec.priority == 'high' else ('dash-circle' if rec.priority == 'medium' else 'check-circle-fill') }}"
+                 style="color:{{ 'var(--accent-danger)' if rec.priority == 'high' else ('var(--accent-warning)' if rec.priority == 'medium' else 'var(--accent-success)') }};font-size:0.9rem;"></i>
+              <strong style="font-size:0.82rem;color:var(--navy)">{{ rec.type }}</strong>
             </div>
             <p style="font-size:0.8rem;color:var(--text-secondary);margin:0">{{ rec.message }}</p>
           </div>
           {% endfor %}
         {% else %}
-          <p class="text-muted" style="font-size:0.85rem">No recommendations yet — complete some modules to get personalized suggestions.</p>
+        <p style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:1rem 0;">
+          <i class="bi bi-lightbulb" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>
+          Complete some modules to get personalized suggestions.
+        </p>
         {% endif %}
       </div>
     </div>
 
     {% if weak_areas %}
     <div class="card animate-fade">
-      <div class="card-header"><i class="bi bi-graph-down me-2"></i>Weak Areas</div>
+      <div class="card-header"><i class="bi bi-graph-down-arrow"></i>Areas to Improve</div>
       <div class="card-body">
         {% for area in weak_areas %}
-        <div class="d-flex align-items-center gap-2 mb-3">
-          <div class="flex-grow-1">
-            <div style="font-size:0.82rem;font-weight:600;margin-bottom:4px">{{ area.topic }}</div>
-            <div class="progress"><div class="progress-bar bg-red" style="width:{{ area.score }}%"></div></div>
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span style="font-size:0.82rem;font-weight:600;color:var(--text-primary)">{{ area.topic }}</span>
+            <span style="font-size:0.78rem;font-weight:700;color:var(--accent-danger)">{{ area.score }}%</span>
           </div>
-          <span style="font-size:0.8rem;color:var(--accent-red);min-width:3rem;text-align:right">{{ area.score }}%</span>
+          <div class="progress" style="height:6px;">
+            <div class="progress-bar bg-red" style="width:{{ area.score }}%"></div>
+          </div>
         </div>
         {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="card animate-fade">
+      <div class="card-body">
+        <div class="empty-state" style="padding:1.5rem 1rem;">
+          <div class="empty-icon" style="font-size:2rem;"><i class="bi bi-trophy"></i></div>
+          <p><strong>Great job!</strong><br>No weak areas identified yet.</p>
+        </div>
       </div>
     </div>
     {% endif %}

@@ -1,149 +1,192 @@
 {% extends "base.html" %}
 {% block title %}Admin Dashboard — SkillSprint AI{% endblock %}
 {% block content %}
+
+<!-- Page Header -->
 <div class="page-header animate-fade">
-  <h1><i class="bi bi-grid me-2"></i>Administrator Dashboard</h1>
-  <div class="subtitle">NovaCart · Live system metrics &amp; compliance overview</div>
+  <div>
+    <h1><i class="bi bi-grid-1x2 me-2" style="color:var(--teal)"></i>Administrator Dashboard</h1>
+    <div class="subtitle">NovaCart · Live system metrics, compliance coverage &amp; team overview</div>
+  </div>
+  <div class="page-header-actions">
+    <a href="/documents/upload" class="btn btn-teal btn-sm"><i class="bi bi-cloud-upload"></i>Upload Docs</a>
+    <a href="/reviews" class="btn btn-primary btn-sm"><i class="bi bi-clipboard-check"></i>Review Queue</a>
+  </div>
 </div>
 
-<!-- Stats row -->
+<!-- KPI Row -->
 <div class="row g-3 mb-4">
   <div class="col-md-3 col-6">
-    <div class="stat-card violet animate-fade">
-      <div class="stat-icon"><i class="bi bi-people"></i></div>
-      <div class="stat-value mt-2">{{ employee_count }}</div>
+    <div class="stat-card navy animate-fade">
+      <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+      <div class="stat-value">{{ employee_count }}</div>
       <div class="stat-label">Employees</div>
-      <div class="stat-sub">{{ role_count }} roles</div>
+      <div class="stat-sub">{{ role_count }} active roles</div>
     </div>
   </div>
   <div class="col-md-3 col-6">
-    <div class="stat-card blue animate-fade">
+    <div class="stat-card teal animate-fade">
       <div class="stat-icon"><i class="bi bi-files"></i></div>
-      <div class="stat-value mt-2">{{ metrics.file_count }}</div>
+      <div class="stat-value">{{ metrics.file_count }}</div>
       <div class="stat-label">Files Ingested</div>
-      <div class="stat-sub">{{ metrics.unique_document_ids }} unique docs</div>
+      <div class="stat-sub">{{ metrics.unique_document_ids }} unique documents</div>
     </div>
   </div>
   <div class="col-md-3 col-6">
-    <div class="stat-card cyan animate-fade">
-      <div class="stat-icon"><i class="bi bi-table"></i></div>
-      <div class="stat-value mt-2">{{ matrix_count }}</div>
-      <div class="stat-label">Matrix Rows</div>
-      <div class="stat-sub">{{ metrics.mandatory_sections }} mandatory sections</div>
-    </div>
-  </div>
-  <div class="col-md-3 col-6">
-    <div class="stat-card {{ 'green' if plan_count > 0 else 'amber' }} animate-fade">
+    <div class="stat-card success animate-fade">
       <div class="stat-icon"><i class="bi bi-journal-text"></i></div>
-      <div class="stat-value mt-2">{{ plan_count }}</div>
+      <div class="stat-value">{{ plan_count }}</div>
       <div class="stat-label">Plans Generated</div>
-      <div class="stat-sub">{{ pending_reviews }} pending reviews</div>
+      <div class="stat-sub">{{ matrix_count }} matrix rows</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="stat-card {{ 'danger' if pending_reviews > 0 else 'teal' }} animate-fade">
+      <div class="stat-icon"><i class="bi bi-clipboard-check"></i></div>
+      <div class="stat-value">{{ pending_reviews }}</div>
+      <div class="stat-label">Pending Reviews</div>
+      <div class="stat-sub">
+        {% if pending_reviews > 0 %}<a href="/reviews" style="color:var(--accent-danger);font-weight:600;font-size:0.78rem;">Open queue →</a>
+        {% else %}All clear ✓{% endif %}
+      </div>
     </div>
   </div>
 </div>
 
+<!-- Middle Row: Coverage + Flagged Content -->
 <div class="row g-4 mb-4">
-  <!-- Coverage compliance -->
+  <!-- Compliance Coverage -->
   <div class="col-md-6">
     <div class="card animate-fade h-100">
-      <div class="card-header"><i class="bi bi-shield-check me-2"></i>Compliance Coverage</div>
+      <div class="card-header">
+        <i class="bi bi-shield-check"></i>Compliance Coverage by Role
+      </div>
       <div class="card-body">
         {% if coverage_by_role %}
-        {% for row in coverage_by_role %}
-        <div class="mb-3">
-          <div class="d-flex justify-content-between mb-1">
-            <span style="font-size:0.85rem;font-weight:600">{{ row.role }}</span>
-            <span style="font-size:0.8rem;color:{{ 'var(--accent-green)' if row.pct >= 90 else ('var(--accent-amber)' if row.pct >= 70 else 'var(--accent-red)') }}">{{ row.pct }}%</span>
+          {% for row in coverage_by_role %}
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary)">{{ row.role }}</span>
+              <span style="font-size:0.8rem;font-weight:700;color:{{ 'var(--accent-success)' if row.pct >= 90 else ('var(--accent-warning)' if row.pct >= 70 else 'var(--accent-danger)') }}">
+                {{ row.pct }}%
+              </span>
+            </div>
+            <div class="progress" style="height:8px;">
+              <div class="progress-bar {{ 'bg-green' if row.pct >= 90 else ('bg-amber' if row.pct >= 70 else 'bg-red') }}"
+                   style="width:{{ row.pct }}%" role="progressbar"
+                   aria-valuenow="{{ row.pct }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
           </div>
-          <div class="progress">
-            <div class="progress-bar {{ 'bg-green' if row.pct >= 90 else ('bg-amber' if row.pct >= 70 else 'bg-red') }}"
-                 style="width:{{ row.pct }}%"></div>
-          </div>
-        </div>
-        {% endfor %}
+          {% endfor %}
         {% else %}
         <div class="empty-state">
           <div class="empty-icon"><i class="bi bi-shield-x"></i></div>
-          <p>No validation reports yet. Generate plans and run the validation pipeline.</p>
+          <p>No validation reports yet.<br>Generate plans and run the validation pipeline.</p>
         </div>
         {% endif %}
       </div>
     </div>
   </div>
 
-  <!-- Flagged content & alerts -->
+  <!-- Flagged Content -->
   <div class="col-md-6">
     <div class="card animate-fade h-100">
-      <div class="card-header"><i class="bi bi-flag me-2"></i>Flagged Content &amp; Alerts</div>
-      <div class="card-body">
-        <div class="row g-3 mb-3">
+      <div class="card-header">
+        <i class="bi bi-flag-fill"></i>Content Flags &amp; Alerts
+      </div>
+      <div class="card-body d-flex flex-column gap-3">
+        <div class="row g-2">
           <div class="col-6">
-            <div style="background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);border-radius:var(--radius-md);padding:1rem;text-align:center">
-              <div style="font-size:1.75rem;font-weight:800;color:var(--accent-red)">{{ flagged_hallucinations }}</div>
-              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Hallucination Flags</div>
+            <div class="flag-mini-card danger">
+              <div class="flag-value">{{ flagged_hallucinations }}</div>
+              <div class="flag-label">Hallucination Flags</div>
             </div>
           </div>
           <div class="col-6">
-            <div style="background:rgba(217,119,6,0.1);border:1px solid rgba(217,119,6,0.3);border-radius:var(--radius-md);padding:1rem;text-align:center">
-              <div style="font-size:1.75rem;font-weight:800;color:var(--accent-amber)">{{ flagged_contradictions }}</div>
-              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Contradictions</div>
+            <div class="flag-mini-card warning">
+              <div class="flag-value">{{ flagged_contradictions }}</div>
+              <div class="flag-label">Contradictions</div>
             </div>
           </div>
           <div class="col-6">
-            <div style="background:rgba(79,70,229,0.1);border:1px solid rgba(79,70,229,0.3);border-radius:var(--radius-md);padding:1rem;text-align:center">
-              <div style="font-size:1.75rem;font-weight:800;color:#a5b4fc">{{ pending_reviews }}</div>
-              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Pending Reviews</div>
+            <div class="flag-mini-card navy">
+              <div class="flag-value">{{ pending_reviews }}</div>
+              <div class="flag-label">Pending Reviews</div>
             </div>
           </div>
           <div class="col-6">
-            <div style="background:rgba(8,145,178,0.1);border:1px solid rgba(8,145,178,0.3);border-radius:var(--radius-md);padding:1rem;text-align:center">
-              <div style="font-size:1.75rem;font-weight:800;color:#67e8f9">{{ metrics.adversarial_sections }}</div>
-              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Injection Cases</div>
+            <div class="flag-mini-card teal">
+              <div class="flag-value">{{ metrics.adversarial_sections }}</div>
+              <div class="flag-label">Injection Cases</div>
             </div>
           </div>
         </div>
+
         {% if pending_reviews > 0 %}
-        <a href="/reviews" class="btn btn-primary w-100 btn-sm">
-          <i class="bi bi-clipboard-check me-2"></i>Open Review Queue ({{ pending_reviews }})
+        <a href="/reviews" class="btn btn-danger btn-sm w-100 mt-auto">
+          <i class="bi bi-clipboard-check"></i>Open Review Queue ({{ pending_reviews }} pending)
         </a>
+        {% else %}
+        <div class="alert alert-success mb-0 mt-auto" style="font-size:0.82rem;">
+          <i class="bi bi-check-circle-fill me-2"></i>Review queue is clear — no items pending.
+        </div>
         {% endif %}
       </div>
     </div>
   </div>
 </div>
 
+<!-- Bottom Row: Employee Table + Sidebar -->
 <div class="row g-4">
-  <!-- Employee list -->
+  <!-- Employee Table -->
   <div class="col-md-8">
     <div class="card animate-fade">
       <div class="card-header d-flex align-items-center justify-content-between">
-        <span><i class="bi bi-people me-2"></i>Employees</span>
-        <a href="/api/employees" class="btn btn-outline-light btn-sm" target="_blank"><i class="bi bi-box-arrow-up-right me-1"></i>API</a>
+        <span><i class="bi bi-people"></i>Employees ({{ employee_count }})</span>
+        <a href="/api/employees" class="btn btn-outline btn-sm" target="_blank">
+          <i class="bi bi-box-arrow-up-right"></i>API
+        </a>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
           <table class="table mb-0">
-            <thead><tr>
-              <th>Code</th><th>Name</th><th>Role</th><th>Department</th><th>Status</th><th>Plan</th>
-            </tr></thead>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th>Plan</th>
+              </tr>
+            </thead>
             <tbody>
             {% for emp in employees %}
             <tr>
               <td><code>{{ emp.employee_code }}</code></td>
-              <td>{{ emp.name }}</td>
-              <td style="font-size:0.8rem">{{ emp.role.title if emp.role else '—' }}</td>
-              <td style="font-size:0.8rem">{{ emp.department }}</td>
-              <td><span class="badge {{ 'badge-verified' if emp.training_status == 'completed' else ('badge-warning' if emp.training_status == 'in_progress' else 'badge-muted') }}">{{ emp.training_status.replace('_',' ') }}</span></td>
+              <td style="font-weight:600;">{{ emp.name }}</td>
+              <td style="font-size:0.8rem;">{{ emp.role.title if emp.role else '—' }}</td>
+              <td style="font-size:0.8rem;color:var(--text-secondary);">{{ emp.department }}</td>
+              <td>
+                <span class="badge
+                  {% if emp.training_status == 'completed' %}badge-success
+                  {% elif emp.training_status == 'in_progress' %}badge-warning
+                  {% else %}badge-muted{% endif %}">
+                  {{ emp.training_status.replace('_',' ').title() }}
+                </span>
+              </td>
               <td>
                 {% if emp.id in plan_ids %}
-                <a href="/plans/{{ plan_ids[emp.id] }}" class="btn btn-info btn-sm" style="font-size:0.7rem;padding:0.2rem 0.6rem">View</a>
+                <a href="/plans/{{ plan_ids[emp.id] }}" class="btn btn-teal btn-sm">
+                  <i class="bi bi-eye"></i>View
+                </a>
                 {% else %}
-                <span class="text-muted" style="font-size:0.75rem">—</span>
+                <span style="color:var(--text-muted);font-size:0.78rem;">—</span>
                 {% endif %}
               </td>
             </tr>
             {% else %}
-            <tr><td colspan="6" class="text-center text-muted py-3">No employees seeded yet.</td></tr>
+            <tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">No employees seeded yet.</td></tr>
             {% endfor %}
             </tbody>
           </table>
@@ -152,41 +195,39 @@
     </div>
   </div>
 
-  <!-- Quick stats -->
+  <!-- Sidebar: Corpus Health + Quick Actions -->
   <div class="col-md-4">
     <div class="card animate-fade mb-3">
-      <div class="card-header"><i class="bi bi-database me-2"></i>Corpus Health</div>
-      <div class="card-body">
-        <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
-          <span style="font-size:0.85rem;color:var(--text-secondary)">Mandatory sections</span>
-          <strong>{{ metrics.mandatory_sections }}</strong>
-        </div>
-        <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
-          <span style="font-size:0.85rem;color:var(--text-secondary)">Optional sections</span>
-          <strong>{{ metrics.optional_sections }}</strong>
-        </div>
-        <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
-          <span style="font-size:0.85rem;color:var(--text-secondary)">Role-specific sections</span>
-          <strong>{{ metrics.role_specific_sections }}</strong>
-        </div>
-        <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
-          <span style="font-size:0.85rem;color:var(--text-secondary)">Conflict pairs</span>
-          <strong>{{ metrics.conflict_pairs }}</strong>
-        </div>
-        <div class="d-flex justify-content-between py-2">
-          <span style="font-size:0.85rem;color:var(--text-secondary)">Adversarial cases</span>
-          <strong style="color:var(--accent-red)">{{ metrics.adversarial_sections }}</strong>
+      <div class="card-header"><i class="bi bi-database"></i>Corpus Health</div>
+      <div class="card-body p-0">
+        <div style="padding:0 1.25rem;">
+          <div class="corpus-row"><label>Mandatory sections</label><strong>{{ metrics.mandatory_sections }}</strong></div>
+          <div class="corpus-row"><label>Optional sections</label><strong>{{ metrics.optional_sections }}</strong></div>
+          <div class="corpus-row"><label>Role-specific sections</label><strong>{{ metrics.role_specific_sections }}</strong></div>
+          <div class="corpus-row"><label>Conflict pairs</label><strong style="color:var(--accent-warning)">{{ metrics.conflict_pairs }}</strong></div>
+          <div class="corpus-row"><label>Adversarial cases</label><strong style="color:var(--accent-danger)">{{ metrics.adversarial_sections }}</strong></div>
         </div>
       </div>
     </div>
 
     <div class="card animate-fade">
-      <div class="card-header"><i class="bi bi-lightning me-2"></i>Quick Actions</div>
+      <div class="card-header"><i class="bi bi-lightning-charge"></i>Quick Actions</div>
       <div class="card-body d-flex flex-column gap-2">
-        <a href="/documents/upload" id="upload-docs-btn" class="btn btn-primary btn-sm w-100"><i class="bi bi-cloud-upload me-2"></i>Upload Documents</a>
-        <a href="/reviews" id="review-queue-btn" class="btn btn-warning btn-sm w-100"><i class="bi bi-clipboard-check me-2"></i>Review Queue</a>
-        <a href="/reports" id="reports-btn" class="btn btn-info btn-sm w-100"><i class="bi bi-bar-chart me-2"></i>Reports</a>
-        <a href="/search" id="search-btn" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-search me-2"></i>Search</a>
+        <a href="/documents/upload" id="upload-docs-btn" class="btn btn-primary btn-sm w-100">
+          <i class="bi bi-cloud-upload"></i>Upload Documents
+        </a>
+        <a href="/reviews" id="review-queue-btn" class="btn btn-teal btn-sm w-100">
+          <i class="bi bi-clipboard-check"></i>Review Queue
+        </a>
+        <a href="/reports" id="reports-btn" class="btn btn-outline btn-sm w-100">
+          <i class="bi bi-bar-chart-line"></i>Reports
+        </a>
+        <a href="/search" id="search-btn" class="btn btn-outline btn-sm w-100">
+          <i class="bi bi-search"></i>Search
+        </a>
+        <a href="/dashboard/role" class="btn btn-outline btn-sm w-100">
+          <i class="bi bi-diagram-3"></i>Role Dashboard
+        </a>
       </div>
     </div>
   </div>

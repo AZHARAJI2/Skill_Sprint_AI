@@ -15,30 +15,56 @@
 {% if request.url.path != '/login' %}
 <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
   <div class="container-fluid" style="max-width:1280px; margin:0 auto;">
-    <a class="navbar-brand" href="/">⚡ SkillSprint AI</a>
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
+    <a class="navbar-brand" href="/">
+      <div class="brand-icon">S</div>
+      <span>SkillSprint <span style="color:#5EEAD4;">AI</span></span>
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            style="color:rgba(255,255,255,0.8);font-size:1.2rem;">
+      <i class="bi bi-list"></i>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       {% if user is defined %}
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link{% if request.url.path.startswith('/dashboard') %} active{% endif %}" href="/dashboard"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+      <ul class="navbar-nav me-auto ms-3 gap-1">
+        <li class="nav-item">
+          <a class="nav-link{% if request.url.path.startswith('/dashboard') %} active{% endif %}" href="/dashboard">
+            <i class="bi bi-speedometer2"></i>Dashboard
+          </a>
+        </li>
         {% if user.app_role in ('Admin','Training Manager') %}
-        <li class="nav-item"><a class="nav-link{% if request.url.path.startswith('/documents') %} active{% endif %}" href="/documents/upload"><i class="bi bi-cloud-upload me-1"></i>Documents</a></li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.url.path.startswith('/documents') %} active{% endif %}" href="/documents/upload">
+            <i class="bi bi-cloud-upload"></i>Documents
+          </a>
+        </li>
         {% endif %}
         {% if user.app_role in ('Admin','Training Manager','Reviewer') %}
-        <li class="nav-item"><a class="nav-link{% if request.url.path == '/reviews' %} active{% endif %}" href="/reviews"><i class="bi bi-clipboard-check me-1"></i>Reviews</a></li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.url.path == '/reviews' %} active{% endif %}" href="/reviews">
+            <i class="bi bi-clipboard-check"></i>Reviews
+          </a>
+        </li>
         {% endif %}
         {% if user.app_role in ('Admin','Training Manager','Reviewer','Manager') %}
-        <li class="nav-item"><a class="nav-link{% if request.url.path.startswith('/reports') %} active{% endif %}" href="/reports"><i class="bi bi-bar-chart me-1"></i>Reports</a></li>
-        <li class="nav-item"><a class="nav-link{% if request.url.path == '/search' %} active{% endif %}" href="/search"><i class="bi bi-search me-1"></i>Search</a></li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.url.path.startswith('/reports') %} active{% endif %}" href="/reports">
+            <i class="bi bi-bar-chart-line"></i>Reports
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.url.path == '/search' %} active{% endif %}" href="/search">
+            <i class="bi bi-search"></i>Search
+          </a>
+        </li>
         {% endif %}
       </ul>
-      <div class="d-flex align-items-center gap-3">
-        <span class="badge badge-pending">{{ user.app_role }}</span>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge-role">{{ user.app_role }}</span>
         <span class="navbar-text d-none d-md-inline">{{ user.username }}</span>
         <form method="post" action="/logout" class="d-inline">
-          <button id="logout-btn" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+          <button id="logout-btn" class="btn-logout">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </button>
         </form>
       </div>
       {% endif %}
@@ -47,7 +73,7 @@
 </nav>
 {% endif %}
 
-<main class="container py-4" role="main">
+<main class="container py-4" role="main" style="max-width:1280px;">
   {% block content %}{% endblock %}
 </main>
 

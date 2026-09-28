@@ -7,9 +7,14 @@ hidden evaluator's security checklist.
 from __future__ import annotations
 
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 
 from src.main import app
+
+
+def _transport() -> ASGITransport:
+    """Return an ASGITransport wrapping the FastAPI app (httpx ≥0.23 compatible)."""
+    return ASGITransport(app=app)
 
 
 # ---------------------------------------------------------------------------
@@ -60,7 +65,7 @@ _INJECTION_PAYLOADS = [
 @pytest.mark.parametrize("payload", _INJECTION_PAYLOADS)
 async def test_injection_payloads_in_review_comment_are_stored_not_executed(payload: str):
     """VG-5.1: Injection payloads in review comments must be stored as-is, never executed."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _admin(client)
         resp = await client.post(
             "/api/reviews/INJ-TEST/approve",
@@ -81,7 +86,7 @@ async def test_injection_payloads_in_review_comment_are_stored_not_executed(payl
 @pytest.mark.asyncio
 async def test_sql_injection_in_search_param():
     """VG-5.1: SQL injection in search query must return empty results, not error."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _admin(client)
         resp = await client.get(
             "/api/search",
@@ -101,7 +106,7 @@ async def test_sql_injection_in_search_param():
 @pytest.mark.asyncio
 async def test_employee_cannot_generate_plan():
     """VG-5.2: Employee role is forbidden from generating plans."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _employee(client)
         resp = await client.post("/api/plans/generate/1", headers=headers)
         assert resp.status_code == 403
@@ -110,7 +115,7 @@ async def test_employee_cannot_generate_plan():
 @pytest.mark.asyncio
 async def test_employee_cannot_ingest_documents():
     """VG-5.2: Employee cannot call document upload API."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _employee(client)
         resp = await client.post(
             "/api/documents/upload",
@@ -124,7 +129,7 @@ async def test_employee_cannot_ingest_documents():
 @pytest.mark.asyncio
 async def test_employee_cannot_approve_reviews():
     """VG-5.2: Employee role cannot write review decisions."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _employee(client)
         resp = await client.post(
             "/api/reviews/ANY-ITEM/approve",
@@ -137,7 +142,7 @@ async def test_employee_cannot_approve_reviews():
 @pytest.mark.asyncio
 async def test_reviewer_cannot_generate_plan():
     """VG-5.2: Reviewer role cannot trigger Pipeline 1 generation."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _reviewer(client)
         resp = await client.post("/api/plans/generate/1", headers=headers)
         assert resp.status_code == 403
@@ -146,7 +151,7 @@ async def test_reviewer_cannot_generate_plan():
 @pytest.mark.asyncio
 async def test_manager_cannot_regenerate_policy():
     """VG-5.2: Manager cannot call selective-regenerate (Admin/Trainer only)."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _manager(client)
         resp = await client.post("/api/plans/selective-regenerate/POL-01", headers=headers)
         assert resp.status_code == 403
@@ -155,7 +160,7 @@ async def test_manager_cannot_regenerate_policy():
 @pytest.mark.asyncio
 async def test_employee_cannot_read_other_employees_plan():
     """VG-5.2: Employee may only fetch their own plan."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _employee(client)
         # Attempt to read plan ID 1 (probably another employee's plan)
         resp = await client.get("/api/plans/1", headers=headers)
@@ -180,7 +185,7 @@ _PROTECTED_ENDPOINTS = [
 @pytest.mark.parametrize("method,path", _PROTECTED_ENDPOINTS)
 async def test_anonymous_access_returns_401_or_403(method: str, path: str):
     """VG-5.3: All protected API endpoints must reject anonymous requests."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         if method == "GET":
             resp = await client.get(path)
         else:
@@ -191,7 +196,7 @@ async def test_anonymous_access_returns_401_or_403(method: str, path: str):
 @pytest.mark.asyncio
 async def test_bad_token_returns_401():
     """VG-5.3: A forged JWT must be rejected."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.FAKEPAYLOAD.FAKESIG"}
         resp = await client.get("/api/employees", headers=headers)
         assert resp.status_code in (401, 403)
@@ -204,7 +209,7 @@ async def test_bad_token_returns_401():
 @pytest.mark.asyncio
 async def test_approve_action_creates_audit_entry():
     """VG-5.4: Every review decision must produce an audit log entry."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _admin(client)
         item_id = "AUDIT-TRAIL-TEST"
         await client.post(
@@ -226,7 +231,7 @@ async def test_approve_action_creates_audit_entry():
 @pytest.mark.asyncio
 async def test_audit_log_is_immutable_append_only():
     """VG-5.4: AuditEntry records must not be deletable through any API route."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _admin(client)
         # There is no DELETE /api/audit route
         resp = await client.delete("/api/audit/1", headers=headers)
@@ -240,7 +245,7 @@ async def test_audit_log_is_immutable_append_only():
 @pytest.mark.asyncio
 async def test_oversized_payload_rejected():
     """VG-5.5: Very large payloads must not cause a 500 (DoS prevention)."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _admin(client)
         big_string = "X" * 1_000_000  # 1 MB string
         resp = await client.post(
@@ -259,7 +264,7 @@ async def test_oversized_payload_rejected():
 @pytest.mark.asyncio
 async def test_employee_code_uniqueness_enforced():
     """VG-5.5: Duplicate employee codes are rejected with 409."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _admin(client)
         payload = {
             "employee_code": "SEED-EMP-01",
@@ -279,7 +284,7 @@ async def test_employee_code_uniqueness_enforced():
 @pytest.mark.asyncio
 async def test_review_original_result_preserved_on_reject():
     """VG-5.5: After reject, original_result must not be mutated."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _admin(client)
         item_id = "MUTATION-GUARD-TEST"
         original = {
@@ -310,7 +315,7 @@ async def test_review_original_result_preserved_on_reject():
 @pytest.mark.asyncio
 async def test_validation_route_does_not_call_genai():
     """VG-5.6: Validation pipeline must use pure Python only (no GenAI import at call site)."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _admin(client)
         resp = await client.post("/api/plans/1/validate", headers=headers)
         # Route may return 200 or 404 (if no plan 1); must not return 500 from GenAI call

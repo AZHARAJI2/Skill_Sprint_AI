@@ -37,7 +37,7 @@ from src.plans.models import OnboardingPlan
 from src.plans.repository import PlanRepository
 from src.reviews.models import ValidationReportRecord
 from src.reviews.service import ReviewService, ValidationReportRepository
-from src.schemas import GeneratedPlan  # noqa: F401 — used via plan.structured_json
+from schemas.plan_schema import GeneratedPlan  # noqa: F401 — used via plan.structured_json
 
 router = APIRouter(tags=["dashboards"])
 templates = Jinja2Templates(directory=str(settings.project_root / "templates"))
