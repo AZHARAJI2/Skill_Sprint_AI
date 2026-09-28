@@ -7,7 +7,10 @@ import json
 from sqlalchemy.orm import Session
 
 from config.logging_config import get_logger
+from config.settings import settings
 from genai_pipeline.base_provider import BaseGenAIProvider
+from genai_pipeline.commandcode_provider import CommandCodeProvider
+from genai_pipeline.deepseek_provider import DeepSeekProvider
 from genai_pipeline.gemini_provider import GeminiProvider
 from genai_pipeline.plan_assembler import PlanAssembler
 from genai_pipeline.plan_generator import PlanGenerator
@@ -60,7 +63,13 @@ class PlanGenerationService:
 
     def generate_for_employee(self, employee_id: int, actor: str = "system") -> OnboardingPlan:
         """Run Pipeline 1 and persist the structured plan plus generation metadata."""
-        provider = self.provider or GeminiProvider()
+        provider = self.provider or (
+            GeminiProvider()
+            if settings.genai_provider == "gemini"
+            else DeepSeekProvider()
+            if settings.genai_provider == "deepseek"
+            else CommandCodeProvider()
+        )
         generator = PlanGenerator(provider, self.prompt_manager)
         employee = self.employees.get(employee_id)
         role = employee.role
@@ -100,10 +109,13 @@ class PlanGenerationService:
             }
         )
         requirements_json = json.dumps([item.model_dump(mode="json") for item in classified])
-        source_chunks_block = self._fence_chunks(classified, excerpts)
+        source_chunks_by_reference = self._fenced_chunk_blocks(classified, excerpts)
+        source_chunks_block = "\n\n".join(source_chunks_by_reference.values())
         valid_sources = {(item.source_document_id, item.source_section_id) for item in classified} | set(excerpts.keys())
         mandatory_ids = {item.requirement_id for item in classified if item.mandatory}
-        enrich = isinstance(provider, GeminiProvider)
+        # Enrichment remains opt-in in PlanGenerator. Any provider that
+        # implements BaseGenAIProvider can use the same parallel enrichers.
+        enrich = True
 
         self._record_prompt_templates()
         plan, telemetry = generator.generate(
@@ -111,6 +123,7 @@ class PlanGenerationService:
             employee_json=employee_json,
             requirements_json=requirements_json,
             source_chunks_block=source_chunks_block,
+            source_chunks_by_reference=source_chunks_by_reference,
             valid_sources=valid_sources,
             mandatory_ids=mandatory_ids,
             excerpts=excerpts,
@@ -139,8 +152,9 @@ class PlanGenerationService:
         self.employees.get(employee_id)
         return self.plans.list_by_employee(employee_id)
 
-    def _fence_chunks(self, classified, excerpts) -> str:
-        blocks: list[str] = []
+    def _fenced_chunk_blocks(self, classified, excerpts) -> dict[tuple[str, str], str]:
+        """Fence one short approved excerpt per source reference for token-efficient prompts."""
+        blocks: dict[tuple[str, str], str] = {}
         seen: set[tuple[str, str]] = set()
         for item in classified:
             key = (item.source_document_id, item.source_section_id)
@@ -150,10 +164,10 @@ class PlanGenerationService:
             excerpt = excerpts.get(key)
             text = (excerpt.text if excerpt else "")[:500]
             scan = self.assembler.injection_guard.scan(text, document_id=key[0], section_id=key[1])
-            blocks.append(scan.fenced_text)
+            blocks[key] = scan.fenced_text
             if len(blocks) >= 40:
                 break
-        return "\n\n".join(blocks)
+        return blocks
 
     def _record_prompt_templates(self) -> None:
         for name in ("onboarding_plan", "learning_module", "quiz_generation", "assessment", "scenario_task"):
@@ -164,14 +178,17 @@ class PlanGenerationService:
 
     def _persist(self, employee_id: int, role_id: int, plan: GeneratedPlan, telemetry: dict, actor: str) -> OnboardingPlan:
         versions = {doc.document_id: doc.version for doc in self.documents.list_active()}
+        generation_failed = plan.generation_status == "failed_after_retries"
         header = OnboardingPlan(
             employee_id=employee_id,
             role_id=role_id,
             prompt_version=telemetry.get("prompt_version"),
             model_used=telemetry.get("model_used"),
             source_doc_versions=versions,
-            status="generated",
-            verification_status=None,
+            # A source-grounded assembler fallback is useful for review, but it
+            # must never be presented as an approved, actionable training plan.
+            status="manual_review_required" if generation_failed else "generated",
+            verification_status="Manual Review Required" if generation_failed else None,
             structured_json=plan.model_dump(mode="json"),
         )
         self.plans.add(header)
@@ -234,7 +251,7 @@ class PlanGenerationService:
                 plan_id=header.id,
                 prompt_template_id=template_row.id if template_row else None,
                 model_name=telemetry.get("model_used"),
-                api_version="google-genai",
+                api_version=telemetry.get("api_version") or "unknown",
                 source_doc_versions=versions,
                 retry_count=int(telemetry.get("retry_count") or 0),
                 response_time_ms=float(telemetry.get("response_time_ms") or 0),

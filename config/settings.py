@@ -18,38 +18,83 @@ class Settings:
         self.app_name: str = "SkillSprint AI"
         self.company_name: str = "NovaCart"
         self.secret_key: str = os.getenv("SKILLSPRINT_SECRET_KEY", "dev-secret-change-for-evaluation")
+        self.cookie_secure: bool = os.getenv("SKILLSPRINT_COOKIE_SECURE", "false").strip().lower() in {"1", "true", "yes"}
         self.jwt_algorithm: str = "HS256"
         self.access_token_expire_minutes: int = int(os.getenv("SKILLSPRINT_TOKEN_MINUTES", "480"))
         self.database_url: str = os.getenv(
             "SKILLSPRINT_DATABASE_URL",
             f"sqlite:///{(self.project_root / 'data' / 'skillsprint.db').as_posix()}",
         )
+        # Hosted PostgreSQL services commonly provide either postgres:// or
+        # postgresql:// URLs.  Normalize both to the installed Psycopg 3
+        # dialect so deployment is a configuration change, not a code change.
+        if self.database_url.startswith("postgres://"):
+            self.database_url = "postgresql+psycopg://" + self.database_url.removeprefix("postgres://")
+        elif self.database_url.startswith("postgresql://"):
+            self.database_url = "postgresql+psycopg://" + self.database_url.removeprefix("postgresql://")
         self.upload_dir: Path = Path(os.getenv("SKILLSPRINT_UPLOAD_DIR", self.project_root / "data" / "uploads"))
         self.log_dir: Path = Path(os.getenv("SKILLSPRINT_LOG_DIR", self.project_root / "logs"))
         self.max_upload_bytes: int = int(os.getenv("SKILLSPRINT_MAX_UPLOAD_BYTES", str(20 * 1024 * 1024)))
         self.allowed_extensions: frozenset[str] = frozenset({".pdf", ".docx", ".txt", ".md", ".csv"})
         self.sample_documents_dir: Path = self.project_root / "sample_documents"
         self.matrix_csv_path: Path = self.project_root / "role_matrix" / "role_requirement_matrix_seed.csv"
+        # Pipeline 1 defaults to Command Code. It exposes an OpenAI-compatible
+        # API and lets the operator choose a supported model through one key.
+        self.genai_provider: str = os.getenv("SKILLSPRINT_GENAI_PROVIDER", "commandcode").strip().lower()
+        if self.genai_provider not in {"commandcode", "deepseek", "gemini"}:
+            raise ValueError("SKILLSPRINT_GENAI_PROVIDER must be 'commandcode', 'deepseek', or 'gemini'.")
+        # Command Code documents CMD_API_KEY in its curl examples. The longer
+        # spelling is accepted as a clearer backend-host secret name.
+        self.command_code_api_key: str | None = os.getenv("CMD_API_KEY") or os.getenv("COMMAND_CODE_API_KEY")
+        self.command_code_model: str = os.getenv(
+            "COMMAND_CODE_MODEL", "deepseek/deepseek-v4-flash"
+        ).strip() or "deepseek/deepseek-v4-flash"
+        self.command_code_base_url: str = os.getenv(
+            "COMMAND_CODE_BASE_URL", "https://api.commandcode.ai/provider/v1"
+        ).strip()
+        configured_command_code_timeout = float(os.getenv("SKILLSPRINT_COMMAND_CODE_TIMEOUT_SECONDS", "22"))
+        self.command_code_request_timeout_seconds: float | None = (
+            configured_command_code_timeout if configured_command_code_timeout > 0 else None
+        )
+        self.command_code_zero_data_retention: bool = os.getenv(
+            "SKILLSPRINT_COMMAND_CODE_ZDR", "false"
+        ).strip().lower() in {"1", "true", "yes"}
+        self.deepseek_api_key: str | None = os.getenv("DEEPSEEK_API_KEY")
+        self.deepseek_model: str = os.getenv("DEEPSEEK_MODEL", "deepseek-flash").strip() or "deepseek-flash"
+        self.deepseek_base_url: str = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com").strip()
+        configured_deepseek_timeout = float(os.getenv("SKILLSPRINT_DEEPSEEK_TIMEOUT_SECONDS", "22"))
+        self.deepseek_request_timeout_seconds: float | None = (
+            configured_deepseek_timeout if configured_deepseek_timeout > 0 else None
+        )
         self.gemini_api_key: str | None = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-        self.gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        # gemini-2.5-flash is not available to newly created Gemini API keys.
+        # Migrate that legacy value automatically so an old terminal/.env
+        # setting cannot silently keep plan generation broken.
+        configured_model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash").strip()
+        self.gemini_model: str = (
+            "gemini-3.8-flash"
+            if configured_model in {"", "gemini-2.5-flash", "models/gemini-2.5-flash"}
+            else configured_model
+        )
         self.gemini_thinking_budget: int = int(os.getenv("GEMINI_THINKING_BUDGET", "0"))
-        self.gemini_request_timeout_seconds: float = float(
-            # Gemini rejects manually configured request deadlines below 10 seconds.
-            os.getenv("SKILLSPRINT_GEMINI_TIMEOUT_SECONDS", "10")
+        # A zero value means no SDK request deadline.  This is deliberately
+        # configurable because a complete, source-grounded plan may take more
+        # than a short interactive timeout.
+        configured_gemini_timeout = float(os.getenv("SKILLSPRINT_GEMINI_TIMEOUT_SECONDS", "22"))
+        self.gemini_request_timeout_seconds: float | None = (
+            configured_gemini_timeout if configured_gemini_timeout > 0 else None
         )
-        self.groq_api_key: str | None = os.getenv("GROQ_API_KEY")
-        self.groq_model: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
-        self.groq_request_timeout_seconds: float = float(
-            os.getenv("SKILLSPRINT_GROQ_TIMEOUT_SECONDS", "20")
+        # Default 28s so Pipeline 1 + Pipeline 2 stay inside the 30s NFR.
+        # Set SKILLSPRINT_PLAN_TIMEOUT_SECONDS=0 to wait without an end-to-end cap.
+        configured_plan_timeout = float(os.getenv("SKILLSPRINT_PLAN_TIMEOUT_SECONDS", "28"))
+        self.plan_generation_timeout_seconds: float | None = (
+            configured_plan_timeout if configured_plan_timeout > 0 else None
         )
-        # One complete plan call has a strict end-to-end budget.  A second
-        # attempt is reserved only for malformed structured output.
-        self.plan_generation_timeout_seconds: float = float(
-            os.getenv("SKILLSPRINT_PLAN_TIMEOUT_SECONDS", "25")
-        )
-        self.genai_max_retries: int = int(os.getenv("SKILLSPRINT_GENAI_MAX_RETRIES", "2"))
+        # Project Map permits at most three generation attempts.  Transient
+        # provider overloads are retried within this cap.
+        self.genai_max_retries: int = int(os.getenv("SKILLSPRINT_GENAI_MAX_RETRIES", "3"))
         self.genai_retry_backoff_seconds: float = float(
-            os.getenv("SKILLSPRINT_GENAI_RETRY_BACKOFF_SECONDS", "1")
+            os.getenv("SKILLSPRINT_GENAI_RETRY_BACKOFF_SECONDS", "0.4")
         )
         # A complete plan already has one source-grounded call per stage group.
         # Extra wording-only calls are opt-in so a free-tier key is not exhausted
@@ -57,6 +102,9 @@ class Settings:
         self.genai_enable_enrichment: bool = os.getenv(
             "SKILLSPRINT_ENABLE_GENAI_ENRICHMENT", "false"
         ).strip().lower() in {"1", "true", "yes"}
+        # Three independent stage groups are generated concurrently. This
+        # reduces wall-clock time without changing the complete-plan schema.
+        self.genai_parallel_workers: int = max(1, min(3, int(os.getenv("SKILLSPRINT_GENAI_PARALLEL_WORKERS", "3"))))
 
         # -----------------------------------------------------------------------
         # Progress-tracking configuration (SRS Steps 17, 18, 50, 53, 54)

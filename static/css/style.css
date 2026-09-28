@@ -16,6 +16,8 @@
   --navy:          #1E3A5F;
   --navy-light:    #2D5282;
   --navy-dark:     #152B47;
+  --navy-bg:       #E8EEF4;
+  --navy-border:   #C5D0DC;
   --teal:          #0F766E;
   --teal-light:    #14B8A6;
   --teal-bg:       #F0FDFA;
@@ -257,7 +259,7 @@ main.container {
   font-size: 1.2rem;
   margin-bottom: 0.75rem;
 }
-.stat-card.navy .stat-icon   { background: #EEF2FF; color: var(--navy); }
+.stat-card.navy .stat-icon   { background: var(--navy-bg); color: var(--navy); }
 .stat-card.teal .stat-icon   { background: var(--teal-bg); color: var(--teal); }
 .stat-card.success .stat-icon { background: #ECFDF5; color: var(--accent-success); }
 .stat-card.warning .stat-icon { background: #FFFBEB; color: var(--accent-warning); }
@@ -318,12 +320,12 @@ main.container {
   align-items: center;
   gap: 0.25em;
 }
-.badge-navy    { background: #EEF2FF; color: var(--navy); border: 1px solid #C7D2FE; }
-.badge-teal    { background: var(--teal-bg); color: #0F766E; border: 1px solid #99F6E4; }
+.badge-navy    { background: var(--navy-bg); color: var(--navy); border: 1px solid var(--navy-border); }
+.badge-teal    { background: var(--teal-bg); color: var(--teal); border: 1px solid #99F6E4; }
 .badge-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
 .badge-warning { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
 .badge-danger  { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
-.badge-info    { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+.badge-info    { background: var(--navy-bg); color: var(--navy); border: 1px solid var(--navy-border); }
 .badge-muted   { background: #F1F5F9; color: #64748B; border: 1px solid #E2E8F0; }
 .badge-verified { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
 .badge-pending  { background: #FFF7ED; color: #9A3412; border: 1px solid #FDBA74; }
@@ -564,7 +566,7 @@ code {
 .alert-success { background: #ECFDF5; color: #065F46; border-color: #A7F3D0; }
 .alert-danger  { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
 .alert-warning { background: #FFFBEB; color: #92400E; border-color: #FDE68A; }
-.alert-info    { background: #EFF6FF; color: #1E40AF; border-color: #BFDBFE; }
+.alert-info    { background: var(--navy-bg); color: var(--navy); border-color: var(--navy-border); }
 
 /* ═══════════════════════════════════════
    LOGIN PAGE
@@ -645,7 +647,7 @@ code {
 .flag-mini-card.danger .flag-value  { color: var(--accent-danger); }
 .flag-mini-card.warning { background: #FFFBEB; border-color: #FDE68A; }
 .flag-mini-card.warning .flag-value { color: var(--accent-warning); }
-.flag-mini-card.navy    { background: #EEF2FF; border-color: #C7D2FE; }
+.flag-mini-card.navy    { background: var(--navy-bg); border-color: var(--navy-border); }
 .flag-mini-card.navy .flag-value    { color: var(--navy); }
 .flag-mini-card.teal    { background: var(--teal-bg); border-color: #99F6E4; }
 .flag-mini-card.teal .flag-value    { color: var(--teal); }
@@ -665,7 +667,7 @@ code {
   display: flex; align-items: center; justify-content: center;
   font-size: 0.85rem;
 }
-.plan-item-icon.navy    { background: #EEF2FF; color: var(--navy); }
+.plan-item-icon.navy    { background: var(--navy-bg); color: var(--navy); }
 .plan-item-icon.teal    { background: var(--teal-bg); color: var(--teal); }
 .plan-item-icon.success { background: #ECFDF5; color: var(--accent-success); }
 .plan-item-icon.warning { background: #FFFBEB; color: var(--accent-warning); }
@@ -872,7 +874,7 @@ code {
 }
 .quiz-option-btn.selected {
   border-color: var(--navy);
-  background: #EFF6FF;
+  background: var(--navy-bg);
 }
 .quiz-option-btn.correct {
   border-color: #10B981 !important;
@@ -933,5 +935,18 @@ code {
   background: #F8FAFC;
   padding: 0.65rem 0.85rem;
   border-radius: var(--radius-sm);
+}
+
+/* Project logo image (replaces the "S" placeholder box) */
+.navbar-brand .brand-icon-img {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.login-logo .brand-icon-img {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  object-fit: cover;
 }
 

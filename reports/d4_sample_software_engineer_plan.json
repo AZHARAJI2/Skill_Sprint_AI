@@ -572,6 +572,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read HANDBOOK-01 \u00a71.1",
+        "Complete and record the required evidence: Signed acknowledgment form",
         "Discuss Policy Awareness with the reporting manager"
       ],
       "assessment_method": "Signed acknowledgment form",
@@ -602,6 +603,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read ROLE-01 \u00a71.1",
+        "Complete and record the required evidence: Manager confirmation",
         "Discuss Role Readiness with the reporting manager"
       ],
       "assessment_method": "Manager confirmation",
@@ -631,6 +633,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read ROLE-01 \u00a72.1",
+        "Complete and record the required evidence: IT confirmation",
         "Discuss Technical Setup with the reporting manager"
       ],
       "assessment_method": "IT confirmation",
@@ -662,6 +665,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read POL-04 \u00a71.2",
+        "Complete and record the required evidence: Quiz pass \u226580%",
         "Discuss Conduct Compliance with the reporting manager"
       ],
       "assessment_method": "Quiz pass \u226580%",
@@ -694,6 +698,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read POL-02 \u00a72.1",
+        "Complete and record the required evidence: Manager confirmation",
         "Discuss Benefits Literacy with the reporting manager"
       ],
       "assessment_method": "Manager confirmation",
@@ -724,6 +729,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read POL-01 \u00a75.1",
+        "Complete and record the required evidence: Quiz pass \u226580%",
         "Discuss Confidentiality with the reporting manager"
       ],
       "assessment_method": "Quiz pass \u226580%",
@@ -753,6 +759,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read FAQ-01 \u00a71.3",
+        "Complete and record the required evidence: Checklist sign-off",
         "Discuss Onboarding with the reporting manager"
       ],
       "assessment_method": "Checklist sign-off",
@@ -785,6 +792,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read ROLE-01 \u00a71.2",
+        "Complete and record the required evidence: Practical exercise",
         "Discuss Engineering Process with the reporting manager"
       ],
       "assessment_method": "Practical exercise",
@@ -817,6 +825,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read POL-03 \u00a72.1",
+        "Complete and record the required evidence: MFA setup confirmation",
         "Discuss Security Compliance with the reporting manager"
       ],
       "assessment_method": "MFA setup confirmation",
@@ -847,6 +856,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read FAQ-01 \u00a71.2",
+        "Complete and record the required evidence: None",
         "Discuss Team Integration with the reporting manager"
       ],
       "assessment_method": "None",
@@ -879,6 +889,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read SOP-02 \u00a73.1",
+        "Complete and record the required evidence: None",
         "Discuss Policy Awareness with the reporting manager"
       ],
       "assessment_method": "None",
@@ -909,6 +920,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read COMP-01 \u00a71.1",
+        "Complete and record the required evidence: Verbal confirmation in 1:1",
         "Discuss Compliance Awareness with the reporting manager"
       ],
       "assessment_method": "Verbal confirmation in 1:1",
@@ -940,6 +952,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read SOP-01 \u00a72.1",
+        "Complete and record the required evidence: Quiz pass \u226580%",
         "Discuss Incident Response with the reporting manager"
       ],
       "assessment_method": "Quiz pass \u226580%",
@@ -976,6 +989,7 @@
       "duration_minutes": 60,
       "activities": [
         "Read POL-04 \u00a71.1",
+        "Complete and record the required evidence: Training completion certificate",
         "Discuss Conduct Compliance with the reporting manager"
       ],
       "assessment_method": "Training completion certificate",
@@ -1008,6 +1022,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read ROLE-01 \u00a72.1",
+        "Complete and record the required evidence: Code review by lead",
         "Discuss Technical Competency with the reporting manager"
       ],
       "assessment_method": "Code review by lead",
@@ -1039,6 +1054,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read SOP-01 \u00a71.1",
+        "Complete and record the required evidence: Tabletop exercise",
         "Discuss Incident Response with the reporting manager"
       ],
       "assessment_method": "Tabletop exercise",
@@ -1069,6 +1085,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read SOP-01 \u00a71.1",
+        "Complete and record the required evidence: Practical exercise",
         "Discuss Engineering Process with the reporting manager"
       ],
       "assessment_method": "Practical exercise",
@@ -1098,6 +1115,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read POL-01 \u00a74.1",
+        "Complete and record the required evidence: None",
         "Discuss Policy Awareness with the reporting manager"
       ],
       "assessment_method": "None",
@@ -1127,6 +1145,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read COMP-01 \u00a72.1",
+        "Complete and record the required evidence: None",
         "Discuss Compliance Awareness with the reporting manager"
       ],
       "assessment_method": "None",
@@ -1156,6 +1175,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read POL-01 \u00a72.1",
+        "Complete and record the required evidence: None",
         "Discuss Confidentiality with the reporting manager"
       ],
       "assessment_method": "None",
@@ -1185,6 +1205,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read POL-03 \u00a72.1",
+        "Complete and record the required evidence: None",
         "Discuss Security Compliance with the reporting manager"
       ],
       "assessment_method": "None",
@@ -1216,6 +1237,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read SOP-01 \u00a74.2",
+        "Complete and record the required evidence: None",
         "Discuss Documentation with the reporting manager"
       ],
       "assessment_method": "None",
@@ -1246,6 +1268,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read POL-05 \u00a74.1",
+        "Complete and record the required evidence: None",
         "Discuss Data Privacy with the reporting manager"
       ],
       "assessment_method": "None",
@@ -1275,6 +1298,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read POL-01 \u00a73.1",
+        "Complete and record the required evidence: Signed review form",
         "Discuss Performance Readiness with the reporting manager"
       ],
       "assessment_method": "Signed review form",
@@ -1306,6 +1330,7 @@
       "duration_minutes": 30,
       "activities": [
         "Read POL-02 \u00a74.1",
+        "Complete and record the required evidence: None",
         "Discuss Benefits Literacy with the reporting manager"
       ],
       "assessment_method": "None",
@@ -1336,6 +1361,7 @@
       "duration_minutes": 20,
       "activities": [
         "Read POL-03 \u00a74.2",
+        "Complete and record the required evidence: None",
         "Discuss Security Awareness with the reporting manager"
       ],
       "assessment_method": "None",

@@ -16,7 +16,6 @@ from config.settings import settings
 from database.base import get_session
 from database.migrations import create_schema
 from genai_pipeline.base_provider import GenerationConfig
-from genai_pipeline.failover_provider import FailoverProvider
 from genai_pipeline.gemini_provider import GeminiProvider
 from genai_pipeline.plan_assembler import PlanAssembler, SourceExcerpt
 from genai_pipeline.plan_generator import PlanGenerator
@@ -36,8 +35,16 @@ from src.documents.models import Document, DocumentChunk
 from src.employees.service import EmployeeService, RoleService
 from src.errors import AppError
 from src.main import app
-from src.plans.models import GenerationMetadata
+from src.plans.models import GenerationMetadata, OnboardingPlan
 from src.plans.service import PlanGenerationService
+
+
+def test_legacy_gemini_model_environment_value_is_migrated(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A stale local Gemini 2.5 setting must not break a newly created API key."""
+    from config.settings import Settings
+
+    monkeypatch.setenv("GEMINI_MODEL", "gemini-2.5-flash")
+    assert Settings().gemini_model == "gemini-3.8-flash"
 
 NOVA_CART_ROLES = [
     ("Software Engineer", "Engineering"),
@@ -246,34 +253,6 @@ def test_retry_recovers_then_caps() -> None:
     assert response.parsed["ok"] is True
 
 
-def test_failover_stays_on_fallback_after_primary_service_outage() -> None:
-    """A Gemini-style 503 switches the current plan to the fallback without repeated primary calls."""
-    from pydantic import BaseModel
-
-    class Tiny(BaseModel):
-        ok: bool
-
-    primary = ScriptedProvider([AppError("temporary overload", status_code=503)], model_name="primary")
-    fallback = ScriptedProvider([{"ok": True}], model_name="fallback")
-    provider = FailoverProvider(primary, fallback)
-
-    response = RetryManager(provider, max_attempts=2).run("prompt", schema=Tiny)
-    assert response.parsed == {"ok": True}
-    assert primary.calls == 1
-    assert fallback.calls == 1
-    assert provider.model == "fallback"
-
-
-def test_configured_groq_is_selected_before_gemini(monkeypatch) -> None:
-    """The low-latency provider receives the full plan budget when its key is configured."""
-    from genai_pipeline.failover_provider import FailoverProvider
-    from genai_pipeline.groq_provider import GroqProvider
-    from src.plans.dependencies import get_genai_provider
-
-    monkeypatch.setattr("genai_pipeline.groq_provider.settings.groq_api_key", "test-key")
-    provider = get_genai_provider()
-    assert isinstance(provider, FailoverProvider)
-    assert isinstance(provider.primary, GroqProvider)
 
 
 def test_gemini_fails_closed_without_api_key(monkeypatch) -> None:
@@ -459,6 +438,13 @@ def test_api_generate_requires_admin(session: Session) -> None:
 
         fetched = client.get(f"/api/plans/{body['id']}", headers={"Authorization": f"Bearer {admin_token}"})
         assert fetched.status_code == 200
+        employee_plan = client.get(
+            f"/api/plans/{body['id']}", headers={"Authorization": f"Bearer {emp_token}"}
+        )
+        assert employee_plan.status_code == 200
+        assert employee_plan.json()["structured_json"]["quizzes"]
+        assert "correct_answer" not in employee_plan.json()["structured_json"]["quizzes"][0]
+        assert "explanation" not in employee_plan.json()["structured_json"]["quizzes"][0]
         listed = client.get(
             f"/api/plans/employee/{employee_ids['Software Engineer']}",
             headers={"Authorization": f"Bearer {admin_token}"},
@@ -580,6 +566,110 @@ def test_phased_generation_and_generation_failure_validator(session: Session) ->
     report = ValidationPipeline().run(payload, plan_id=stored.id)
     assert report.overall_status == VerificationStatus.MANUAL_REVIEW_REQUIRED
     assert report.overall_status != VerificationStatus.VERIFIED
+
+
+def test_gemini_quota_does_not_persist_a_short_fallback_plan(session: Session) -> None:
+    """A provider quota response must tell the caller to retry, not save a partial plan."""
+    employee_ids = _seed_pipeline_data(session)
+    service = PlanGenerationService(
+        session,
+        provider=ScriptedProvider([AppError("quota reached", status_code=429)]),
+    )
+
+    with pytest.raises(AppError) as exc:
+        service.generate_for_employee(employee_ids["Software Engineer"], actor="test")
+
+    assert exc.value.status_code == 429
+    assert session.query(OnboardingPlan).count() == 0
+
+
+def test_transient_gemini_unavailable_is_retried_before_failing() -> None:
+    """Gemini's documented temporary 503 overload consumes the capped retries."""
+    provider = ScriptedProvider([AppError("temporarily unavailable", status_code=503)] * 3)
+    with pytest.raises(AppError) as exc:
+        RetryManager(provider, max_attempts=3).run("prompt")
+    assert exc.value.status_code == 503
+    assert provider.calls == 3
+
+
+def test_deepseek_provider_uses_json_mode_and_never_exposes_the_key(monkeypatch) -> None:
+    """DeepSeek calls use the server-side bearer header and JSON-object response mode."""
+    from genai_pipeline.deepseek_provider import DeepSeekProvider
+
+    captured: dict = {}
+
+    class FakeResponse:
+        is_error = False
+
+        def json(self):
+            return {
+                "model": "deepseek-flash",
+                "choices": [{"message": {"content": '{"result": "ok"}'}}],
+                "usage": {"prompt_tokens": 12, "completion_tokens": 4},
+            }
+
+    class FakeClient:
+        def __init__(self, timeout):
+            captured["timeout"] = timeout
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def post(self, url, *, headers, json):
+            captured.update({"url": url, "headers": headers, "body": json})
+            return FakeResponse()
+
+    monkeypatch.setattr("genai_pipeline.deepseek_provider.httpx.Client", FakeClient)
+    response = DeepSeekProvider(api_key="not-a-real-key").generate("trusted prompt")
+
+    assert response.parsed == {"result": "ok"}
+    assert response.metadata["usage"]["completion_tokens"] == 4
+    assert captured["url"].endswith("/chat/completions")
+    assert captured["headers"]["Authorization"] == "Bearer not-a-real-key"
+    assert "not-a-real-key" not in response.raw_text
+
+
+def test_command_code_provider_uses_documented_openai_endpoint(monkeypatch) -> None:
+    """Command Code uses its documented API root, model id, and bearer header."""
+    from genai_pipeline.commandcode_provider import CommandCodeProvider
+
+    captured: dict = {}
+
+    class FakeResponse:
+        is_error = False
+
+        def json(self):
+            return {
+                "model": "deepseek/deepseek-v4-flash",
+                "choices": [{"message": {"content": '{"result": "ok"}'}}],
+                "usage": {"prompt_tokens": 10, "completion_tokens": 2},
+            }
+
+    class FakeClient:
+        def __init__(self, timeout):
+            del timeout
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def post(self, url, *, headers, json):
+            captured.update({"url": url, "headers": headers, "body": json})
+            return FakeResponse()
+
+    monkeypatch.setattr("genai_pipeline.deepseek_provider.httpx.Client", FakeClient)
+    response = CommandCodeProvider(api_key="not-a-real-command-code-key").generate("trusted prompt")
+
+    assert response.model_name == "deepseek/deepseek-v4-flash"
+    assert response.metadata["api_version"] == "commandcode-chat-completions"
+    assert captured["url"] == "https://api.commandcode.ai/provider/v1/chat/completions"
+    assert captured["headers"]["Authorization"] == "Bearer not-a-real-command-code-key"
+    assert captured["body"]["model"] == "deepseek/deepseek-v4-flash"
 
 
 def test_no_plan_with_generation_failures_can_reach_verified_status() -> None:

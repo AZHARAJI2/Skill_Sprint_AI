@@ -20,6 +20,24 @@ class _SkipDebugFilter(logging.Filter):
         return record.levelno >= logging.INFO
 
 
+class _WindowsSafeRotatingFileHandler(logging.handlers.RotatingFileHandler):
+    """Keep logging when another local process temporarily holds the log file.
+
+    Windows cannot rename an open file. During development, ``uvicorn --reload``
+    or a parallel test process can hold the prior log file while this process
+    reaches the rotation threshold. In that case, defer rotation instead of
+    emitting a logging traceback or interrupting a plan-generation thread.
+    """
+
+    def doRollover(self) -> None:
+        """Rotate normally, or reopen the current file if Windows denies rename."""
+        try:
+            super().doRollover()
+        except PermissionError:
+            if self.stream is None:
+                self.stream = self._open()
+
+
 def configure_logging() -> logging.Logger:
     """Configure a queue-backed logger and return the application logger.
 
@@ -45,7 +63,7 @@ def configure_logging() -> logging.Logger:
     stream_handler.setLevel(logging.INFO)
 
     file_path: Path = settings.log_dir / "skillsprint.log"
-    file_handler = logging.handlers.RotatingFileHandler(
+    file_handler = _WindowsSafeRotatingFileHandler(
         file_path, maxBytes=2_000_000, backupCount=5, encoding="utf-8"
     )
     file_handler.setFormatter(formatter)

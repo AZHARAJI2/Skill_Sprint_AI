@@ -70,6 +70,17 @@ def seed_all(ingest_documents: bool = True) -> dict:
         auth.ensure_user("reviewer", "reviewer123", "Reviewer")
         auth.ensure_user("manager", "manager123", "Manager")
         auth.ensure_user("employee", "employee123", "Employee", employee_id=demo_employees[0].id)
+        account_rows = []
+        for employee in demo_employees:
+            account, initial_password = auth.provision_employee_account(employee, actor="seed")
+            account_rows.append(
+                {
+                    "employee_code": employee.employee_code,
+                    "username": account.username,
+                    "password_issued": bool(initial_password),
+                }
+            )
+        summary["employee_accounts"] = account_rows
         matrix = load_matrix(session, settings.matrix_csv_path, replace_existing=True)
         summary["matrix_loaded"] = matrix.loaded
         summary["matrix_rejected"] = matrix.rejected

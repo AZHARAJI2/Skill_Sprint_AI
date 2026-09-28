@@ -626,9 +626,16 @@ class ProgressTrackingService:
             stored_answer = payload.get("correct_answer", "")
             explanation = payload.get("explanation", "")
 
-            is_correct = self._normalize(selected) == self._normalize(stored_answer)
             if isinstance(stored_answer, list):
-                is_correct = self._normalize(selected) in [self._normalize(a) for a in stored_answer]
+                # Multiple-response questions pass only when the complete set
+                # of selected options matches the stored answer.  Awarding a
+                # point for one of several correct choices is misleading.
+                selected_values = selected if isinstance(selected, list) else [selected]
+                is_correct = {
+                    self._normalize(value) for value in selected_values
+                } == {self._normalize(value) for value in stored_answer}
+            else:
+                is_correct = self._normalize(selected) == self._normalize(stored_answer)
 
             if is_correct:
                 correct_count += 1
@@ -686,6 +693,49 @@ class ProgressTrackingService:
             "correct_count": correct_count,
             "details": details,
         }
+
+    # ------------------------------------------------------------------
+    # Public: check_single_answer - per-question immediate feedback
+    # ------------------------------------------------------------------
+
+    def check_single_answer(self, plan_id: int, question_id: str, selected) -> dict:
+        """Validate one quiz answer and return correctness + explanation.
+
+        The correct answer is fetched from the DB only after the employee
+        commits an answer, so it is never preloaded into the page (F12 safe).
+        """
+        quizzes = (
+            self._session.query(QuizQuestionRecord)
+            .filter(QuizQuestionRecord.plan_id == plan_id)
+            .all()
+        )
+        for q in quizzes:
+            payload = q.payload or {}
+            q_id = payload.get("question_id", str(q.id))
+            if q_id != question_id:
+                continue
+
+            stored_answer = payload.get("correct_answer", "")
+            explanation = payload.get("explanation", "")
+
+            if isinstance(stored_answer, list):
+                selected_values = selected if isinstance(selected, list) else [selected]
+                is_correct = (
+                    {self._normalize(v) for v in selected_values}
+                    == {self._normalize(v) for v in stored_answer}
+                )
+            else:
+                is_correct = self._normalize(selected) == self._normalize(stored_answer)
+
+            return {
+                "question_id": question_id,
+                "correct": is_correct,
+                "correct_answer": stored_answer,
+                "explanation": explanation,
+                "selected": selected,
+            }
+
+        raise ValueError(f"Question {question_id!r} not found in plan {plan_id}")
 
     # ------------------------------------------------------------------
     # Public: get_sanitized_quiz_items (no answer leak before submission)

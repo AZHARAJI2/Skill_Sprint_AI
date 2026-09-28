@@ -7,22 +7,32 @@
     <h1><i class="bi bi-clipboard-check me-2" style="color:var(--teal)"></i>Human Review Queue</h1>
     <div class="subtitle">Items requiring manual review — approve, reject, edit, or request regeneration</div>
   </div>
-  {% if queue %}
   <div class="page-header-actions">
     <span class="badge badge-danger" style="font-size:0.85rem;padding:0.45em 1em;">
       {{ queue|length }} item{{ 's' if queue|length != 1 }} pending
     </span>
   </div>
-  {% endif %}
 </div>
 
-{% if queue %}
 <!-- Filters -->
 <div class="card animate-fade mb-4" style="padding:1rem 1.25rem;">
   <div class="d-flex align-items-center gap-3 flex-wrap">
     <span style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);white-space:nowrap;">
       <i class="bi bi-funnel me-1"></i>Filter by:
     </span>
+    <form method="get" action="/reviews" class="d-flex align-items-center gap-2 flex-wrap" id="plan-review-filter">
+      <label class="visually-hidden" for="filter-plan">Employee plan</label>
+      <select id="filter-plan" name="plan_id" class="form-select form-select-sm" style="width:auto;min-width:280px;">
+        <option value="">All employee plans</option>
+        {% for plan in plan_options %}
+        <option value="{{ plan.id }}" {% if selected_plan_id == plan.id %}selected{% endif %}>{{ plan.label }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-funnel"></i> Show plan reviews</button>
+      {% if selected_plan_id %}
+      <a href="/reviews" class="btn btn-outline btn-sm">Clear</a>
+      {% endif %}
+    </form>
     <select id="filter-type" class="form-select form-select-sm" style="width:auto;min-width:130px;">
       <option value="">All item types</option>
       <option value="module">Module</option>
@@ -44,6 +54,7 @@
   </div>
 </div>
 
+{% if queue %}
 <!-- Queue Table -->
 <div class="card animate-fade">
   <div class="card-body p-0">
@@ -99,26 +110,26 @@
             <div class="action-btn-group">
               <button class="btn btn-outline btn-sm details-btn"
                 data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
-                data-original='{{ item.original_result | tojson }}'
+                data-original="{{ item.original_result | tojson | forceescape }}"
                 title="View content and validation evidence">
                 <i class="bi bi-eye"></i><span class="d-none d-xl-inline"> Details</span>
               </button>
               {% if user.app_role in ('Admin', 'Training Manager', 'Reviewer') %}
               <button class="btn btn-success btn-sm action-btn"
                 data-action="approve" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
-                data-original='{{ item.original_result | tojson }}'
+                data-original="{{ item.original_result | tojson | forceescape }}"
                 title="Approve"><i class="bi bi-check-lg"></i></button>
               <button class="btn btn-danger btn-sm action-btn"
                 data-action="reject" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
-                data-original='{{ item.original_result | tojson }}'
+                data-original="{{ item.original_result | tojson | forceescape }}"
                 title="Reject"><i class="bi bi-x-lg"></i></button>
               <button class="btn btn-warning btn-sm action-btn"
                 data-action="edit" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
-                data-original='{{ item.original_result | tojson }}'
+                data-original="{{ item.original_result | tojson | forceescape }}"
                 title="Edit"><i class="bi bi-pencil"></i></button>
               <button class="btn btn-info btn-sm action-btn"
                 data-action="regenerate" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
-                data-original='{{ item.original_result | tojson }}'
+                data-original="{{ item.original_result | tojson | forceescape }}"
                 title="Regenerate"><i class="bi bi-arrow-clockwise"></i></button>
               {% endif %}
             </div>
@@ -136,7 +147,7 @@
   <div class="card-body">
     <div class="empty-state">
       <div class="empty-icon" style="color:var(--accent-success);"><i class="bi bi-check-circle-fill"></i></div>
-      <p><strong style="color:var(--navy);">All clear!</strong><br>No items are awaiting human review.<br>
+      <p><strong style="color:var(--navy);">All clear!</strong><br>No items are awaiting human review{% if selected_plan_id %} for this selected plan{% endif %}.<br>
       <span style="color:var(--text-muted);font-size:0.82rem;">Items enter this queue when Pipeline 2 assigns a non-Verified status.</span></p>
     </div>
   </div>
@@ -225,7 +236,11 @@
 
 {% block scripts %}
 <script>
-let currentAction = null, currentItem = null, currentType = null, currentOriginal = null;
+document.getElementById('plan-review-filter')?.addEventListener('submit', event => {
+  const select = event.currentTarget.querySelector('[name="plan_id"]');
+  if (select && !select.value) select.removeAttribute('name');
+});
+let currentAction = null, currentItem = null, currentType = null, currentPlan = null, currentOriginal = null;
 const modal = new bootstrap.Modal(document.getElementById('actionModal'));
 const detailModal = new bootstrap.Modal(document.getElementById('reviewDetailModal'));
 const actionConfig = {
@@ -240,6 +255,7 @@ document.querySelectorAll('.action-btn').forEach(btn => {
     currentAction   = btn.dataset.action;
     currentItem     = btn.dataset.item;
     currentType     = btn.dataset.type;
+    currentPlan     = Number(btn.dataset.plan) || null;
     try { currentOriginal = JSON.parse(btn.dataset.original); } catch { currentOriginal = {}; }
 
     const cfg = actionConfig[currentAction];
@@ -404,7 +420,7 @@ document.querySelectorAll('.details-btn').forEach(btn => {
     try {
       const [planResponse, historyResponse] = await Promise.all([
         planId > 0 ? fetch(`/api/plans/${planId}`) : Promise.resolve(null),
-        fetch(`/api/reviews/${encodeURIComponent(itemId)}/decisions`),
+        fetch(`/api/reviews/${encodeURIComponent(itemId)}/decisions?plan_id=${encodeURIComponent(planId)}`),
       ]);
       const planPayload = planResponse?.ok ? await planResponse.json() : {};
       const decisions = historyResponse.ok ? await historyResponse.json() : [];
@@ -424,7 +440,7 @@ document.querySelectorAll('.details-btn').forEach(btn => {
 
 document.getElementById('modal-confirm-btn').addEventListener('click', async () => {
   const comment = document.getElementById('action-comment').value.trim();
-  const body = { item_type: currentType, original_result: currentOriginal, comment };
+  const body = { item_type: currentType, original_result: currentOriginal, comment, plan_id: currentPlan };
 
   if (currentAction === 'edit') {
     try { body.edited_content = JSON.parse(document.getElementById('edit-content').value); }

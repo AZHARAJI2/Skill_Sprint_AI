@@ -143,9 +143,16 @@
           </li>
           <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabQuiz">
-              <i class="bi bi-patch-question me-1"></i>Quizzes ({{ plan_detail.quizzes|length }})
+              <i class="bi bi-patch-question me-1"></i>Quizzes ({{ quiz_items|length }})
             </button>
           </li>
+          {% if user.app_role != 'Employee' %}
+          <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabAssessments">
+              <i class="bi bi-clipboard2-check me-1"></i>Assessments ({{ plan_detail.assessments|length }})
+            </button>
+          </li>
+          {% endif %}
         </ul>
         <div class="tab-content px-3 pb-3 pt-2">
           <!-- Modules -->
@@ -172,6 +179,11 @@
               <div class="d-flex flex-column align-items-end gap-1">
                 <span class="badge badge-navy" style="font-size:0.7rem;">{{ m.stage }}</span>
                 <span class="badge badge-muted" style="font-size:0.7rem;">{{ m.difficulty }}</span>
+                {% set state = item_statuses.get('module:' ~ m.module_id, 'not_started') %}
+                <span class="badge {{ 'badge-success' if state == 'completed' else ('badge-warning' if state == 'pending_confirmation' else 'badge-muted') }}" style="font-size:0.7rem;">{{ state.replace('_', ' ').title() }}</span>
+                {% if plan_is_actionable and state != 'completed' and user.app_role != 'Employee' %}
+                <button type="button" class="btn btn-teal btn-sm progress-complete" data-type="module" data-id="{{ m.module_id }}">Mark complete</button>
+                {% endif %}
               </div>
             </div>
             {% else %}
@@ -216,6 +228,16 @@
                   <div style="color:var(--teal);font-weight:500;margin-top:0.15rem;">{{ t.completion_criteria }}</div>
                 </div>
               </div>
+              {% set state = item_statuses.get('task:' ~ t.task_id, 'not_started') %}
+              <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+                <span class="badge {{ 'badge-success' if state == 'completed' else ('badge-warning' if state == 'pending_confirmation' else 'badge-muted') }}">{{ state.replace('_', ' ').title() }}</span>
+                {% if plan_is_actionable and state == 'not_started' and user.app_role != 'Employee' %}
+                <button type="button" class="btn btn-teal btn-sm progress-complete" data-type="task" data-id="{{ t.task_id }}">Mark complete</button>
+                {% elif can_confirm_progress and state == 'pending_confirmation' %}
+                <button type="button" class="btn btn-teal btn-sm progress-confirm" data-type="task" data-id="{{ t.task_id }}" data-confirmed="true">Confirm</button>
+                <button type="button" class="btn btn-outline btn-sm progress-confirm" data-type="task" data-id="{{ t.task_id }}" data-confirmed="false">Reject</button>
+                {% endif %}
+              </div>
             </div>
             {% else %}
             <div class="empty-state"><div class="empty-icon"><i class="bi bi-check2-square"></i></div><p>No tasks or assignments found in this plan.</p></div>
@@ -234,6 +256,13 @@
               <span class="badge {{ 'badge-danger' if c.required_or_optional == 'required' else 'badge-muted' }}">
                 {{ c.required_or_optional }}
               </span>
+              {% set state = item_statuses.get('checklist:' ~ c.item_id, 'not_started') %}
+              <div class="d-flex flex-column align-items-end gap-1 ms-2">
+                <span class="badge {{ 'badge-success' if state == 'completed' else 'badge-muted' }}">{{ state.replace('_', ' ').title() }}</span>
+                {% if plan_is_actionable and state != 'completed' and user.app_role != 'Employee' %}
+                <button type="button" class="btn btn-teal btn-sm progress-complete" data-type="checklist" data-id="{{ c.item_id }}">Mark complete</button>
+                {% endif %}
+              </div>
             </div>
             {% else %}
             <div class="empty-state"><div class="empty-icon"><i class="bi bi-list-check"></i></div><p>No checklist items.</p></div>
@@ -258,7 +287,7 @@
                 <div class="text-end">
                   <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);">Current Score</div>
                   <div style="font-size:1.15rem;font-weight:800;color:var(--navy);">
-                    <span id="quiz-correct-count">0</span> / <span id="quiz-total-count">{{ plan_detail.quizzes|length }}</span>
+                    <span id="quiz-correct-count">0</span> / <span id="quiz-total-count">{{ quiz_items|length }}</span>
                     <span id="quiz-score-pct" style="font-size:0.9rem;color:var(--teal);margin-left:0.25rem;">(0%)</span>
                   </div>
                 </div>
@@ -272,6 +301,11 @@
                 </button>
               </div>
             </div>
+            {% if user.app_role != 'Employee' and plan_is_actionable and quiz_items %}
+            <div class="d-flex justify-content-end mt-3">
+              <button type="button" id="quiz-submit-btn" class="btn btn-teal btn-sm">Submit quiz (Trainer view)</button>
+            </div>
+            {% endif %}
 
             <!-- Quiz Completion Banner (Dynamic) -->
             <div id="quiz-completion-banner" class="alert d-none mb-3 animate-fade" role="alert">
@@ -285,7 +319,7 @@
             </div>
 
             <!-- Questions List -->
-            {% for q in plan_detail.quizzes %}
+            {% for q in quiz_items %}
             {% set q_idx = loop.index0 %}
             <div class="quiz-card" id="quiz-q-card-{{ q_idx }}" data-qid="{{ q.question_id }}">
               <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
@@ -318,19 +352,37 @@
                 {% endfor %}
               </div>
 
-              <!-- Explanation Box (Initially Hidden) -->
-              <div class="quiz-explanation-box d-none" id="expl-q-{{ q_idx }}">
-                <div class="d-flex align-items-center gap-2 mb-1">
-                  <i class="bi bi-info-circle-fill"></i>
-                  <strong class="expl-verdict"></strong>
-                </div>
-                <div class="expl-text">{{ q.explanation }}</div>
+              {% if q.question_type == 'MR' %}
+              <div class="d-flex justify-content-end mt-2">
+                <button type="button" class="quiz-mr-check-btn btn btn-outline btn-sm" data-qidx="{{ q_idx }}">
+                  <i class="bi bi-check2 me-1"></i>Check My Answers
+                </button>
               </div>
+              {% endif %}
+
+              <div class="quiz-explanation-box d-none" id="expl-q-{{ q_idx }}"></div>
             </div>
             {% else %}
             <div class="empty-state"><div class="empty-icon"><i class="bi bi-patch-question"></i></div><p>No quiz questions in this plan.</p></div>
             {% endfor %}
           </div>
+
+          {% if user.app_role != 'Employee' %}
+          <div class="tab-pane fade" id="tabAssessments">
+            {% for a in plan_detail.assessments %}
+            {% set state = item_statuses.get('assessment:' ~ a.assessment_id, 'not_started') %}
+            <div class="plan-item">
+              <div class="plan-item-icon navy"><i class="bi bi-clipboard2-check"></i></div>
+              <div class="flex-grow-1"><div class="plan-item-title">{{ a.title }}</div><div class="plan-item-sub">{{ a.assessment_type }} · {{ a.stage }} · Pass threshold {{ (a.pass_threshold * 100)|int }}%</div></div>
+              <div class="d-flex flex-column align-items-end gap-1">
+                <span class="badge {{ 'badge-success' if state == 'completed' else ('badge-warning' if state == 'pending_confirmation' else 'badge-muted') }}">{{ state.replace('_', ' ').title() }}</span>
+                {% if plan_is_actionable and state == 'not_started' and user.app_role != 'Employee' %}<button type="button" class="btn btn-teal btn-sm progress-complete" data-type="assessment" data-id="{{ a.assessment_id }}">Mark complete</button>{% endif %}
+                {% if can_confirm_progress and state == 'pending_confirmation' %}<button type="button" class="btn btn-teal btn-sm progress-confirm" data-type="assessment" data-id="{{ a.assessment_id }}" data-confirmed="true">Confirm</button>{% endif %}
+              </div>
+            </div>
+            {% else %}<div class="empty-state"><div class="empty-icon"><i class="bi bi-clipboard2-check"></i></div><p>No assessments in this plan.</p></div>{% endfor %}
+          </div>
+          {% endif %}
         </div>
         {% else %}
         <div class="empty-state">
@@ -400,59 +452,27 @@
 {% endblock %}
 
 {% block scripts %}
-{% if plan and plan_detail and plan_detail.quizzes %}
+{% if plan and plan_detail and quiz_items %}
 <script>
 (function() {
   const QUIZ_DATA = [
-    {% for q in plan_detail.quizzes %}
-    {
-      question_id: {{ q.question_id | tojson }},
-      correct_answer: {{ q.correct_answer | tojson }},
-      explanation: {{ q.explanation | tojson }},
-      question_type: {{ q.question_type | tojson }}
-    }{% if not loop.last %},{% endif %}
+    {% for q in quiz_items %}
+    { question_id: {{ q.question_id | tojson }}, question_type: {{ q.question_type | tojson }} }{% if not loop.last %},{% endif %}
     {% endfor %}
   ];
-
   const PASSING_SCORE = {{ passing_score or 70 }};
   const STORAGE_KEY = 'skillsprint_quiz_plan_{{ plan.id }}';
-
+  const IS_EMPLOYEE = {{ 'true' if user.app_role == 'Employee' else 'false' }};
+  const PLAN_ID = {{ plan.id }};
   let userAnswers = {};
 
-  // Load persisted answers
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      userAnswers = JSON.parse(saved);
-    }
-  } catch (e) {
-    userAnswers = {};
-  }
-
-  function normalize(str) {
-    if (str === null || str === undefined) return '';
-    return String(str).trim().toLowerCase();
-  }
-
-  function isAnswerCorrect(qData, selectedVal) {
-    const corr = qData.correct_answer;
-    if (Array.isArray(corr)) {
-      return corr.map(normalize).includes(normalize(selectedVal));
-    }
-    return normalize(corr) === normalize(selectedVal);
-  }
+  function normalize(str) { return str == null ? '' : String(str).trim().toLowerCase(); }
 
   function updateScoreDisplay() {
     const total = QUIZ_DATA.length;
     const answeredCount = Object.keys(userAnswers).length;
-    let correctCount = 0;
-
-    Object.values(userAnswers).forEach(ans => {
-      if (ans.correct) correctCount++;
-    });
-
-    const pct = total > 0 ? Math.round((correctCount / total) * 100) : 0;
-
+    const correctCount = Object.values(userAnswers).filter(a => a.correct).length;
+    const pct = answeredCount > 0 ? Math.round(correctCount / total * 100) : 0;
     const correctEl = document.getElementById('quiz-correct-count');
     const scorePctEl = document.getElementById('quiz-score-pct');
     const badgeEl = document.getElementById('quiz-status-badge');
@@ -460,24 +480,15 @@
     const bannerIcon = document.getElementById('quiz-banner-icon');
     const bannerTitle = document.getElementById('quiz-banner-title');
     const bannerText = document.getElementById('quiz-banner-text');
-
     if (correctEl) correctEl.textContent = correctCount;
     if (scorePctEl) scorePctEl.textContent = `(${pct}%)`;
-
     if (answeredCount === 0) {
-      if (badgeEl) {
-        badgeEl.className = 'badge badge-muted px-3 py-2';
-        badgeEl.textContent = 'Not Started';
-      }
+      if (badgeEl) { badgeEl.className = 'badge badge-muted px-3 py-2'; badgeEl.textContent = 'Not Started'; }
       if (bannerEl) bannerEl.classList.add('d-none');
     } else if (answeredCount < total) {
-      if (badgeEl) {
-        badgeEl.className = 'badge badge-teal px-3 py-2';
-        badgeEl.textContent = `In Progress (${answeredCount}/${total})`;
-      }
+      if (badgeEl) { badgeEl.className = 'badge badge-teal px-3 py-2'; badgeEl.textContent = `In Progress (${answeredCount}/${total})`; }
       if (bannerEl) bannerEl.classList.add('d-none');
     } else {
-      // Completed all questions
       const passed = pct >= PASSING_SCORE;
       if (badgeEl) {
         badgeEl.className = passed ? 'badge badge-success px-3 py-2' : 'badge badge-danger px-3 py-2';
@@ -489,128 +500,188 @@
           bannerEl.className = 'alert alert-success mb-3 animate-fade d-block';
           bannerIcon.className = 'bi bi-check-circle-fill text-success';
           bannerTitle.textContent = `🎉 Congratulations! Quiz Passed (${pct}%)`;
-          bannerText.textContent = `You exceeded the minimum passing score of ${PASSING_SCORE}%. Your understanding of company policies and role requirements is confirmed!`;
+          bannerText.textContent = `You exceeded the minimum passing score of ${PASSING_SCORE}%. Your understanding has been confirmed!`;
         } else {
           bannerEl.className = 'alert alert-danger mb-3 animate-fade d-block';
           bannerIcon.className = 'bi bi-exclamation-octagon-fill text-danger';
           bannerTitle.textContent = `⚠️ Passing Threshold Not Met (${pct}%)`;
-          bannerText.textContent = `Your score is ${pct}%, which is below the minimum required score of ${PASSING_SCORE}%. Review the source documents highlighted in the explanations below and click Reset to try again.`;
+          bannerText.textContent = `Your score is ${pct}%, below the required ${PASSING_SCORE}%. Review the explanations and click Reset to try again.`;
         }
       }
     }
   }
 
-  function applyAnswerUI(qidx, selectedVal, persist = true) {
-    const qData = QUIZ_DATA[qidx];
-    if (!qData) return;
-
-    const correct = isAnswerCorrect(qData, selectedVal);
-    if (persist) {
-      userAnswers[qidx] = { selected: selectedVal, correct: correct };
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(userAnswers));
-      } catch (e) {}
-    }
-
+  function applyResult(qidx, result, selectedVal) {
+    const isCorrect = result.correct;
+    const correctAnswer = result.correct_answer;
+    const explanation = result.explanation || '';
+    userAnswers[qidx] = { selected: selectedVal, correct: isCorrect, explanation, correct_answer: correctAnswer, locked: true };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(userAnswers)); } catch(e) {}
     const container = document.getElementById(`opts-q-${qidx}`);
     if (!container) return;
-
-    const buttons = container.querySelectorAll('.quiz-option-btn');
-    buttons.forEach(btn => {
-      const btnVal = btn.dataset.optval;
-      const isThisSelected = normalize(btnVal) === normalize(selectedVal);
-      const isThisCorrect = isAnswerCorrect(qData, btnVal);
+    const selectedValues = Array.isArray(selectedVal) ? selectedVal : [selectedVal];
+    const correctValues = Array.isArray(correctAnswer) ? correctAnswer : [correctAnswer];
+    container.querySelectorAll('.quiz-option-btn').forEach(btn => {
+      const val = btn.dataset.optval;
+      const isSelected = selectedValues.some(v => normalize(v) === normalize(val));
+      const isCorrectOpt = correctValues.some(v => normalize(v) === normalize(val));
       const icon = btn.querySelector('.quiz-opt-icon');
-
       btn.classList.add('locked');
-
-      if (isThisSelected) {
-        if (correct) {
-          btn.classList.add('correct');
-          if (icon) {
-            icon.className = 'bi bi-check-circle-fill text-success quiz-opt-icon';
-            icon.classList.remove('d-none');
-          }
-        } else {
-          btn.classList.add('incorrect');
-          if (icon) {
-            icon.className = 'bi bi-x-circle-fill text-danger quiz-opt-icon';
-            icon.classList.remove('d-none');
-          }
-        }
-      } else if (!correct && isThisCorrect) {
-        // Highlight the correct answer in green so the user learns
+      btn.classList.remove('selected');
+      if (isSelected && isCorrect) {
         btn.classList.add('correct');
-        if (icon) {
-          icon.className = 'bi bi-check-circle-fill text-success quiz-opt-icon';
-          icon.classList.remove('d-none');
-        }
+        if (icon) { icon.className = 'bi bi-check-circle-fill text-success quiz-opt-icon'; icon.classList.remove('d-none'); }
+      } else if (isSelected && !isCorrect) {
+        btn.classList.add('incorrect');
+        if (icon) { icon.className = 'bi bi-x-circle-fill text-danger quiz-opt-icon'; icon.classList.remove('d-none'); }
+      } else if (!isSelected && isCorrectOpt && !isCorrect) {
+        btn.classList.add('correct');
+        if (icon) { icon.className = 'bi bi-check-circle-fill text-success quiz-opt-icon'; icon.classList.remove('d-none'); }
       }
     });
-
-    // Show explanation
     const explBox = document.getElementById(`expl-q-${qidx}`);
     if (explBox) {
-      explBox.classList.remove('d-none');
-      explBox.className = correct ? 'quiz-explanation-box correct animate-fade' : 'quiz-explanation-box incorrect animate-fade';
-      const verdict = explBox.querySelector('.expl-verdict');
-      if (verdict) {
-        verdict.textContent = correct ? '✓ Correct Answer! (إجابة صحيحة)' : '✗ Incorrect (إجابة غير صحيحة - راجع الشرح والمصدر أدناه)';
-      }
+      explBox.className = isCorrect ? 'quiz-explanation-box correct animate-fade' : 'quiz-explanation-box incorrect animate-fade';
+      explBox.innerHTML = `<strong>${isCorrect ? '✓ Correct! (إجابة صحيحة)' : '✗ Incorrect (إجابة غير صحيحة)'}</strong>${explanation ? '<br><span style="font-size:0.82rem">' + explanation + '</span>' : ''}`;
     }
   }
 
-  // Restore saved state
-  Object.keys(userAnswers).forEach(qidx => {
-    const ans = userAnswers[qidx];
-    if (ans && ans.selected !== undefined) {
-      applyAnswerUI(parseInt(qidx), ans.selected, false);
+  async function handleOptionClick(btn) {
+    const qidx = parseInt(btn.dataset.qidx);
+    const qData = QUIZ_DATA[qidx];
+    if (!qData) return;
+    if (userAnswers[qidx] && userAnswers[qidx].locked && qData.question_type !== 'MR') return;
+    const selectedVal = btn.dataset.optval;
+    const isMultiple = qData.question_type === 'MR';
+    if (!isMultiple) {
+      const container = document.getElementById(`opts-q-${qidx}`);
+      if (container) { container.querySelectorAll('.quiz-option-btn').forEach(b => b.classList.remove('selected')); }
+      btn.classList.add('selected');
+      try {
+        const res = await fetch(`/api/plans/${PLAN_ID}/quiz/check`, {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ question_id: qData.question_id, selected: selectedVal })
+        });
+        if (!res.ok) { console.warn('Quiz check failed'); return; }
+        applyResult(qidx, await res.json(), selectedVal);
+        updateScoreDisplay();
+      } catch(err) { console.error(err); }
+    } else {
+      btn.classList.toggle('selected');
+      const container = document.getElementById(`opts-q-${qidx}`);
+      const selected = [];
+      if (container) container.querySelectorAll('.quiz-option-btn.selected').forEach(b => selected.push(b.dataset.optval));
+      userAnswers[qidx] = { selected, locked: false };
     }
-  });
+  }
+
+  // Restore graded answers from localStorage
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      Object.entries(JSON.parse(saved)).forEach(([idx, data]) => {
+        if (data.locked) { userAnswers[parseInt(idx)] = data; applyResult(parseInt(idx), data, data.selected); }
+      });
+    }
+  } catch(e) {}
   updateScoreDisplay();
 
-  // Attach click listeners to option buttons
-  document.querySelectorAll('.quiz-option-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const qidx = parseInt(this.dataset.qidx);
-      if (userAnswers[qidx] !== undefined) {
-        return; // Question already answered
-      }
-      const selectedVal = this.dataset.optval;
-      applyAnswerUI(qidx, selectedVal, true);
-      updateScoreDisplay();
+  document.querySelectorAll('.quiz-option-btn').forEach(btn => btn.addEventListener('click', () => handleOptionClick(btn)));
+
+  // MR check buttons
+  document.querySelectorAll('.quiz-mr-check-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const qidx = parseInt(btn.dataset.qidx);
+      const qData = QUIZ_DATA[qidx];
+      if (!qData) return;
+      const selected = (userAnswers[qidx] || {}).selected || [];
+      if (!selected.length) { alert('Select at least one option.'); return; }
+      btn.disabled = true;
+      try {
+        const res = await fetch(`/api/plans/${PLAN_ID}/quiz/check`, {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ question_id: qData.question_id, selected })
+        });
+        if (!res.ok) { btn.disabled = false; return; }
+        applyResult(qidx, await res.json(), selected);
+        btn.classList.add('d-none');
+        updateScoreDisplay();
+      } catch(err) { btn.disabled = false; }
     });
   });
 
-  // Reset button
   const resetBtn = document.getElementById('quiz-reset-btn');
   if (resetBtn) {
-    resetBtn.addEventListener('click', function() {
-      if (confirm('Do you want to reset all quiz answers and retake the test?')) {
-        userAnswers = {};
-        try {
-          localStorage.removeItem(STORAGE_KEY);
-        } catch (e) {}
+    resetBtn.addEventListener('click', () => {
+      if (!confirm('Reset all quiz answers and retake?')) return;
+      userAnswers = {};
+      try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+      document.querySelectorAll('.quiz-option-btn').forEach(b => {
+        b.classList.remove('correct','incorrect','selected','locked');
+        const icon = b.querySelector('.quiz-opt-icon');
+        if (icon) icon.classList.add('d-none');
+      });
+      document.querySelectorAll('.quiz-explanation-box').forEach(box => { box.className = 'quiz-explanation-box d-none'; box.innerHTML = ''; });
+      document.querySelectorAll('.quiz-mr-check-btn').forEach(b => { b.disabled = false; b.classList.remove('d-none'); });
+      const banner = document.getElementById('quiz-completion-banner');
+      if (banner) banner.classList.add('d-none');
+      updateScoreDisplay();
+    });
+  }
 
-        // Reset UI
-        document.querySelectorAll('.quiz-option-btn').forEach(btn => {
-          btn.classList.remove('correct', 'incorrect', 'selected', 'locked');
-          const icon = btn.querySelector('.quiz-opt-icon');
-          if (icon) icon.classList.add('d-none');
+  // Trainer bulk submit (non-employee path)
+  const submitQuizBtn = document.getElementById('quiz-submit-btn');
+  if (submitQuizBtn) {
+    submitQuizBtn.addEventListener('click', async () => {
+      if (Object.keys(userAnswers).length !== QUIZ_DATA.length) { alert('Answer every question first.'); return; }
+      submitQuizBtn.disabled = true; submitQuizBtn.textContent = 'Submitting…';
+      try {
+        const answers = {};
+        QUIZ_DATA.forEach((q, i) => { answers[q.question_id] = (userAnswers[i] || {}).selected; });
+        const res = await fetch(`/api/plans/${PLAN_ID}/quiz/submit`, {
+          method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({answers})
         });
-
-        document.querySelectorAll('.quiz-explanation-box').forEach(box => {
-          box.classList.add('d-none');
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.detail || 'Submission failed.');
+        Object.entries(result.details).forEach(([qId, detail]) => {
+          const idx = QUIZ_DATA.findIndex(q => q.question_id === qId);
+          if (idx >= 0) applyResult(idx, detail, detail.selected);
         });
-
-        const banner = document.getElementById('quiz-completion-banner');
-        if (banner) banner.classList.add('d-none');
-
         updateScoreDisplay();
-      }
+        submitQuizBtn.classList.add('d-none');
+      } catch(err) { alert(err.message); submitQuizBtn.disabled = false; submitQuizBtn.textContent = 'Submit quiz (Trainer view)'; }
     });
   }
 })();
+</script>
+{% endif %}
+{% if plan and plan_detail %}
+<script>
+document.querySelectorAll('.progress-complete').forEach(button => button.addEventListener('click', async () => {
+  button.disabled = true;
+  try {
+    const response = await fetch(`/api/plans/{{ plan.id }}/items/${button.dataset.type}/${button.dataset.id}/complete`, {method: 'POST'});
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || result.error || 'Could not record completion.');
+    alert(result.message);
+    window.location.reload();
+  } catch (error) { alert(error.message || 'Could not record completion.'); button.disabled = false; }
+}));
+document.querySelectorAll('.progress-confirm').forEach(button => button.addEventListener('click', async () => {
+  const confirmed = button.dataset.confirmed === 'true';
+  const comment = window.prompt(confirmed ? 'Confirmation note (optional):' : 'Why is this being rejected?') || '';
+  if (!confirmed && !comment) return;
+  button.disabled = true;
+  try {
+    const response = await fetch(`/api/plans/{{ plan.id }}/items/${button.dataset.type}/${button.dataset.id}/confirm`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({confirmed, comment})
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || result.error || 'Could not record the decision.');
+    alert(result.message);
+    window.location.reload();
+  } catch (error) { alert(error.message || 'Could not record the decision.'); button.disabled = false; }
+}));
 </script>
 {% endif %}
 {% endblock %}

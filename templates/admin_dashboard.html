@@ -163,6 +163,7 @@
                 <th>Role</th>
                 <th>Department</th>
                 <th>Status</th>
+                <th>Login</th>
                 <th>Plan</th>
               </tr>
             </thead>
@@ -182,6 +183,20 @@
                 </span>
               </td>
               <td>
+                {% if emp.id in login_usernames %}
+                <code>{{ login_usernames[emp.id] }}</code>
+                {% elif user.app_role in ('Admin', 'Training Manager') %}
+                <button type="button" class="btn btn-outline btn-sm provision-login-btn" data-employee-id="{{ emp.id }}">
+                  <i class="bi bi-key"></i> Create login
+                </button>
+                {% else %}
+                <span style="color:var(--text-muted);font-size:0.78rem;">No login</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="/dashboard/employee?employee_id={{ emp.id }}" class="btn btn-outline btn-sm" title="Open employee workspace">
+                  <i class="bi bi-person-workspace"></i><span class="d-none d-xl-inline"> Workspace</span>
+                </a>
                 {% if emp.id in plan_ids %}
                 <a href="/plans/{{ plan_ids[emp.id] }}" class="btn btn-teal btn-sm">
                   <i class="bi bi-eye"></i>View
@@ -207,7 +222,7 @@
               </td>
             </tr>
             {% else %}
-            <tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">No employees seeded yet.</td></tr>
+            <tr><td colspan="7" class="text-center py-4" style="color:var(--text-muted);">No employees seeded yet.</td></tr>
             {% endfor %}
             </tbody>
           </table>
@@ -272,7 +287,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p class="text-muted-sm mb-3">The plan is created from approved documents and role requirements, then automatically checked by the independent Python validation pipeline. Generation can take a moment.</p>
+          <p class="text-muted-sm mb-3">The plan is created from approved documents and role requirements, then checked by the independent Python validation pipeline. The target for generation plus validation is 30 seconds.</p>
           <label for="plan-employee-id" class="form-label">Employee</label>
           <select id="plan-employee-id" class="form-select" required>
             <option value="" selected disabled>Select an employee</option>
@@ -358,7 +373,7 @@
       const reviewLink = requiresReview ? ' <a href="/reviews" class="alert-link">Open review queue</a>' : '';
       const fallback = payload.structured_json?.generation_status === 'failed_after_retries';
       const message = fallback
-        ? `AI generation did not complete after its allowed retries. A source-grounded fallback plan was saved for human review. <a href="/plans/${payload.id}" class="alert-link">Open plan</a>${reviewLink}`
+        ? `AI generated an incomplete response after its allowed retries. A source-grounded review draft was saved; it cannot be used for employee progress until it is replaced by a complete plan. <a href="/plans/${payload.id}" class="alert-link">Open plan</a>${reviewLink}`
         : `Plan generated and validated. Status: <strong>${status}</strong>.${score} <a href="/plans/${payload.id}" class="alert-link">Open plan</a>${reviewLink}`;
       showFeedback(fallback ? 'warning' : (status === 'Verified' ? 'success' : 'warning'), message);
       submitButton.innerHTML = '<i class="bi bi-check2"></i> Plan Generated';
@@ -367,6 +382,30 @@
       submitButton.disabled = false;
       submitButton.innerHTML = '<i class="bi bi-magic"></i> Generate Plan';
     }
+  });
+
+  document.querySelectorAll('.provision-login-btn').forEach(button => {
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      button.innerHTML = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>';
+      try {
+        const response = await fetch(`/api/employees/${encodeURIComponent(button.dataset.employeeId)}/account`, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'Could not create the employee login.');
+        const passwordNote = payload.initial_password ? ` Initial password: ${payload.initial_password}` : '';
+        button.replaceWith(Object.assign(document.createElement('code'), {
+          textContent: payload.login.username,
+        }));
+        window.alert(`Login created for ${payload.login.username}.${passwordNote}`);
+      } catch (error) {
+        button.disabled = false;
+        button.innerHTML = '<i class="bi bi-key"></i> Create login';
+        window.alert(error.message || 'Could not create the employee login.');
+      }
+    });
   });
 })();
 </script>

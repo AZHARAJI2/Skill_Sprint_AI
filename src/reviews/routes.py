@@ -21,7 +21,7 @@ Admin always passes all role checks (see require_role in auth/dependencies.py).
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, Query
 from sqlalchemy.orm import Session
 
 from database.base import get_session
@@ -105,6 +105,7 @@ def approve_item(
         original_result=body.get("original_result", {}),
         reviewer=user,
         comment=body.get("comment"),
+        plan_id=_plan_id_from_body(body),
     )
     return _decision_payload(decision)
 
@@ -149,6 +150,7 @@ def reject_item(
         original_result=body.get("original_result", {}),
         reviewer=user,
         comment=body.get("comment"),
+        plan_id=_plan_id_from_body(body),
     )
     return _decision_payload(decision)
 
@@ -194,6 +196,7 @@ def edit_item(
         edited_content=body.get("edited_content", {}),
         reviewer=user,
         comment=body.get("comment"),
+        plan_id=_plan_id_from_body(body),
     )
     return _decision_payload(decision)
 
@@ -240,6 +243,7 @@ def regenerate_item(
         original_result=body.get("original_result", {}),
         reviewer=user,
         comment=body.get("comment"),
+        plan_id=_plan_id_from_body(body),
     )
     return _decision_payload(decision)
 
@@ -280,6 +284,7 @@ def add_comment(
         original_result=body.get("original_result", {}),
         reviewer=user,
         comment=body.get("comment", ""),
+        plan_id=_plan_id_from_body(body),
     )
     return _decision_payload(decision)
 
@@ -292,6 +297,7 @@ def add_comment(
 @router.get("/{item_id}/decisions", summary="Full decision history for an item")
 def get_decisions(
     item_id: str,
+    plan_id: int | None = Query(default=None, gt=0),
     session: Session = Depends(get_session),
     user: User = Depends(require_role(*_QUEUE_READER_ROLES)),
 ) -> list[dict]:
@@ -301,7 +307,7 @@ def get_decisions(
     and ``reviewer_override`` (reviewer's change or None), satisfying VG-4.2.
     """
     service = ReviewService(session)
-    decisions = service.get_review_decisions(item_id)
+    decisions = service.get_review_decisions(item_id, plan_id=plan_id)
     return [_decision_payload(d) for d in decisions]
 
 
@@ -332,6 +338,7 @@ def _decision_payload(decision) -> dict:
         "id": decision.id,
         "item_id": decision.item_id,
         "item_type": decision.item_type,
+        "plan_id": decision.plan_id,
         "reviewer_id": decision.reviewer_id,
         "action": decision.action,
         "comment": decision.comment,
@@ -339,6 +346,28 @@ def _decision_payload(decision) -> dict:
         "reviewer_override": decision.reviewer_override,
         "timestamp": decision.timestamp.isoformat() if decision.timestamp else None,
     }
+
+
+def _plan_id_from_body(body: dict) -> int | None:
+    """Read an optional positive plan scope supplied by the review UI."""
+    value = body.get("plan_id")
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        from src.errors import AppError
+
+        raise AppError("plan_id must be a positive integer.", status_code=422)
+    try:
+        plan_id = int(value)
+    except (TypeError, ValueError) as exc:
+        from src.errors import AppError
+
+        raise AppError("plan_id must be a positive integer.", status_code=422) from exc
+    if plan_id <= 0:
+        from src.errors import AppError
+
+        raise AppError("plan_id must be a positive integer.", status_code=422)
+    return plan_id
 
 
 def _audit_payload(entry) -> dict:

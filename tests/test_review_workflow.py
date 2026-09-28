@@ -207,6 +207,31 @@ class TestReviewQueuePopulated:
         assert queue[0].original_result is not None
         assert queue[0].original_result["verification_status"] == "Manual Review Required"
 
+    def test_queue_and_decisions_are_scoped_to_the_selected_plan(self, db_session: Session) -> None:
+        """Matching item IDs in separate employee plans must never share a decision."""
+        self._seed_report(db_session, plan_id=101)
+        self._seed_report(db_session, plan_id=202)
+        reviewer = _reviewer_user(db_session)
+        service = ReviewService(db_session)
+
+        assert [item.plan_id for item in service.get_queue(plan_id=101)] == [101]
+        assert [item.plan_id for item in service.get_queue(plan_id=202)] == [202]
+
+        service.approve(
+            item_id="M-001",
+            item_type="module",
+            original_result=_sample_original_result("M-001"),
+            reviewer=reviewer,
+            plan_id=101,
+        )
+
+        assert service.get_queue(plan_id=101) == []
+        remaining = service.get_queue(plan_id=202)
+        assert len(remaining) == 1
+        assert remaining[0].plan_id == 202
+        assert len(service.get_review_decisions("M-001", plan_id=101)) == 1
+        assert service.get_review_decisions("M-001", plan_id=202) == []
+
 
 # ---------------------------------------------------------------------------
 # 3. Approve
@@ -595,6 +620,16 @@ class TestUnauthorized:
         client, _, _, _ = client_with_db
         resp = client.get("/api/reviews/queue")
         assert resp.status_code == 401
+
+    def test_show_plan_reviews_blank_filter_returns_html(self, client_with_db) -> None:
+        """GET /reviews?plan_id= must render the queue, not a JSON 422 blank page."""
+        client, reviewer_token, _, _ = client_with_db
+        client.cookies.set("skillsprint_token", reviewer_token)
+        resp = client.get("/reviews?plan_id=")
+        assert resp.status_code == 200
+        assert "text/html" in resp.headers.get("content-type", "")
+        assert "Human Review Queue" in resp.text
+        assert "Show plan reviews" in resp.text
 
 
 # ---------------------------------------------------------------------------

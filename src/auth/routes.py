@@ -26,6 +26,14 @@ class LoginBody(BaseModel):
     password: str
 
 
+class PasswordChangeBody(BaseModel):
+    """Payload for a self-service password change."""
+
+    current_password: str
+    new_password: str
+    confirm_password: str
+
+
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request) -> HTMLResponse:
     """Render the login form."""
@@ -52,7 +60,13 @@ def login_form(
             status_code=401,
         )
     response = RedirectResponse(url="/dashboard", status_code=303)
-    response.set_cookie("skillsprint_token", token, httponly=True, samesite="lax")
+    response.set_cookie(
+        "skillsprint_token",
+        token,
+        httponly=True,
+        samesite="lax",
+        secure=settings.cookie_secure,
+    )
     return response
 
 
@@ -77,3 +91,22 @@ def logout() -> RedirectResponse:
 def me(user: User = Depends(get_current_user)) -> dict:
     """Return the authenticated principal."""
     return {"username": user.username, "role": user.app_role, "employee_id": user.employee_id}
+
+
+@router.get("/account", response_class=HTMLResponse)
+def account_page(request: Request, user: User = Depends(get_current_user)) -> HTMLResponse:
+    """Render the authenticated user's self-service account page."""
+    return templates.TemplateResponse(request=request, name="account.html", context={"user": user})
+
+
+@router.post("/api/account/password")
+def change_own_password(
+    body: PasswordChangeBody,
+    session: Session = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> dict:
+    """Allow an authenticated user to change only their own password."""
+    if body.new_password != body.confirm_password:
+        raise AppError("The new password and confirmation do not match.", status_code=422)
+    AuthService(session).change_password(user, body.current_password, body.new_password)
+    return {"ok": True, "message": "Password changed successfully."}

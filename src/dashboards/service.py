@@ -19,6 +19,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from role_matrix.repository import RoleMatrixRepository
+from src.auth.service import AuthService
 from src.documents.metrics import CorpusMetricsService
 from src.employees.models import Employee
 from src.employees.service import EmployeeService, RoleService
@@ -139,13 +140,27 @@ class DashboardService:
         Returns:
             ProgressData populated from live database rows.
         """
-        plans = self._plans.list_by_employee(employee_id)
-        if not plans:
-            return ProgressData(status="Not Started")
+        # ProgressTrackingService is the authoritative implementation for
+        # Steps 17, 18, 50, 53 and 54.  It reads persisted event data only;
+        # dashboard rendering must never fabricate partial completion.
+        from src.dashboards.progress_service import ProgressTrackingService
 
-        # Use the most recent plan
-        plan = sorted(plans, key=lambda p: p.id, reverse=True)[0]
-        return self._compute_progress(plan)
+        result = ProgressTrackingService(self._session).compute_employee_progress(employee_id)
+        return ProgressData(
+            overall_pct=result.overall_pct,
+            status=result.status,
+            modules_done=result.modules_done,
+            modules_total=result.modules_total,
+            tasks_done=result.tasks_done,
+            tasks_total=result.tasks_total,
+            checklists_done=result.checklists_done,
+            checklists_total=result.checklists_total,
+            quizzes_done=result.quizzes_done,
+            quizzes_total=result.quizzes_total,
+            avg_quiz_score=result.avg_quiz_score,
+            assessments_done=result.assessments_done,
+            assessments_total=result.assessments_total,
+        )
 
     def get_latest_plan(self, employee_id: int) -> OnboardingPlan | None:
         """Return the most recent plan for an employee, or None."""
@@ -309,6 +324,7 @@ class DashboardService:
             "flagged_contradictions": flagged_contradictions,
             "coverage_by_role": coverage_by_role,
             "plan_ids": plan_ids,
+            "login_usernames": AuthService(self._session).list_employee_usernames(),
             "employees": employees,
         }
 

@@ -74,6 +74,74 @@
           <label for="employee-prior-experience" class="form-label">Relevant Prior Experience</label>
           <textarea id="employee-prior-experience" class="form-control" rows="3" placeholder="Short onboarding-relevant summary only."></textarea>
         </div>
+        <div class="col-12">
+          <!-- Auto-Generated Credentials Callout & Live Dynamic Preview -->
+          <div class="card border-0 shadow-sm" style="background: #F0FDFA; border-left: 4px solid var(--teal) !important; border-radius: 8px;">
+            <div class="card-body p-3">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-shield-lock-fill fs-5" style="color:var(--teal)"></i>
+                  <span class="fw-bold" style="color:var(--navy); font-size: 0.95rem;">
+                    Automatic Account Credentials (إنشاء بيانات الدخول تلقائياً)
+                  </span>
+                </div>
+                <span class="badge" style="background-color: var(--teal) !important; color: white;">
+                  <i class="bi bi-check2-circle me-1"></i>Auto-Generated / تلقائي
+                </span>
+              </div>
+              <p class="small text-secondary mb-2" style="font-size: 0.84rem;">
+                Any new employee profile automatically receives an active login account. You do not need to invent or enter passwords manually.
+              </p>
+
+              <!-- Example Format & Real-time Live Preview -->
+              <div class="row g-2 pt-2 border-top" style="border-color: rgba(15,118,110,0.15) !important;">
+                <div class="col-md-6">
+                  <div class="p-2 rounded bg-white border" style="border-color: #CCFBF1 !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="small text-muted fw-semibold" style="font-size:0.78rem;"><i class="bi bi-person me-1"></i>Username Rule / اسم المستخدم:</span>
+                      <span class="badge bg-light text-muted border" style="font-size:0.68rem;">Format: {first_name}-{dept}</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="small text-muted" style="font-size:0.78rem;">Example: <code class="px-1.5 py-0.5 rounded" style="background:#E0F2FE;color:#0369A1;font-weight:600;">sarah-e</code></span>
+                      <span class="small text-muted" style="font-size:0.78rem;">Live Preview: <code id="preview-username" class="px-1.5 py-0.5 rounded" style="background:#F0FDFA;color:#0F766E;font-weight:700;">employee-d</code></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="p-2 rounded bg-white border" style="border-color: #CCFBF1 !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="small text-muted fw-semibold" style="font-size:0.78rem;"><i class="bi bi-key me-1"></i>Temporary Password / كلمة المرور:</span>
+                      <span class="badge bg-light text-muted border" style="font-size:0.68rem;">Format: SkillSprint!{ID}</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="small text-muted" style="font-size:0.78rem;">Example: <code class="px-1.5 py-0.5 rounded" style="background:#FEF3C7;color:#B45309;font-weight:600;">SkillSprint!EMP-012</code></span>
+                      <span class="small text-muted" style="font-size:0.78rem;">Live Preview: <code id="preview-password" class="px-1.5 py-0.5 rounded" style="background:#F0FDFA;color:#0F766E;font-weight:700;">SkillSprint!EMP-XXX</code></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Collapsible optional override -->
+              <input type="checkbox" id="employee-create-login" checked class="d-none">
+              <div class="mt-2 text-end">
+                <button type="button" class="btn btn-link btn-sm text-decoration-none p-0" id="toggle-custom-credentials-btn" style="color: var(--teal); font-size: 0.78rem;">
+                  <i class="bi bi-sliders me-1"></i>Optional: Override with custom username or password
+                </button>
+              </div>
+              <div id="employee-login-fields" class="row g-2 mt-2 p-2 bg-white rounded border d-none">
+                <div class="col-md-6">
+                  <label for="employee-login-username" class="form-label small mb-1">Custom Login Username</label>
+                  <input id="employee-login-username" class="form-control form-control-sm" maxlength="64" autocomplete="username" placeholder="Leave blank to use auto-generated username">
+                </div>
+                <div class="col-md-6">
+                  <label for="employee-temporary-password" class="form-label small mb-1">Custom Temporary Password</label>
+                  <input id="employee-temporary-password" class="form-control form-control-sm" type="password" minlength="8" autocomplete="new-password" placeholder="Leave blank to use auto-generated password">
+                  <div class="form-text" style="font-size:0.72rem;">Min 8 characters. Stored securely as bcrypt hash.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div id="employee-form-result" class="mt-4 d-none" role="status" aria-live="polite"></div>
       <div class="d-flex gap-2 justify-content-end mt-4">
@@ -94,6 +162,77 @@
   <div class="card-header"><i class="bi bi-file-earmark-arrow-up me-1"></i>Import Employees from File</div>
   <div class="card-body">
     <p class="mb-3">Add one employee or several employees at once. Upload only <strong>CSV</strong>, <strong>Excel (.xlsx)</strong>, or <strong>JSON</strong> files.</p>
+    
+    <!-- Auto-Generated Credentials Callout for File Imports -->
+    <div class="card border-0 mb-3 shadow-sm" style="background: #F0FDFA; border-left: 4px solid var(--teal) !important; border-radius: 8px;">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-people-fill fs-5" style="color:var(--teal)"></i>
+            <span class="fw-bold" style="color:var(--navy); font-size: 0.95rem;">
+              Auto-Generated Credentials for Bulk File Imports (إنشاء الحسابات تلقائياً لجميع موظفي الملف)
+            </span>
+          </div>
+          <span class="badge" style="background-color: var(--teal) !important; color: white;">
+            <i class="bi bi-lightning-charge me-1"></i>Auto-Provisioned / تلقائي
+          </span>
+        </div>
+        <p class="small text-secondary mb-2" style="font-size: 0.84rem;">
+          You <strong>do not need</strong> to add username or password columns to your CSV, Excel (.xlsx), or JSON file. The system automatically creates a unique username and secure temporary password for every imported employee row.
+        </p>
+
+        <!-- Example Table for File Import -->
+        <div class="table-responsive rounded border bg-white mb-2">
+          <table class="table table-sm table-borderless mb-0" style="font-size: 0.82rem;">
+            <thead style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+              <tr>
+                <th class="ps-3 py-1.5 text-secondary">File Row Data (بيانات الموظف بالملف)</th>
+                <th class="py-1.5 text-secondary">Auto-Generated Username</th>
+                <th class="py-1.5 text-secondary">Auto-Generated Temporary Password</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td class="ps-3 py-1.5">
+                  <code>EMP-101</code> — <strong>Sarah Smith</strong> (Engineering)
+                </td>
+                <td class="py-1.5">
+                  <code class="px-2 py-0.5 rounded" style="background: #E0F2FE; color: #0369A1; font-weight: 600;">sarah-e</code>
+                </td>
+                <td class="py-1.5">
+                  <code class="px-2 py-0.5 rounded" style="background: #FEF3C7; color: #B45309; font-weight: 600;">SkillSprint!EMP-101</code>
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td class="ps-3 py-1.5">
+                  <code>EMP-102</code> — <strong>David Miller</strong> (Finance)
+                </td>
+                <td class="py-1.5">
+                  <code class="px-2 py-0.5 rounded" style="background: #E0F2FE; color: #0369A1; font-weight: 600;">david-f</code>
+                </td>
+                <td class="py-1.5">
+                  <code class="px-2 py-0.5 rounded" style="background: #FEF3C7; color: #B45309; font-weight: 600;">SkillSprint!EMP-102</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="ps-3 py-1.5">
+                  <code>EMP-103</code> — <strong>Amina Khan</strong> (Customer Support)
+                </td>
+                <td class="py-1.5">
+                  <code class="px-2 py-0.5 rounded" style="background: #E0F2FE; color: #0369A1; font-weight: 600;">amina-c</code>
+                </td>
+                <td class="py-1.5">
+                  <code class="px-2 py-0.5 rounded" style="background: #FEF3C7; color: #B45309; font-weight: 600;">SkillSprint!EMP-103</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="small text-muted" style="font-size: 0.78rem;">
+          <i class="bi bi-info-circle me-1"></i>After upload, all generated credentials are displayed immediately on-screen with a one-click copy tool for onboarding distribution.
+        </div>
+      </div>
+    </div>
     <div class="row g-3 mb-3">
       <div class="col-lg-6">
         <div class="border rounded p-3 h-100">
@@ -144,16 +283,67 @@
 
   const role = document.getElementById('employee-role');
   const department = document.getElementById('employee-department');
+  const codeInput = document.getElementById('employee-code');
+  const nameInput = document.getElementById('employee-name');
+  const previewUsername = document.getElementById('preview-username');
+  const previewPassword = document.getElementById('preview-password');
+  const toggleCustomBtn = document.getElementById('toggle-custom-credentials-btn');
+  const loginFields = document.getElementById('employee-login-fields');
+  const loginUsername = document.getElementById('employee-login-username');
+  const temporaryPassword = document.getElementById('employee-temporary-password');
   const submit = document.getElementById('create-employee-submit');
   const result = document.getElementById('employee-form-result');
+  const createLogin = document.getElementById('employee-create-login');
 
-  role.addEventListener('change', () => {
-    department.value = role.options[role.selectedIndex].dataset.department || '';
-  });
+  function updatePreview() {
+    const rawName = (nameInput?.value || '').trim();
+    const rawDept = (department?.value || '').trim();
+    const rawCode = (codeInput?.value || '').trim();
+
+    // Extract first token (letters/numbers)
+    const nameMatch = rawName.toLowerCase().match(/[a-z0-9]+/);
+    const firstName = nameMatch ? nameMatch[0] : (rawName ? 'emp' : 'employee');
+    
+    // Extract dept initial
+    const deptMatch = rawDept.toLowerCase().match(/[a-z0-9]/);
+    const deptInitial = deptMatch ? deptMatch[0] : 'd';
+
+    const safeCode = rawCode ? rawCode.replace(/[^a-zA-Z0-9_-]/g, '') : 'EMP-XXX';
+
+    if (previewUsername) {
+      previewUsername.textContent = `${firstName}-${deptInitial}`;
+    }
+    if (previewPassword) {
+      previewPassword.textContent = `SkillSprint!${safeCode || 'EMP-XXX'}`;
+    }
+  }
+
+  if (codeInput) codeInput.addEventListener('input', updatePreview);
+  if (nameInput) nameInput.addEventListener('input', updatePreview);
+  if (department) department.addEventListener('input', updatePreview);
+  if (role) {
+    role.addEventListener('change', () => {
+      department.value = role.options[role.selectedIndex].dataset.department || '';
+      updatePreview();
+    });
+  }
+
+  if (toggleCustomBtn && loginFields) {
+    toggleCustomBtn.addEventListener('click', () => {
+      loginFields.classList.toggle('d-none');
+    });
+  }
+
+  function escapeHtml(value) {
+    const element = document.createElement('div');
+    element.textContent = value ?? '';
+    return element.innerHTML;
+  }
 
   function showResult(type, message) {
     result.className = `alert alert-${type} mt-4`;
-    result.textContent = message;
+    result.innerHTML = message;
+    result.classList.remove('d-none');
   }
 
   form.addEventListener('submit', async event => {
@@ -165,8 +355,8 @@
     const competencies = document.getElementById('employee-competencies').value
       .split(',').map(value => value.trim()).filter(Boolean);
     const payload = {
-      employee_code: document.getElementById('employee-code').value.trim(),
-      name: document.getElementById('employee-name').value.trim(),
+      employee_code: codeInput.value.trim(),
+      name: nameInput.value.trim(),
       role_id: Number(role.value),
       department: department.value.trim(),
       experience_level: document.getElementById('employee-experience').value,
@@ -176,6 +366,9 @@
       required_competencies: competencies.length ? competencies : null,
       prior_experience: document.getElementById('employee-prior-experience').value.trim() || null,
       training_status: 'not_started',
+      create_login: true,
+      login_username: loginUsername?.value.trim() || null,
+      temporary_password: temporaryPassword?.value || null,
     };
     submit.disabled = true;
     submit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Creating…';
@@ -187,8 +380,89 @@
       });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.error || body.detail || 'Could not create the employee profile.');
-      showResult('success', `Employee profile created for ${body.name}. Opening plan generation…`);
-      window.setTimeout(() => { window.location.href = `/dashboard?generate_for=${body.id}`; }, 700);
+      
+      const username = body.login?.username || '—';
+      const initialPassword = body.initial_password || '(Existing password kept)';
+      
+      submit.disabled = true;
+      submit.innerHTML = '<i class="bi bi-check-circle me-1"></i>Employee Created';
+
+      result.className = 'mt-4 animate-fade';
+      result.classList.remove('d-none');
+      result.innerHTML = `
+        <div class="card border-0 shadow-sm p-4" style="background:#F0FDF4; border: 1px solid #BBF7D0 !important; border-radius: 10px;">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width:46px;height:46px;background:var(--teal);font-size:1.4rem;">
+              <i class="bi bi-check-lg"></i>
+            </div>
+            <div>
+              <h5 class="mb-0 fw-bold" style="color:var(--navy);">Employee Profile & Sign-In Created Successfully!</h5>
+              <div class="small text-secondary">Personalized account created for <strong>${escapeHtml(body.name)}</strong> (<code>${escapeHtml(body.employee_code)}</code>)</div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded border p-3 mb-3" style="border-color:#DCFCE7 !important;">
+            <div class="fw-semibold small text-secondary mb-2"><i class="bi bi-key-fill me-1" style="color:var(--teal)"></i>Auto-Generated Sign-In Credentials (بيانات الدخول التلقائية):</div>
+            <div class="row g-3 align-items-center">
+              <div class="col-md-5">
+                <span class="small text-muted d-block" style="font-size:0.75rem;">Username (اسم المستخدم):</span>
+                <div class="d-flex align-items-center gap-2 mt-1">
+                  <code class="fs-6 fw-bold px-2 py-1 rounded" style="background:#F0FDFA;color:#0F766E;">${escapeHtml(username)}</code>
+                  <button type="button" class="btn btn-sm btn-outline-secondary btn-copy" data-text="${escapeHtml(username)}" title="Copy username">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <span class="small text-muted d-block" style="font-size:0.75rem;">Initial Password (كلمة المرور المؤقتة):</span>
+                <div class="d-flex align-items-center gap-2 mt-1">
+                  <code class="fs-6 fw-bold px-2 py-1 rounded" style="background:#FEF3C7;color:#B45309;">${escapeHtml(initialPassword)}</code>
+                  <button type="button" class="btn btn-sm btn-outline-secondary btn-copy" data-text="${escapeHtml(initialPassword)}" title="Copy password">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-2 text-md-end">
+                <button type="button" class="btn btn-sm btn-outline-teal w-100 btn-copy-both" data-user="${escapeHtml(username)}" data-pass="${escapeHtml(initialPassword)}">
+                  <i class="bi bi-clipboard-check me-1"></i>Copy Both
+                </button>
+              </div>
+            </div>
+            <div class="small text-muted mt-2" style="font-size:0.75rem;">
+              <i class="bi bi-shield-check me-1"></i>Share these credentials with the employee securely. The employee can change their password anytime in <em>My Account</em>.
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center pt-1">
+            <a href="/employees/new" class="btn btn-outline btn-sm"><i class="bi bi-person-plus me-1"></i>Add Another Employee</a>
+            <div class="d-flex gap-2">
+              <a href="/dashboard" class="btn btn-outline btn-sm">Return to Dashboard</a>
+              <a href="/dashboard?generate_for=${encodeURIComponent(body.id)}" class="btn btn-primary btn-sm"><i class="bi bi-magic me-1"></i>Proceed to Generate Plan</a>
+            </div>
+          </div>
+        </div>
+      `;
+      // Wire copy buttons
+      result.querySelectorAll('.btn-copy').forEach(btn => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(btn.dataset.text || '').then(() => {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check2 text-success"></i>';
+            setTimeout(() => { btn.innerHTML = orig; }, 1500);
+          });
+        });
+      });
+      const copyBoth = result.querySelector('.btn-copy-both');
+      if (copyBoth) {
+        copyBoth.addEventListener('click', () => {
+          const text = `SkillSprint Login Credentials\nUsername: ${copyBoth.dataset.user}\nTemporary Password: ${copyBoth.dataset.pass}\nLogin URL: ${window.location.origin}/login`;
+          navigator.clipboard.writeText(text).then(() => {
+            const orig = copyBoth.innerHTML;
+            copyBoth.innerHTML = '<i class="bi bi-check2 text-success me-1"></i>Copied!';
+            setTimeout(() => { copyBoth.innerHTML = orig; }, 1800);
+          });
+        });
+      }
     } catch (error) {
       showResult('danger', error.message || 'Could not create the employee profile.');
       submit.disabled = false;
@@ -209,11 +483,12 @@
   function showResult(type, message) {
     result.className = `alert alert-${type} mt-3`;
     result.innerHTML = message;
+    result.classList.remove('d-none');
   }
 
   function escapeHtml(value) {
     const element = document.createElement('div');
-    element.textContent = value;
+    element.textContent = value ?? '';
     return element.innerHTML;
   }
 
@@ -250,7 +525,90 @@
         const detail = issues ? `<ul class="mb-0 mt-2">${issues}</ul>` : '';
         throw new Error(`${escapeHtml(body.error || 'Could not import the employee file.')}${detail}`);
       }
-      showResult('success', `${body.message} <a href="/dashboard">Open the dashboard to generate plans.</a>`);
+      
+      const creds = body.credentials || [];
+      let credRows = '';
+      if (creds.length) {
+        credRows = creds.map(c => `
+          <tr style="border-bottom:1px solid #F1F5F9;">
+            <td class="ps-3 py-2"><code>${escapeHtml(c.employee_code)}</code></td>
+            <td class="py-2"><code class="px-2 py-0.5 rounded fw-bold" style="background:#F0FDFA;color:#0F766E;">${escapeHtml(c.username)}</code></td>
+            <td class="py-2"><code class="px-2 py-0.5 rounded fw-bold" style="background:#FEF3C7;color:#B45309;">${escapeHtml(c.initial_password || '—')}</code></td>
+            <td class="pe-3 py-2 text-end">
+              <button type="button" class="btn btn-sm btn-outline-secondary btn-copy-row" data-user="${escapeHtml(c.username)}" data-pass="${escapeHtml(c.initial_password || '')}" title="Copy credentials">
+                <i class="bi bi-clipboard"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      result.className = 'mt-3 animate-fade';
+      result.classList.remove('d-none');
+      result.innerHTML = `
+        <div class="card border-0 shadow-sm p-3" style="background:#F0FDF4; border: 1px solid #BBF7D0 !important; border-radius: 10px;">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-success fs-5"></i>
+              <strong style="color:var(--navy);">${escapeHtml(body.message)}</strong>
+            </div>
+            ${creds.length ? `
+              <button type="button" class="btn btn-sm btn-outline-teal" id="copy-all-import-creds">
+                <i class="bi bi-clipboard-check me-1"></i>Copy All Credentials
+              </button>
+            ` : ''}
+          </div>
+
+          ${creds.length ? `
+            <div class="table-responsive rounded border bg-white mb-3">
+              <table class="table table-sm table-hover mb-0" style="font-size:0.83rem;">
+                <thead style="background:#F8FAFC;border-bottom:1px solid #E2E8F0;">
+                  <tr>
+                    <th class="ps-3 py-2 text-secondary">Employee Code</th>
+                    <th class="py-2 text-secondary">Auto-Generated Username</th>
+                    <th class="py-2 text-secondary">Temporary Password</th>
+                    <th class="pe-3 py-2 text-end text-secondary">Copy</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${credRows}
+                </tbody>
+              </table>
+            </div>
+          ` : ''}
+
+          <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center pt-2 border-top">
+            <span class="small text-muted"><i class="bi bi-info-circle me-1"></i>Credentials are active. Passwords can be changed by employees in My Account.</span>
+            <a href="/dashboard" class="btn btn-primary btn-sm"><i class="bi bi-grid me-1"></i>Open Dashboard to Generate Plans</a>
+          </div>
+        </div>
+      `;
+
+      // Copy individual row
+      result.querySelectorAll('.btn-copy-row').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = `Username: ${btn.dataset.user} | Password: ${btn.dataset.pass}`;
+          navigator.clipboard.writeText(text).then(() => {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check2 text-success"></i>';
+            setTimeout(() => { btn.innerHTML = orig; }, 1500);
+          });
+        });
+      });
+
+      // Copy all credentials
+      const copyAllBtn = result.querySelector('#copy-all-import-creds');
+      if (copyAllBtn && creds.length) {
+        copyAllBtn.addEventListener('click', () => {
+          const lines = creds.map(c => `Employee: ${c.employee_code} | Username: ${c.username} | Password: ${c.initial_password || ''}`);
+          navigator.clipboard.writeText(lines.join('\n')).then(() => {
+            const orig = copyAllBtn.innerHTML;
+            copyAllBtn.innerHTML = '<i class="bi bi-check2 text-success me-1"></i>Copied All!';
+            setTimeout(() => { copyAllBtn.innerHTML = orig; }, 1800);
+          });
+        });
+      }
+
       form.reset();
     } catch (error) {
       showResult('danger', error.message || 'Could not import the employee file.');

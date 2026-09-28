@@ -26,10 +26,12 @@ logger = get_logger("plan_generator")
 class PlanGenerator:
     """Generate one full structured plan and merge it onto the Python-assembled backbone."""
 
-    # One structured call is materially faster and avoids the old three-call
-    # free-tier burst.  The Python assembler still supplies every stage/item.
+    # Independent periods use separate skeletons and are generated in parallel.
+    # The Python assembler still supplies every required item and citation.
     STAGE_GROUPS: list[tuple[str, set[str]]] = [
-        ("All onboarding stages", {"Day 1", "Week 1", "Week 2", "First 30 Days", "First 60 Days", "First 90 Days"})
+        ("Foundation: Day 1 and Week 1", {"Day 1", "Week 1"}),
+        ("Practice: Week 2 and First 30 Days", {"Week 2", "First 30 Days"}),
+        ("Growth: First 60 and First 90 Days", {"First 60 Days", "First 90 Days"}),
     ]
 
     def __init__(self, provider: BaseGenAIProvider, prompt_manager: PromptManager | None = None) -> None:
@@ -49,6 +51,7 @@ class PlanGenerator:
         employee_json: str,
         requirements_json: str,
         source_chunks_block: str,
+        source_chunks_by_reference: dict[tuple[str, str], str] | None = None,
         valid_sources: set[tuple[str, str]],
         mandatory_ids: set[str],
         excerpts: dict | None = None,
@@ -69,10 +72,15 @@ class PlanGenerator:
             "model_used": None,
             "retry_count": 0,
             "response_time_ms": 0.0,
+            "api_version": None,
             "recovered_from_assembler": False,
             "stage_failures": [],
         }
-        deadline_monotonic = time.monotonic() + settings.plan_generation_timeout_seconds
+        deadline_monotonic = (
+            time.monotonic() + settings.plan_generation_timeout_seconds
+            if settings.plan_generation_timeout_seconds is not None
+            else None
+        )
 
         req_stage_map = {r.requirement_id: r.due_stage for r in assembled.classified_requirements}
         merged_groups: list[GeneratedPlan] = []
@@ -112,25 +120,47 @@ class PlanGenerator:
                 stages_used=sub_stages,
                 covered_requirement_ids=stage_covered_ids,
             )
+            stage_source_refs = list(
+                dict.fromkeys(
+                    (requirement.source_document_id, requirement.source_section_id)
+                    for requirement in stage_reqs
+                )
+            )
+            stage_source_chunks = (
+                "\n\n".join(
+                    source_chunks_by_reference.get(reference, "")
+                    for reference in stage_source_refs
+                )
+                if source_chunks_by_reference
+                else source_chunks_block
+            )
 
             prompt_kwargs = {
                 "employee_json": employee_json,
                 "requirements_json": json.dumps([r.model_dump(mode="json") for r in stage_reqs]),
-                "source_chunks_block": source_chunks_block,
+                # Do not send the entire corpus to every parallel request.
+                # Each group receives only the source excerpts cited by its
+                # requirements, which controls token use and reduces noise.
+                "source_chunks_block": stage_source_chunks or source_chunks_block,
                 "role_title": assembled.role_title,
             }
             if "stage_group" in template.variables:
                 prompt_kwargs["stage_group"] = group_name
             if "plan_skeleton_json" in template.variables:
-                prompt_kwargs["plan_skeleton_json"] = sub_assembled.model_dump_json()
+                prompt_kwargs["plan_skeleton_json"] = self._prompt_skeleton_json(sub_assembled)
 
             prompt = self.prompt_manager.render(template, **prompt_kwargs)
 
             try:
                 cfg = GenerationConfig(
                     temperature=0.15,
+                    max_output_tokens=8192,
                     thinking_budget=getattr(settings, "gemini_thinking_budget", 0),
-                    timeout_seconds=max(1.0, deadline_monotonic - time.monotonic()),
+                    timeout_seconds=(
+                        max(1.0, deadline_monotonic - time.monotonic())
+                        if deadline_monotonic is not None
+                        else None
+                    ),
                     deadline_monotonic=deadline_monotonic,
                 )
                 response = RetryManager(
@@ -140,16 +170,27 @@ class PlanGenerator:
                 group_merged = self._merge(sub_assembled, model_plan)
                 return group_idx, group_name, group_merged, response, None
             except AppError as exc:
-                if exc.status_code in {401, 403}:
+                # Auth/quota errors cannot be repaired by the assembler.
+                # Time-budget exhaustion falls back to the source-grounded
+                # skeleton so the 30s NFR still returns a complete plan.
+                if exc.status_code in {400, 401, 403, 429}:
+                    raise
+                if exc.status_code == 503 and not self._is_time_budget_error(exc):
                     raise
                 failed_sub = self._mark_as_failed(sub_assembled)
                 return group_idx, group_name, failed_sub, None, exc
 
-        # One all-stage request stays inside the 25-second generation budget.
-        group_results = [
-            _generate_group(idx, name, stages)
-            for idx, (name, stages) in enumerate(self.STAGE_GROUPS)
-        ]
+        # The groups contain no shared mutable state. Generating them together
+        # reduces latency while preserving the later Python-only merge and
+        # schema/traceability validation steps.
+        with ThreadPoolExecutor(
+            max_workers=min(settings.genai_parallel_workers, len(self.STAGE_GROUPS))
+        ) as executor:
+            futures = [
+                executor.submit(_generate_group, idx, name, stages)
+                for idx, (name, stages) in enumerate(self.STAGE_GROUPS)
+            ]
+            group_results = [future.result() for future in futures]
 
         group_results.sort(key=lambda x: x[0])
 
@@ -161,6 +202,7 @@ class PlanGenerator:
                 telemetry["model_used"] = resp.model_name
                 telemetry["retry_count"] += resp.retry_count
                 telemetry["response_time_ms"] += resp.response_time_ms
+                telemetry["api_version"] = resp.metadata.get("api_version") or telemetry["api_version"]
             elif exc is not None:
                 telemetry["recovered_from_assembler"] = True
                 telemetry["model_used"] = getattr(self.provider, "model", None) or getattr(
@@ -259,6 +301,33 @@ class PlanGenerator:
             mandatory_ids=mandatory_ids,
         )
         return plan, telemetry
+
+    @staticmethod
+    def _is_time_budget_error(exc: AppError) -> bool:
+        """True when the provider stopped because the 30s generation budget ended."""
+        message = str(exc).casefold()
+        return any(
+            token in message
+            for token in ("time budget", "time limit", "timed out", "timeout")
+        )
+
+    @staticmethod
+    def _prompt_skeleton_json(plan: GeneratedPlan) -> str:
+        """Send identifiers and citations, not full assembler prose, to the model."""
+        payload = plan.model_dump(mode="json")
+        payload.pop("classified_requirements", None)
+        keep = {
+            "module_id", "item_id", "task_id", "question_id", "assessment_id",
+            "requirement_id", "requirement_ids", "title", "stage", "due_stage",
+            "source_document_id", "source_section_id", "difficulty",
+            "mandatory_status", "assessment_type",
+        }
+        for collection in ("modules", "checklists", "tasks", "quizzes", "assessments"):
+            payload[collection] = [
+                {key: item[key] for key in keep if key in item}
+                for item in payload.get(collection, [])
+            ]
+        return json.dumps(payload)
 
     @staticmethod
     def _mark_as_failed(sub_assembled: GeneratedPlan) -> GeneratedPlan:

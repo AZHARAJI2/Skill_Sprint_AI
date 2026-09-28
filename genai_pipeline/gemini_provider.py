@@ -30,21 +30,32 @@ class GeminiProvider(BaseGenAIProvider):
         self.api_key = api_key if api_key is not None else settings.gemini_api_key
         self.model = model or getattr(settings, "gemini_model", None) or "gemini-2.5-flash"
         self._client = None
+        self._client_timeout_seconds: float | None = None
 
-    def _client_or_raise(self):
+    def _client_or_raise(self, timeout_seconds: float | None = None):
+        """Return a Gemini client configured for this request's time budget."""
         if not self.api_key:
             raise AppError(
                 "GEMINI_API_KEY is not configured; refusing to fabricate a plan",
                 status_code=503,
             )
-        if self._client is None:
+        effective_timeout = timeout_seconds if timeout_seconds is not None else settings.gemini_request_timeout_seconds
+        # The SDK rejects manually configured deadlines below 10 seconds.  A
+        # None timeout is intentional: it lets the underlying transport wait
+        # for a complete structured plan.
+        if effective_timeout is not None:
+            effective_timeout = max(10.0, effective_timeout)
+        if self._client is None or self._client_timeout_seconds != effective_timeout:
             from google import genai
             from google.genai import types
 
             self._client = genai.Client(
                 api_key=self.api_key,
-                http_options=types.HttpOptions(timeout=settings.gemini_request_timeout_seconds * 1000),
+                http_options=types.HttpOptions(
+                    timeout=effective_timeout * 1000 if effective_timeout is not None else None
+                ),
             )
+            self._client_timeout_seconds = effective_timeout
         return self._client
 
     def generate(
@@ -56,16 +67,36 @@ class GeminiProvider(BaseGenAIProvider):
         """Call Gemini and parse JSON, optionally validating a Pydantic schema."""
         cfg = config or GenerationConfig()
         model_name = cfg.model or self.model
-        client = self._client_or_raise()
+        requested_timeout = (
+            cfg.timeout_seconds
+            if cfg.timeout_seconds is not None
+            else settings.gemini_request_timeout_seconds
+        )
+        if cfg.deadline_monotonic is not None:
+            remaining = cfg.deadline_monotonic - time.monotonic()
+            requested_timeout = remaining if requested_timeout is None else min(requested_timeout, remaining)
+        # Settings caps each SDK request; GenerationConfig narrows it further
+        # to the plan's remaining end-to-end budget.
+        configured_cap = settings.gemini_request_timeout_seconds
+        effective_timeout = (
+            min(configured_cap, requested_timeout)
+            if configured_cap is not None and requested_timeout is not None
+            else configured_cap or requested_timeout
+        )
+        client = self._client_or_raise(effective_timeout)
         started = time.perf_counter()
         try:
             from google.genai import types
 
             gen_config_kwargs: dict[str, Any] = {
-                "temperature": cfg.temperature,
                 "max_output_tokens": cfg.max_output_tokens,
                 "response_mime_type": "application/json",
             }
+            # Gemini 3.8 removed sampling parameters such as temperature.
+            # Keep them for legacy model IDs only, so the provider can still
+            # be overridden explicitly for an older permitted model.
+            if not model_name.startswith("gemini-3.8-"):
+                gen_config_kwargs["temperature"] = cfg.temperature
             budget = cfg.thinking_budget if cfg.thinking_budget is not None else getattr(settings, "gemini_thinking_budget", None)
             if budget is not None and budget > 0 and hasattr(types, "ThinkingConfig"):
                 try:
@@ -88,11 +119,29 @@ class GeminiProvider(BaseGenAIProvider):
         except Exception as exc:
             logger.error("gemini_call_failed error=%s", exc)
             status_code = self._provider_status_code(exc)
-            unavailable = status_code in {503, 504} or any(
+            if status_code == 429:
+                raise AppError(
+                    "Gemini quota or rate limit reached. Wait for the provider reset, then generate the complete plan again.",
+                    status_code=429,
+                    details={"provider": "gemini", "status_code": status_code, "message": str(exc)},
+                ) from exc
+            if status_code == 404:
+                raise AppError(
+                    "Configured Gemini model is unavailable. Set GEMINI_MODEL=gemini-3.8-flash and restart the app.",
+                    status_code=400,
+                    details={"provider": "gemini", "status_code": status_code, "message": str(exc)},
+                ) from exc
+            timed_out = "timeout" in str(exc).lower() or "timed out" in str(exc).lower()
+            unavailable = status_code in {503, 504} or timed_out or any(
                 word in str(exc).lower() for word in ("timeout", "timed out", "unavailable", "connection")
             )
             raise AppError(
-                "Gemini API call failed",
+                (
+                    "Gemini did not finish the complete plan before the request time limit. "
+                    "Retry the plan, or use a faster supported Gemini model."
+                    if timed_out
+                    else "Gemini API call failed"
+                ),
                 status_code=503 if unavailable else 502,
                 details={"provider": "gemini", "status_code": status_code, "message": str(exc)},
             ) from exc

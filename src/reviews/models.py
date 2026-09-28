@@ -30,13 +30,16 @@ class ValidationReportRecord(Base):
 
 
 class ReviewDecision(Base):
-    """Reviewer action preserved alongside the original validation result."""
+    """Reviewer action preserved alongside the original validation result and plan."""
 
     __tablename__ = "review_decisions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     item_id: Mapped[str] = mapped_column(String(64), index=True)
     item_type: Mapped[str] = mapped_column(String(64))
+    # Item IDs such as MOD-001 repeat across employee plans. The plan scope is
+    # therefore mandatory for new decisions and nullable only for legacy rows.
+    plan_id: Mapped[int | None] = mapped_column(ForeignKey("onboarding_plans.id"), index=True, nullable=True)
     reviewer_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     action: Mapped[str] = mapped_column(String(32))
     comment: Mapped[str | None] = mapped_column(Text, nullable=True)

@@ -16,7 +16,7 @@
 <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
   <div class="container-fluid" style="max-width:1280px; margin:0 auto;">
     <a class="navbar-brand" href="/">
-      <div class="brand-icon">S</div>
+      <img src="/static/img/logo.png" alt="SkillSprint AI logo" class="brand-icon-img">
       <span>SkillSprint <span style="color:#5EEAD4;">AI</span></span>
     </a>
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -70,7 +70,9 @@
       </ul>
       <div class="d-flex align-items-center gap-2">
         <span class="badge-role">{{ user.app_role }}</span>
-        <span class="navbar-text d-none d-md-inline">{{ user.username }}</span>
+        <a class="nav-link{% if request.url.path == '/account' %} active{% endif %}" href="/account" title="My account">
+          <i class="bi bi-person-gear"></i><span class="d-none d-md-inline ms-1">{{ user.username }}</span>
+        </a>
         <form method="post" action="/logout" class="d-inline">
           <button id="logout-btn" class="btn-logout">
             <i class="bi bi-box-arrow-right"></i> Logout

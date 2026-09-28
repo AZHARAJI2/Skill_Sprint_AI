@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}My Account{% endblock %}
+{% block content %}
+<div class="page-header animate-fade">
+  <div>
+    <h1><i class="bi bi-person-gear me-2" style="color:var(--teal)"></i>My Account</h1>
+    <div class="subtitle">Manage your own sign-in details.</div>
+  </div>
+</div>
+
+<div class="card animate-fade" style="max-width:640px;">
+  <div class="card-header"><i class="bi bi-shield-lock me-1"></i>Change Password</div>
+  <div class="card-body">
+    <p class="text-muted small">Signed in as <strong>{{ user.username }}</strong>. Choose a new password of at least 8 characters.</p>
+    <form id="password-change-form" novalidate>
+      <div class="mb-3">
+        <label for="current-password" class="form-label">Current Password</label>
+        <input id="current-password" class="form-control" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="mb-3">
+        <label for="new-password" class="form-label">New Password</label>
+        <input id="new-password" class="form-control" type="password" minlength="8" autocomplete="new-password" required>
+      </div>
+      <div class="mb-3">
+        <label for="confirm-password" class="form-label">Confirm New Password</label>
+        <input id="confirm-password" class="form-control" type="password" minlength="8" autocomplete="new-password" required>
+      </div>
+      <div id="password-change-result" class="d-none" role="status" aria-live="polite"></div>
+      <button id="password-change-submit" class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-1"></i>Update Password</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  const form = document.getElementById('password-change-form');
+  const result = document.getElementById('password-change-result');
+  const submit = document.getElementById('password-change-submit');
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    submit.disabled = true;
+    try {
+      const response = await fetch('/api/account/password', {
+        method: 'POST', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: JSON.stringify({
+          current_password: document.getElementById('current-password').value,
+          new_password: document.getElementById('new-password').value,
+          confirm_password: document.getElementById('confirm-password').value,
+        }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || body.detail || 'Could not change your password.');
+      result.className = 'alert alert-success mt-3';
+      result.textContent = body.message;
+      form.reset();
+    } catch (error) {
+      result.className = 'alert alert-danger mt-3';
+      result.textContent = error.message || 'Could not change your password.';
+    } finally { submit.disabled = false; }
+  });
+})();
+</script>
+{% endblock %}

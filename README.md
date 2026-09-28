@@ -12,7 +12,7 @@ loader, employee/role CRUD, auth/RBAC skeleton, and responsive HTML shells.
 ## Phase 2 status
 
 Pipeline 1 is implemented: requirement extraction, versioned prompt templates,
-`GeminiProvider` (fails closed without an API key), optional `GroqProvider` failover,
+`CommandCodeProvider` (the default; fails closed without an API key), Pydantic JSON schemas,
 capped retry, source-grounded plan/module/checklist/task/quiz/assessment
 generation, injection fencing, and `/api/plans*` routes. Evidence: `reports/d4_genai_pipeline_evidence.md`.
 
@@ -30,20 +30,31 @@ py -3.12 -m venv .venv
 pip install -r requirements.txt
 ```
 
-Set `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) in the environment before live generation.
-For fast full-plan generation, also set `GROQ_API_KEY`.
-When it is configured, the request uses Groq first and stays on Gemini only if Groq is temporarily unavailable. Without a Groq key, the application keeps Gemini as the primary provider.
-It generates the complete structured plan in one request with a 25-second total budget.
+Set `CMD_API_KEY` (or `COMMAND_CODE_API_KEY`) in the environment before live
+generation. The default Command Code model is `deepseek/deepseek-v4-flash`.
+Override it with `COMMAND_CODE_MODEL` only after confirming that model is
+available to your Command Code account. The complete plan is divided into
+three independent stage groups and generated concurrently, then merged and
+validated by Python. By default it waits for Command Code to finish; set
+`SKILLSPRINT_PLAN_TIMEOUT_SECONDS` to a positive number only when an intentional
+end-to-end deadline is required.
 
-Example for the PowerShell session that starts the app:
+In PowerShell, set the server-side values in the same terminal before starting
+the application (replace the placeholder with your real key):
 
 ```powershell
-$env:GROQ_API_KEY = "your-groq-key"
-$env:SKILLSPRINT_PLAN_TIMEOUT_SECONDS = "25"
+$env:SKILLSPRINT_GENAI_PROVIDER = "commandcode"
+$env:CMD_API_KEY = "your-command-code-key"
+$env:COMMAND_CODE_MODEL = "deepseek/deepseek-v4-flash"
+$env:SKILLSPRINT_GENAI_PARALLEL_WORKERS = "3"
 uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Use a Groq **API key** from the Groq Console. A copied browser/session token or a placeholder value will be rejected with HTTP 401.
+Never put `CMD_API_KEY` in a frontend file, Netlify environment variable,
+or Git commit. It belongs only in the FastAPI backend environment.
+
+Set `SKILLSPRINT_GENAI_PROVIDER=deepseek` or `gemini` only to use an optional
+direct-provider compatibility path.
 Without a key the API returns 503 rather than inventing a plan.
 
 ## Seed demo data
@@ -65,6 +76,18 @@ Demo logins:
 | manager | manager123 | Manager |
 | employee | employee123 | Employee |
 
+## Add a second employee and create their plan
+
+Sign in as `admin` or `trainer`, then choose **Add Employee**. Complete the
+profile, select the existing job role, and optionally enable **Create employee
+sign-in** to give that person a linked Employee account. After saving, the app
+opens the plan-generation dialog for that exact employee. From the Administrator
+Dashboard you can later use **Workspace**, **Generate**, or **Regenerate** on
+any employee row.
+
+An Employee account is linked to one employee profile and can read only that
+profile and its plans; it cannot open another employee's plan by changing a URL.
+
 ## Run the web app
 
 ```bash
@@ -72,6 +95,12 @@ uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Open http://127.0.0.1:8000/login
+
+## Deployment
+
+For the required public deployment, use Netlify as the public entry point and
+a FastAPI host with PostgreSQL as the persistent backend. See
+[DEPLOYMENT.md](DEPLOYMENT.md) for the exact environment variables and checks.
 
 ## Tests
 
@@ -88,9 +117,9 @@ pytest
 - `AuthService`, `require_role`, `get_current_user`
 - SQLAlchemy tables for plans, quizzes, reviews, and audit
 - Phase 2: `PlanGenerationService.generate_for_employee`, `PlanRepository`,
-  `BaseGenAIProvider` / `GeminiProvider`, `PromptManager`, `InjectionGuard`,
+  `BaseGenAIProvider` / `CommandCodeProvider`, `PromptManager`, `InjectionGuard`,
   Pydantic schemas in `schemas/`
 
-Do not call the Gemini SDK from routes or validators. All LLM calls go through
+Do not call a provider SDK or API from routes or validators. All LLM calls go through
 `BaseGenAIProvider`. Do not put GenAI calls in `python_validation/` — that
 pipeline must stay GenAI-free.

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import time
 from collections.abc import Callable
+from threading import Lock
 
 from pydantic import BaseModel
 
@@ -19,6 +20,7 @@ class ScriptedProvider(BaseGenAIProvider):
         self.payloads = list(payloads)
         self.model_name = model_name
         self.calls = 0
+        self._lock = Lock()
 
     def generate(
         self,
@@ -27,14 +29,15 @@ class ScriptedProvider(BaseGenAIProvider):
         config: GenerationConfig | None = None,
     ) -> GenAIResponse:
         del prompt, config
-        if self.calls >= len(self.payloads):
-            if len(self.payloads) == 1:
-                item = self.payloads[0]
+        with self._lock:
+            if self.calls >= len(self.payloads):
+                if len(self.payloads) == 1:
+                    item = self.payloads[0]
+                else:
+                    raise AppError("ScriptedProvider has no remaining payloads", status_code=502)
             else:
-                raise AppError("ScriptedProvider has no remaining payloads", status_code=502)
-        else:
-            item = self.payloads[self.calls]
-        self.calls += 1
+                item = self.payloads[self.calls]
+            self.calls += 1
 
         if isinstance(item, Exception):
             raise item

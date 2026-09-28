@@ -405,7 +405,24 @@
 - **Section F**: F9 ✅ (surgical single-service addition), F12 ✅ (all thresholds from config, quiz graded against stored answer, no hardcoded scores), F14 ✅ (zero GenAI calls in progress rules).
 - **Audit Trail**: Every `item_completed`, `completion_requested`, `completion_confirmed`, `completion_rejected`, and `quiz_submitted` event written to `AuditEntry`.
 
+### Entry 002 — 2026-09-28 | Role: Staff Software Engineer
+**Timestamp**: 2026-09-28 21:00  
+**Agent**: Staff Software Engineer (Antigravity IDE / Gemini)  
+**Member**: Azhar Raji  
+**Task**: Auto-generated credentials for new employees (Manual & Bulk File Import) + Live UI Previews & Examples  
+**Impact Area**:
+- `src/auth/service.py`: Sanitized `_available_employee_username` to ensure ASCII-clean unique tokens (`{first_name}-{dept_initial}`).
+- `templates/employee_form.html`: Added auto-credentials explanatory callouts with real-world examples for both manual addition and bulk file import, dynamic live preview for manual form input, and high-visibility success results with one-click copy tools.
+- `tests/test_employees.py`: Added `test_new_employee_auto_generates_username_and_password`.
+- `tests/test_employee_import.py`: Added `test_import_employees_endpoint_auto_provisions_logins`.
+- `AI_USAGE.md`: Documented changes verified by Azhar Raji.
+
+**Status**: ✅ Completed  
+**Verified Metrics & Outcomes**:
+- **Test Suite**: 148 passed in 42.92s (`pytest -q`, 0 failures, 0 regressions).
+
 ---
+
 
 ## Cross-Phase Notes
 

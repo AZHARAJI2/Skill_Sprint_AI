@@ -123,6 +123,10 @@ class PlanAssembler:
                     duration_minutes=max(20, 15 * len(rows)),
                     activities=[
                         f"Read {lead.source_document_id} §{lead.source_section_id}",
+                        (
+                            f"Complete and record the required evidence: "
+                            f"{lead.assessment_requirement or lead.requirement_text}"
+                        ),
                         f"Discuss {competency} with the reporting manager",
                     ],
                     assessment_method=lead.assessment_requirement or "Manager confirmation",

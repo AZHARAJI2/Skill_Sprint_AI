@@ -14,7 +14,9 @@
       </div>
     </div>
     <div class="ms-auto d-flex gap-2">
+      {% if user.app_role != 'Employee' %}
       <a href="/api/plans/{{ plan.id }}" target="_blank" class="btn btn-outline btn-sm"><i class="bi bi-code-slash me-1"></i>JSON</a>
+      {% endif %}
       {% if user.app_role in ('Admin', 'Training Manager', 'Reviewer', 'Manager') %}
       <a href="/reports?plan_id={{ plan.id }}" class="btn btn-primary btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Export</a>
       {% endif %}
@@ -170,8 +172,8 @@
             {% endfor %}
           </ul>
           {% endif %}
-          <div style="font-size:0.8rem;color:var(--accent-green);margin-top:0.5rem">
-            <i class="bi bi-check-circle me-1"></i>{{ q.correct_answer[:60] if q.correct_answer else '—' }}
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">
+            <i class="bi bi-shield-lock me-1"></i>Answer key is kept server-side and is shown only after quiz submission.
           </div>
         </div>
       </div>
@@ -186,7 +188,7 @@
     <div class="col-md-6">
       <div class="card">
         <div class="card-header d-flex gap-2">
-          <span class="badge badge-violet" style="background:rgba(124,58,237,0.2);color:#a5b4fc;border:1px solid rgba(124,58,237,0.3)">{{ a.assessment_type }}</span>
+          <span class="badge badge-navy">{{ a.assessment_type }}</span>
           <span class="badge badge-muted">{{ a.difficulty }}</span>
         </div>
         <div class="card-body">

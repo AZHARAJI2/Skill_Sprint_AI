@@ -37,31 +37,26 @@ class ReviewRepository(BaseRepository[ReviewDecision]):
     def __init__(self, session: Session) -> None:
         super().__init__(session, ReviewDecision)
 
-    def get_by_item(self, item_id: str) -> list[ReviewDecision]:
-        """Return all review decisions for a given item (most recent first)."""
-        return (
-            self.session.query(ReviewDecision)
-            .filter(ReviewDecision.item_id == item_id)
-            .order_by(ReviewDecision.timestamp.desc())
-            .all()
-        )
+    def get_by_item(self, item_id: str, plan_id: int | None = None) -> list[ReviewDecision]:
+        """Return decisions for one item, optionally restricted to its employee plan."""
+        query = self.session.query(ReviewDecision).filter(ReviewDecision.item_id == item_id)
+        if plan_id is not None:
+            query = query.filter(ReviewDecision.plan_id == plan_id)
+        return query.order_by(ReviewDecision.timestamp.desc()).all()
 
-    def latest_for_item(self, item_id: str) -> ReviewDecision | None:
-        """Return the single most-recent decision for an item, or None."""
-        return (
-            self.session.query(ReviewDecision)
-            .filter(ReviewDecision.item_id == item_id)
-            .order_by(ReviewDecision.timestamp.desc())
-            .first()
-        )
+    def latest_for_item(self, item_id: str, plan_id: int | None = None) -> ReviewDecision | None:
+        """Return the latest decision for an item within one plan, when supplied."""
+        query = self.session.query(ReviewDecision).filter(ReviewDecision.item_id == item_id)
+        if plan_id is not None:
+            query = query.filter(ReviewDecision.plan_id == plan_id)
+        return query.order_by(ReviewDecision.timestamp.desc()).first()
 
-    def pending_items(self) -> list[ReviewDecision]:
-        """Return items that still have status 'pending_review' (no final decision yet)."""
-        return (
-            self.session.query(ReviewDecision)
-            .filter(ReviewDecision.action == "pending_review")
-            .all()
-        )
+    def pending_items(self, plan_id: int | None = None) -> list[ReviewDecision]:
+        """Return items still pending, optionally limited to one plan."""
+        query = self.session.query(ReviewDecision).filter(ReviewDecision.action == "pending_review")
+        if plan_id is not None:
+            query = query.filter(ReviewDecision.plan_id == plan_id)
+        return query.all()
 
 
 class ValidationReportRepository(BaseRepository[ValidationReportRecord]):
@@ -189,7 +184,7 @@ class ReviewService:
             List of ReviewQueueItem sorted by timestamp descending.
         """
         queue: list[ReviewQueueItem] = []
-        seen_item_ids: set[str] = set()
+        seen_items: set[tuple[int, str]] = set()
 
         # --- Source 1: validation reports stored in DB ---
         reports: list[ValidationReportRecord]
@@ -207,11 +202,12 @@ class ReviewService:
                 if status not in self._REVIEW_REQUIRED_STATUSES:
                     continue
                 item_id = item.get("item_id", "")
-                if item_id in seen_item_ids:
+                item_key = (report.plan_id, item_id)
+                if item_key in seen_items:
                     continue
-                seen_item_ids.add(item_id)
+                seen_items.add(item_key)
                 # Check whether a final decision has already been made
-                latest = self._review_repo.latest_for_item(item_id)
+                latest = self._review_repo.latest_for_item(item_id, report.plan_id)
                 if latest and latest.action in (
                     ReviewAction.APPROVE.value,
                     ReviewAction.REJECT.value,
@@ -234,15 +230,16 @@ class ReviewService:
                 )
 
         # --- Source 2: explicit pending_review decisions not from a report ---
-        for decision in self._review_repo.pending_items():
-            if decision.item_id in seen_item_ids:
+        for decision in self._review_repo.pending_items(plan_id):
+            decision_key = (decision.plan_id or 0, decision.item_id)
+            if decision_key in seen_items:
                 continue
-            seen_item_ids.add(decision.item_id)
+            seen_items.add(decision_key)
             queue.append(
                 ReviewQueueItem(
                     item_id=decision.item_id,
                     item_type=decision.item_type,
-                    plan_id=0,  # plan not directly retrievable from this row
+                    plan_id=decision.plan_id or 0,
                     verification_status=decision.original_result.get(
                         "verification_status", VerificationStatus.MANUAL_REVIEW_REQUIRED.value
                     )
@@ -270,6 +267,7 @@ class ReviewService:
         original_result: dict,
         reviewer: User,
         comment: str | None = None,
+        plan_id: int | None = None,
     ) -> ReviewDecision:
         """Reviewer approves the item as-is.
 
@@ -289,6 +287,7 @@ class ReviewService:
         decision = self._create_decision(
             item_id=item_id,
             item_type=item_type,
+            plan_id=plan_id,
             reviewer=reviewer,
             action=ReviewAction.APPROVE.value,
             original_result=original_result,
@@ -305,7 +304,7 @@ class ReviewService:
                 "original_result": original_result,
                 "reviewer_override": None,
                 "comment": comment,
-                "reviewer_id": reviewer.id,
+                "reviewer_id": reviewer.id, "plan_id": plan_id,
             },
         )
         return decision
@@ -317,6 +316,7 @@ class ReviewService:
         original_result: dict,
         reviewer: User,
         comment: str | None = None,
+        plan_id: int | None = None,
     ) -> ReviewDecision:
         """Reviewer rejects the item.
 
@@ -345,6 +345,7 @@ class ReviewService:
         decision = self._create_decision(
             item_id=item_id,
             item_type=item_type,
+            plan_id=plan_id,
             reviewer=reviewer,
             action=ReviewAction.REJECT.value,
             original_result=original_result,
@@ -361,7 +362,7 @@ class ReviewService:
                 "original_result": original_result,
                 "reviewer_override": override,
                 "comment": comment,
-                "reviewer_id": reviewer.id,
+                "reviewer_id": reviewer.id, "plan_id": plan_id,
             },
             log_level="WARNING",
         )
@@ -375,6 +376,7 @@ class ReviewService:
         edited_content: dict,
         reviewer: User,
         comment: str | None = None,
+        plan_id: int | None = None,
     ) -> ReviewDecision:
         """Reviewer supplies an edited/corrected version of the item.
 
@@ -400,6 +402,7 @@ class ReviewService:
         decision = self._create_decision(
             item_id=item_id,
             item_type=item_type,
+            plan_id=plan_id,
             reviewer=reviewer,
             action=ReviewAction.EDIT.value,
             original_result=original_result,
@@ -416,7 +419,7 @@ class ReviewService:
                 "original_result": original_result,
                 "reviewer_override": override,
                 "comment": comment,
-                "reviewer_id": reviewer.id,
+                "reviewer_id": reviewer.id, "plan_id": plan_id,
             },
         )
         return decision
@@ -428,6 +431,7 @@ class ReviewService:
         original_result: dict,
         reviewer: User,
         comment: str | None = None,
+        plan_id: int | None = None,
     ) -> ReviewDecision:
         """Reviewer requests regeneration of the item.
 
@@ -454,6 +458,7 @@ class ReviewService:
         decision = self._create_decision(
             item_id=item_id,
             item_type=item_type,
+            plan_id=plan_id,
             reviewer=reviewer,
             action=ReviewAction.REGENERATE.value,
             original_result=original_result,
@@ -470,7 +475,7 @@ class ReviewService:
                 "original_result": original_result,
                 "reviewer_override": override,
                 "comment": comment,
-                "reviewer_id": reviewer.id,
+                "reviewer_id": reviewer.id, "plan_id": plan_id,
             },
         )
         return decision
@@ -482,6 +487,7 @@ class ReviewService:
         original_result: dict,
         reviewer: User,
         comment: str,
+        plan_id: int | None = None,
     ) -> ReviewDecision:
         """Add a comment to an item without changing its review status.
 
@@ -503,6 +509,7 @@ class ReviewService:
         decision = self._create_decision(
             item_id=item_id,
             item_type=item_type,
+            plan_id=plan_id,
             reviewer=reviewer,
             action=ReviewAction.COMMENT.value,
             original_result=original_result,
@@ -519,7 +526,7 @@ class ReviewService:
                 "original_result": original_result,
                 "reviewer_override": None,
                 "comment": comment,
-                "reviewer_id": reviewer.id,
+                "reviewer_id": reviewer.id, "plan_id": plan_id,
             },
         )
         return decision
@@ -544,7 +551,7 @@ class ReviewService:
             .all()
         )
 
-    def get_review_decisions(self, item_id: str) -> list[ReviewDecision]:
+    def get_review_decisions(self, item_id: str, plan_id: int | None = None) -> list[ReviewDecision]:
         """Return all ReviewDecision rows for an item, newest first.
 
         This is the primary way to confirm that BOTH the original result AND
@@ -556,7 +563,7 @@ class ReviewService:
         Returns:
             List of ReviewDecision rows ordered by timestamp descending.
         """
-        return self._review_repo.get_by_item(item_id)
+        return self._review_repo.get_by_item(item_id, plan_id)
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -566,6 +573,7 @@ class ReviewService:
         self,
         item_id: str,
         item_type: str,
+        plan_id: int | None,
         reviewer: User,
         action: str,
         original_result: dict,
@@ -582,6 +590,7 @@ class ReviewService:
         decision = ReviewDecision(
             item_id=item_id,
             item_type=item_type,
+            plan_id=plan_id,
             reviewer_id=reviewer.id,
             action=action,
             comment=comment,

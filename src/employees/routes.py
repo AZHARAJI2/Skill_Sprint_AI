@@ -5,12 +5,13 @@ from __future__ import annotations
 from datetime import date
 
 from fastapi import APIRouter, Depends, File, UploadFile
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from sqlalchemy.orm import Session
 
 from database.base import get_session
 from src.auth.dependencies import get_current_user, require_role
 from src.auth.models import User
+from src.auth.service import AuthService
 from src.employees.service import EmployeeService, RoleService
 from src.employees.import_service import EmployeeImportService
 
@@ -39,6 +40,15 @@ class EmployeeCreate(BaseModel):
     required_competencies: list[str] | None = None
     prior_experience: str | None = None
     training_status: str = "not_started"
+    create_login: bool = True
+    login_username: str | None = None
+    temporary_password: str | None = None
+
+    @field_validator("login_username")
+    @classmethod
+    def normalise_login_username(cls, value: str | None) -> str | None:
+        """Trim optional employee usernames before uniqueness is checked."""
+        return value.strip() if value else None
 
 
 class EmployeeUpdate(BaseModel):
@@ -104,9 +114,28 @@ def create_employee(
     session: Session = Depends(get_session),
     user: User = Depends(require_role("Admin", "Training Manager")),
 ) -> dict:
-    """Create an employee profile."""
-    employee = EmployeeService(session).create(actor=user.username, **body.model_dump())
-    return _employee_payload(employee)
+    """Create an employee profile and its linked Employee login by default."""
+    profile_fields = body.model_dump(
+        exclude={"create_login", "login_username", "temporary_password"}
+    )
+    if body.temporary_password and len(body.temporary_password) < 8:
+        from src.errors import AppError
+
+        raise AppError("The temporary password must contain at least 8 characters.", status_code=422)
+
+    employee = EmployeeService(session).create(actor=user.username, **profile_fields)
+    payload = _employee_payload(employee)
+    if body.create_login:
+        account, initial_password = AuthService(session).provision_employee_account(
+            employee,
+            preferred_username=body.login_username,
+            temporary_password=body.temporary_password,
+            actor=user.username,
+        )
+        payload["login"] = {"username": account.username, "role": account.app_role}
+        if initial_password:
+            payload["initial_password"] = initial_password
+    return payload
 
 
 @router.post("/employees/import")
@@ -121,9 +150,15 @@ async def import_employees(
         await file.read(),
         actor=user.username,
     )
+    auth = AuthService(session)
+    credentials = []
+    for employee in employees:
+        account, initial_password = auth.provision_employee_account(employee, actor=user.username)
+        credentials.append({"employee_code": employee.employee_code, "username": account.username, "initial_password": initial_password})
     return {
         "created": len(employees),
         "employees": [_employee_payload(employee) for employee in employees],
+        "credentials": credentials,
         "message": f"Created {len(employees)} employee profile(s).",
     }
 
@@ -151,6 +186,26 @@ def get_employee(
 
         raise AppError("Forbidden", status_code=403)
     return _employee_payload(employee)
+
+
+@router.post("/employees/{employee_id}/account")
+def provision_employee_login(
+    employee_id: int,
+    session: Session = Depends(get_session),
+    user: User = Depends(require_role("Admin", "Training Manager")),
+) -> dict:
+    """Create a missing Employee login for an existing profile."""
+    employee = EmployeeService(session).get(employee_id)
+    account, initial_password = AuthService(session).provision_employee_account(
+        employee, actor=user.username
+    )
+    payload = {
+        "employee_id": employee.id,
+        "login": {"username": account.username, "role": account.app_role},
+    }
+    if initial_password:
+        payload["initial_password"] = initial_password
+    return payload
 
 
 @router.patch("/employees/{employee_id}")

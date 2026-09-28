@@ -6,11 +6,15 @@ from datetime import date
 from io import BytesIO
 
 import pytest
+from fastapi.testclient import TestClient
 from openpyxl import Workbook
 
+from database.base import get_session
+from src.auth.service import AuthService
 from src.employees.import_service import EmployeeImportService
 from src.employees.service import EmployeeService, RoleService
 from src.errors import AppError
+from src.main import app
 
 
 def test_csv_import_resolves_role_title_and_creates_profiles(session) -> None:
@@ -73,3 +77,50 @@ def test_xlsx_import_accepts_first_worksheet(session) -> None:
     employees = EmployeeImportService(session).import_file("new-hires.xlsx", stream.getvalue(), actor="admin")
 
     assert [employee.employee_code for employee in employees] == ["EMP-301"]
+
+
+def test_import_employees_endpoint_auto_provisions_logins(session) -> None:
+    """The /api/employees/import endpoint auto-generates logins for all imported rows."""
+    RoleService(session).create("Software Engineer", "Engineering")
+    AuthService(session).create_user("admin-importer", "admin-password", "Admin")
+    session.commit()
+
+    def override_session():
+        yield session
+
+    app.dependency_overrides[get_session] = override_session
+    try:
+        client = TestClient(app)
+        admin_token = client.post(
+            "/api/login", json={"username": "admin-importer", "password": "admin-password"}
+        ).json()["access_token"]
+
+        csv_content = (
+            "employee_code,name,role_title,department\n"
+            "EMP-IMP-888,Tariq Omar,Software Engineer,Engineering\n"
+        ).encode("utf-8")
+
+        response = client.post(
+            "/api/employees/import",
+            headers={"Authorization": f"Bearer {admin_token}"},
+            files={"file": ("import_test.csv", csv_content, "text/csv")},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["created"] == 1
+        assert len(data["credentials"]) == 1
+        cred = data["credentials"][0]
+        assert cred["employee_code"] == "EMP-IMP-888"
+        assert cred["username"] == "tariq-e"
+        assert cred["initial_password"] == "SkillSprint!EMP-IMP-888"
+
+        # Verify employee can authenticate immediately with auto-generated credentials
+        login_res = client.post(
+            "/api/login",
+            json={"username": "tariq-e", "password": "SkillSprint!EMP-IMP-888"},
+        )
+        assert login_res.status_code == 200
+        assert "access_token" in login_res.json()
+    finally:
+        app.dependency_overrides.clear()
+

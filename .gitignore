@@ -14,6 +14,7 @@ data/*.db-journal
 data/uploads/
 *.log
 logs/
+netlify_proxy_public/
 .idea/
 .vscode/
 Thumbs.db

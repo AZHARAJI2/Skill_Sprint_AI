@@ -32,6 +32,7 @@ class RetryManager:
     ) -> GenAIResponse:
         """Attempt generation until schema validation succeeds or the cap is hit."""
         last_error: str | None = None
+        last_status_code: int | None = None
         working_prompt = prompt
         for attempt in range(1, self.max_attempts + 1):
             try:
@@ -56,7 +57,11 @@ class RetryManager:
                     logger.warning("genai_retry_recovered attempt=%s", attempt)
                 return response
             except (AppError, ValidationError, ValueError, TypeError) as exc:
-                if isinstance(exc, AppError) and exc.status_code in {401, 403, 503}:
+                last_status_code = exc.status_code if isinstance(exc, AppError) else None
+                # Configuration and quota errors cannot be corrected by
+                # resending the prompt. A 503 is a temporary provider overload,
+                # so retry it within the hard three-attempt Project Map cap.
+                if isinstance(exc, AppError) and exc.status_code in {400, 401, 403, 429}:
                     raise
                 last_error = str(exc)
                 logger.warning("genai_retry_failed attempt=%s/%s error=%s", attempt, self.max_attempts, last_error)
@@ -70,6 +75,12 @@ class RetryManager:
                     f"{prompt}\n\nPREVIOUS_OUTPUT_WAS_INVALID. Fix these errors and return JSON only:\n{last_error}"
                 )
         logger.error("genai_retry_exhausted attempts=%s last_error=%s", self.max_attempts, last_error)
+        if last_status_code == 503:
+            raise AppError(
+                "The configured AI provider is temporarily unavailable after three attempts. Wait a moment and generate the complete plan again.",
+                status_code=503,
+                details={"attempts": self.max_attempts, "last_error": last_error},
+            )
         raise AppError(
             "GenAI output remained invalid after retry cap",
             status_code=502,

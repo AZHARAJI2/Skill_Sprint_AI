@@ -39,7 +39,8 @@
 ### GenAI
 | Package | Pinned Version | Purpose |
 |---|---|---|
-| google-genai | ==2.23.0 | Gemini API (replaces deprecated google-generativeai) |
+| httpx | ==0.28.1 | Command Code OpenAI-compatible API client (default production provider) |
+| google-genai | ==2.23.0 | Optional Gemini compatibility provider |
 
 ### Semantic Analysis
 | Package | Pinned Version | Purpose |
@@ -97,7 +98,7 @@
 │ Processing │ │ & Role   │ │  (GenAI + Python) │ │  (Pure Python ONLY)  │
 │   Service  │ │ Service  │ │                  │ │                      │
 │            │ │          │ │ PromptManager    │ │ ValidationPipeline   │
-│ Upload     │ │ Profile  │ │ GeminiProvider   │ │  ├─CoverageValidator │
+│ Upload     │ │ Profile  │ │ CommandCodeProvider │ │  ├─CoverageValidator │
 │ Validate   │ │ CRUD     │ │ PlanGenerator    │ │  ├─TraceValidator    │
 │ Parse      │ │ Matrix   │ │ ModuleGenerator  │ │  ├─DuplicateValidator│
 │ Chunk      │ │ Loader   │ │ QuizGenerator    │ │  ├─ContradictValidator│
@@ -131,7 +132,7 @@
 ### Data Flow Summary
 1. **Ingest**: Documents uploaded → validated (type/size/dup/version) → parsed (retain doc_id, title, section, heading, page, version, effective_date) → chunked with traceability metadata → stored
 2. **Matrix Load**: `load_matrix.py` reads `role_requirement_matrix_seed.csv` → validates (reject malformed IDs, missing columns, duplicates) → populates `role_requirements` table
-3. **Generate (Pipeline 1)**: Employee profile + role + matrix + parsed chunks → PromptManager selects versioned template → GeminiProvider generates structured JSON (plan, modules, checklists, tasks, quizzes, assessments) → SchemaValidator validates JSON structure → RetryManager handles failures → stored with generation metadata (prompt version, model, timestamp, source doc versions)
+3. **Generate (Pipeline 1)**: Employee profile + role + matrix + parsed chunks → PromptManager selects versioned template → CommandCodeProvider (default; DeepSeek and Gemini are optional compatibility providers) generates structured JSON in three independent stage groups concurrently → Python merges and schema-validates the complete plan → RetryManager handles failures → stored with generation metadata (prompt version, model, timestamp, source doc versions)
 4. **Validate (Pipeline 2)**: Structured JSON from Pipeline 1 → ValidationPipeline runs all validators independently (coverage, traceability, hallucination, contradiction, duplicate, role-relevance, sequence, schema) → produces ValidationReport with scores and per-item verification status
 5. **Compare**: ComparisonEngine aligns Pipeline 1 output vs Pipeline 2 expectations on STRUCTURED ATTRIBUTES ONLY (IDs, booleans, enums — never exact NL text matching) → produces comparison report
 6. **Review**: Items with status ≠ "Verified" enter ManualReviewQueue → Reviewer approves/rejects/edits/regenerates → both original + reviewer decision stored in audit trail
@@ -162,7 +163,7 @@ All classes follow Single Responsibility Principle. Every class and public metho
 | `Assessment` | Pydantic + SQLAlchemy | `BaseModel` | type (knowledge/practical/scenario/role-specific), rubric (criteria, weights, expected_performance, pass_condition), difficulty |
 | `ValidationReport` | Pydantic | `BaseModel` | plan_id, coverage_score, traceability_score, consistency_score, missing_count, unsupported_count, contradiction_count, per_item_results: list[ItemValidationResult], overall_status |
 | `ItemValidationResult` | Pydantic | `BaseModel` | item_id, item_type, verification_status (enum: Verified/VerifiedWithWarning/PartiallyVerified/SourceSupportMissing/RequirementMissing/UnsupportedRequirement/OutdatedSource/ContradictionDetected/ManualReviewRequired), details, source_references |
-| `ReviewDecision` | SQLAlchemy Model | `Base` | id, item_id, item_type, reviewer_id, action (approve/reject/edit/regenerate), comment, original_result (JSON), reviewer_override (JSON), timestamp |
+| `ReviewDecision` | SQLAlchemy Model | `Base` | id, plan_id, item_id, item_type, reviewer_id, action (approve/reject/edit/regenerate), comment, original_result (JSON), reviewer_override (JSON), timestamp; decisions are scoped to one employee plan |
 | `AuditEntry` | SQLAlchemy Model | `Base` | id, timestamp, actor, action, entity_type, entity_id, details (JSON), log_level |
 | `PromptTemplate` | SQLAlchemy Model | `Base` | id, name, version, template_text, variables, created_at, is_active |
 | `GenerationMetadata` | SQLAlchemy Model | `Base` | id, plan_id (FK), prompt_template_id (FK), model_name, api_version, generation_timestamp, source_doc_versions (JSON), retry_count, response_time_ms |
@@ -193,9 +194,9 @@ class BaseGenAIProvider(ABC):
         """Generate with automatic retry on invalid/incomplete output."""
         ...
 
-class GeminiProvider(BaseGenAIProvider):
-    """Concrete implementation using google-genai SDK (Gemini API).
-    Wraps client = genai.Client(api_key=...) pattern."""
+class CommandCodeProvider(BaseGenAIProvider):
+    """Default concrete implementation using Command Code's OpenAI-compatible API.
+    DeepSeekProvider and GeminiProvider remain available only when configured."""
     ...
 ```
 
@@ -427,7 +428,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 - GenAI Pipeline Evidence (D4)
 - prompt_templates/ (versioned files)
 - schemas/ (Pydantic models for all JSON outputs)
-- genai_pipeline/ (GeminiProvider, generators)
+- genai_pipeline/ (CommandCodeProvider default, optional DeepSeekProvider/GeminiProvider, generators)
 - security/ (InjectionGuard)
 
 #### Key Verification Goals
@@ -617,7 +618,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 
 | NFR | Target | Implementation Approach | Verification |
 |---|---|---|---|
-| Performance | Plan generation + validation ≤30s | Async GenAI calls; validators run in sequence (fast); chunked retrieval | Time the end-to-end flow for a standard role (benchmarked at 0.08s for full Phase 3 suite) |
+| Performance | Plan generation + validation ≤30s | Three concurrent stage-group GenAI calls; compact skeleton + per-group excerpts; 28s generation budget with assembler fallback on timeout; Pipeline 2 validators stay Python-only and sequential | Time the end-to-end `/api/plans/generate/{id}` flow for a standard role (Phase 3 validators benchmarked at ~0.08s) |
 | Scalability | ≥1000 employees, ≥100 roles, ≥1000 docs | Repository pattern + indexed DB queries; no in-memory full-corpus loads | Load test with synthetic profiles |
 | Usability | Intuitive for 5 user types | Bootstrap 5.3 responsive layout; role-specific dashboards; clear navigation | Manual UX walkthrough per role |
 | Accuracy | 100% mandatory coverage before approval | ValidationPipeline enforces; "Verified" status requires 100% coverage + valid sources + zero contradictions | VG-3.1 through VG-3.10 ✅ |
@@ -728,7 +729,9 @@ SkillSprint_AI/
 ├── genai_pipeline/
 │   ├── __init__.py
 │   ├── base_provider.py         # BaseGenAIProvider ABC
-│   ├── gemini_provider.py       # GeminiProvider implementation
+│   ├── commandcode_provider.py  # Default CommandCodeProvider implementation
+│   ├── deepseek_provider.py     # Optional DeepSeekProvider implementation
+│   ├── gemini_provider.py       # Optional GeminiProvider compatibility implementation
 │   ├── plan_generator.py        # PlanGenerationService (GenAI orchestration)
 │   ├── module_generator.py      # Learning module generation
 │   ├── quiz_generator.py        # Quiz generation + distractor validation
