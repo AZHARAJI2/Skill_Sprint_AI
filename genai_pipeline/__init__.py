@@ -3,6 +3,8 @@
 from genai_pipeline.assessment_generator import AssessmentGenerator
 from genai_pipeline.base_provider import BaseGenAIProvider, GenerationConfig, GenAIResponse
 from genai_pipeline.gemini_provider import GeminiProvider
+from genai_pipeline.groq_provider import GroqProvider
+from genai_pipeline.failover_provider import FailoverProvider
 from genai_pipeline.injection_guard import InjectionGuard
 from genai_pipeline.module_generator import ModuleGenerator
 from genai_pipeline.plan_assembler import PlanAssembler
@@ -21,6 +23,8 @@ __all__ = [
     "BaseGenAIProvider",
     "DistractorValidator",
     "GeminiProvider",
+    "GroqProvider",
+    "FailoverProvider",
     "GenAIResponse",
     "GenerationConfig",
     "InjectionGuard",

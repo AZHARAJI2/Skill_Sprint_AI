@@ -28,10 +28,12 @@ from sqlalchemy.orm import Session
 from config.settings import settings
 from database.base import get_session
 from role_matrix.repository import RoleMatrixRepository
+from role_matrix.service import RoleRequirementService
 from src.auth.dependencies import get_current_user, require_role
 from src.auth.models import User
 from src.dashboards.service import DashboardService
 from src.documents.metrics import CorpusMetricsService
+from src.documents.repository import DocumentRepository
 from src.employees.service import EmployeeService, RoleService
 from src.plans.models import OnboardingPlan
 from src.plans.repository import PlanRepository
@@ -206,6 +208,40 @@ def upload_page(
         request=request,
         name="document_upload.html",
         context={"user": user},
+    )
+
+
+@router.get("/employees/new", response_class=HTMLResponse)
+def new_employee_page(
+    request: Request,
+    session: Session = Depends(get_session),
+    user: User = Depends(require_role("Admin", "Training Manager")),
+) -> HTMLResponse:
+    """Render the structured employee-profile form used before plan generation."""
+    roles = RoleService(session).list_roles()
+    return templates.TemplateResponse(
+        request=request,
+        name="employee_form.html",
+        context={"user": user, "roles": roles},
+    )
+
+
+@router.get("/roles/new", response_class=HTMLResponse)
+def new_role_page(
+    request: Request,
+    session: Session = Depends(get_session),
+    user: User = Depends(require_role("Admin", "Training Manager")),
+) -> HTMLResponse:
+    """Render guided creation of a job role and its source-linked requirements."""
+    return templates.TemplateResponse(
+        request=request,
+        name="role_setup.html",
+        context={
+            "user": user,
+            "roles": RoleService(session).list_roles(),
+            "documents": DocumentRepository(session).list_active(),
+            "drafts": RoleRequirementService(session).list_drafts(),
+        },
     )
 
 

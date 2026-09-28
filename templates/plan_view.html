@@ -53,6 +53,13 @@
 </div>
 {% endif %}
 
+{% if detail.generation_status == 'failed_after_retries' %}
+<div class="alert alert-warning animate-fade mb-4">
+  <i class="bi bi-exclamation-triangle me-1"></i>
+  AI generation did not complete after its allowed retries. This is a source-grounded fallback plan and requires Training Manager or Reviewer approval before use.
+</div>
+{% endif %}
+
 <div class="card animate-fade">
   <div class="card-body">
     <ul class="nav nav-tabs mb-0" id="planViewTab">
@@ -87,6 +94,12 @@
             {% endfor %}
           </ul>
           {% endif %}
+          <details style="font-size:0.8rem;color:var(--text-secondary)">
+            <summary style="cursor:pointer;color:var(--teal)">View activities and completion criteria</summary>
+            {% if m.activities %}<div class="mt-2"><strong>Activities</strong><ul class="mb-2 ps-3">{% for activity in m.activities %}<li>{{ activity }}</li>{% endfor %}</ul></div>{% endif %}
+            {% if m.key_concepts %}<div><strong>Key concepts</strong><ul class="mb-2 ps-3">{% for concept in m.key_concepts %}<li>{{ concept }}</li>{% endfor %}</ul></div>{% endif %}
+            <div><strong>Completion:</strong> {{ m.completion_criteria }}</div>
+          </details>
           <div class="d-flex gap-2 mt-2">
             <code style="font-size:0.7rem">{{ m.source_document_id }}</code>
             <code style="font-size:0.7rem">{{ m.source_section_id }}</code>

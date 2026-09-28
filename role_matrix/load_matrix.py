@@ -57,11 +57,28 @@ def _parse_bool(value: object) -> bool | None:
 class MatrixLoader:
     """Reads the approved seed CSV, rejects malformed rows, and populates role_requirements."""
 
-    def load(self, session: Session, csv_path: Path, replace_existing: bool = True) -> MatrixLoadResult:
+    def load(
+        self,
+        session: Session,
+        csv_path: Path,
+        replace_existing: bool = True,
+        actor: str = "system",
+    ) -> MatrixLoadResult:
         """Validate every row then insert. Does not author requirement content."""
         if not csv_path.exists():
             raise AppError(f"Matrix CSV not found: {csv_path}", status_code=404)
         frame = pd.read_csv(csv_path, dtype=str, keep_default_na=False)
+        return self.load_frame(session, frame, replace_existing, actor=actor, source_name=str(csv_path))
+
+    def load_frame(
+        self,
+        session: Session,
+        frame: pd.DataFrame,
+        replace_existing: bool = False,
+        actor: str = "system",
+        source_name: str = "uploaded CSV",
+    ) -> MatrixLoadResult:
+        """Validate and persist a parsed approved matrix without writing an uploaded file to disk."""
         missing_cols = [col for col in REQUIRED_COLUMNS if col not in frame.columns]
         if missing_cols:
             raise AppError("Matrix CSV missing required columns", status_code=400, details=missing_cols)
@@ -115,19 +132,27 @@ class MatrixLoader:
             raise AppError("No valid matrix rows to load", status_code=400, details=rejected)
 
         repo = RoleMatrixRepository(session)
+        existing_ids = {entry.requirement_id for entry in repo.list_all()} if not replace_existing else set()
+        duplicate_existing = [entry.requirement_id for entry in entries if entry.requirement_id in existing_ids]
+        if duplicate_existing:
+            raise AppError(
+                "Matrix CSV contains requirement IDs that already exist. Use new IDs; existing requirements were not changed.",
+                status_code=409,
+                details=sorted(duplicate_existing),
+            )
         if replace_existing:
             repo.delete_all()
         for entry in entries:
             repo.add(entry)
 
         AuditRepository(session).record(
-            actor="system",
+            actor=actor,
             action="matrix_loaded",
             entity_type="role_requirements",
-            entity_id=str(csv_path),
+            entity_id=source_name,
             details={"loaded": len(entries), "rejected": rejected},
         )
-        logger.info("matrix_loaded count=%s rejected=%s path=%s", len(entries), len(rejected), csv_path)
+        logger.info("matrix_loaded count=%s rejected=%s source=%s", len(entries), len(rejected), source_name)
         return MatrixLoadResult(loaded=len(entries), rejected=rejected)
 
 

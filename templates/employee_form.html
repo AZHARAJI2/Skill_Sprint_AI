@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}Add New Employee{% endblock %}
+{% block content %}
+<div class="page-header animate-fade">
+  <div>
+    <h1><i class="bi bi-person-plus me-2" style="color:var(--teal)"></i>Add New Employee</h1>
+    <div class="subtitle">Create the employee profile that personalizes the onboarding plan.</div>
+  </div>
+  <div class="page-header-actions">
+    <a href="/dashboard" class="btn btn-outline btn-sm"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+  </div>
+</div>
+
+<div class="alert alert-info animate-fade mb-4">
+  <i class="bi bi-shield-check me-1"></i>
+  Enter only the profile data required to personalize onboarding. Do not include identity documents, medical information, compensation, or other unnecessary private data.
+</div>
+
+<div class="card animate-fade mb-4">
+  <div class="card-header"><i class="bi bi-person-vcard me-1"></i>Employee Profile</div>
+  <div class="card-body">
+    {% if roles %}
+    <form id="employee-create-form" novalidate>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="employee-code" class="form-label">Employee ID <span class="text-danger">*</span></label>
+          <input id="employee-code" class="form-control" maxlength="32" required placeholder="e.g. EMP-011">
+          <div class="form-text">Must be unique.</div>
+        </div>
+        <div class="col-md-8">
+          <label for="employee-name" class="form-label">Full Name <span class="text-danger">*</span></label>
+          <input id="employee-name" class="form-control" maxlength="128" required autocomplete="name" placeholder="Employee name">
+        </div>
+        <div class="col-md-6">
+          <label for="employee-role" class="form-label">Job Role <span class="text-danger">*</span></label>
+          <select id="employee-role" class="form-select" required>
+            <option value="" selected disabled>Select a job role</option>
+            {% for role in roles %}
+            <option value="{{ role.id }}" data-department="{{ role.department }}">{{ role.title }} — {{ role.department }}</option>
+            {% endfor %}
+          </select>
+          <div class="form-text">The role selects the applicable requirement matrix and source documents.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="employee-department" class="form-label">Department <span class="text-danger">*</span></label>
+          <input id="employee-department" class="form-control" maxlength="128" required placeholder="Select a role to prefill">
+        </div>
+        <div class="col-md-4">
+          <label for="employee-experience" class="form-label">Experience Level</label>
+          <select id="employee-experience" class="form-select">
+            <option value="Beginner" selected>Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="employee-location" class="form-label">Location</label>
+          <input id="employee-location" class="form-control" maxlength="128" placeholder="e.g. Riyadh or Remote">
+        </div>
+        <div class="col-md-4">
+          <label for="employee-joining-date" class="form-label">Joining Date</label>
+          <input id="employee-joining-date" type="date" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label for="employee-manager" class="form-label">Reporting Manager</label>
+          <input id="employee-manager" class="form-control" maxlength="128" placeholder="Manager name">
+        </div>
+        <div class="col-md-6">
+          <label for="employee-competencies" class="form-label">Required Competencies</label>
+          <input id="employee-competencies" class="form-control" placeholder="e.g. Policy Awareness, Incident Reporting">
+          <div class="form-text">Separate competencies with commas.</div>
+        </div>
+        <div class="col-12">
+          <label for="employee-prior-experience" class="form-label">Relevant Prior Experience</label>
+          <textarea id="employee-prior-experience" class="form-control" rows="3" placeholder="Short onboarding-relevant summary only."></textarea>
+        </div>
+      </div>
+      <div id="employee-form-result" class="mt-4 d-none" role="status" aria-live="polite"></div>
+      <div class="d-flex gap-2 justify-content-end mt-4">
+        <a href="/dashboard" class="btn btn-outline">Cancel</a>
+        <button id="create-employee-submit" class="btn btn-primary" type="submit"><i class="bi bi-person-plus me-1"></i>Create Employee</button>
+      </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon"><i class="bi bi-person-x"></i></div>
+      <p><strong>No job roles are available.</strong><br>Create or load a job role before adding an employee.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card animate-fade">
+  <div class="card-header"><i class="bi bi-file-earmark-arrow-up me-1"></i>Import Employees from File</div>
+  <div class="card-body">
+    <p class="mb-3">Add one employee or several employees at once. Upload only <strong>CSV</strong>, <strong>Excel (.xlsx)</strong>, or <strong>JSON</strong> files.</p>
+    <div class="row g-3 mb-3">
+      <div class="col-lg-6">
+        <div class="border rounded p-3 h-100">
+          <div class="fw-semibold mb-2">Required for every employee</div>
+          <ul class="small mb-0 ps-3">
+            <li><code>employee_code</code>, <code>name</code>, and <code>department</code></li>
+            <li>Either <code>role_id</code> or <code>role_title</code> (the existing job-role title)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="border rounded p-3 h-100">
+          <div class="fw-semibold mb-2">Optional columns</div>
+          <p class="small mb-0"><code>experience_level</code>, <code>location</code>, <code>joining_date</code>, <code>reporting_manager</code>, <code>required_competencies</code>, <code>prior_experience</code>, and <code>training_status</code>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-light border small mb-3">
+      <strong>Format rules:</strong> Use <code>YYYY-MM-DD</code> for <code>joining_date</code>. Use <code>Beginner</code>, <code>Intermediate</code>, or <code>Advanced</code> for <code>experience_level</code>. In CSV and XLSX, separate multiple <code>required_competencies</code> with semicolons. The full file is checked first. If any row has an error, no employee profiles are created.
+    </div>
+    <p class="small text-muted mb-3">For CSV or XLSX, use a first-row header such as <code>employee_code,name,role_title,department</code>. For JSON, upload one employee object, an employee array, or an object containing an <code>employees</code> array.</p>
+    {% if roles %}
+    <form id="employee-import-form" novalidate>
+      <div class="row align-items-end g-3">
+        <div class="col-md-8">
+          <label for="employee-import-file" class="form-label">Employee File <span class="text-danger">*</span></label>
+          <input id="employee-import-file" name="file" class="form-control" type="file" accept=".csv,.xlsx,.json,text/csv,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+          <div class="form-text">Maximum size: 20 MB. Excel <code>.xls</code> files are not supported.</div>
+        </div>
+        <div class="col-md-4 d-grid">
+          <button id="employee-import-submit" class="btn btn-primary" type="submit"><i class="bi bi-upload me-1"></i>Import Employees</button>
+        </div>
+      </div>
+      <div id="employee-import-result" class="mt-3 d-none" role="status" aria-live="polite"></div>
+    </form>
+    {% else %}
+    <div class="alert alert-warning mb-0">Import is unavailable until job roles have been created or loaded. Each employee must be assigned to an existing job role.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const form = document.getElementById('employee-create-form');
+  if (!form) return;
+
+  const role = document.getElementById('employee-role');
+  const department = document.getElementById('employee-department');
+  const submit = document.getElementById('create-employee-submit');
+  const result = document.getElementById('employee-form-result');
+
+  role.addEventListener('change', () => {
+    department.value = role.options[role.selectedIndex].dataset.department || '';
+  });
+
+  function showResult(type, message) {
+    result.className = `alert alert-${type} mt-4`;
+    result.textContent = message;
+  }
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    const competencies = document.getElementById('employee-competencies').value
+      .split(',').map(value => value.trim()).filter(Boolean);
+    const payload = {
+      employee_code: document.getElementById('employee-code').value.trim(),
+      name: document.getElementById('employee-name').value.trim(),
+      role_id: Number(role.value),
+      department: department.value.trim(),
+      experience_level: document.getElementById('employee-experience').value,
+      location: document.getElementById('employee-location').value.trim() || null,
+      joining_date: document.getElementById('employee-joining-date').value || null,
+      reporting_manager: document.getElementById('employee-manager').value.trim() || null,
+      required_competencies: competencies.length ? competencies : null,
+      prior_experience: document.getElementById('employee-prior-experience').value.trim() || null,
+      training_status: 'not_started',
+    };
+    submit.disabled = true;
+    submit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Creating…';
+    try {
+      const response = await fetch('/api/employees', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: JSON.stringify(payload),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || body.detail || 'Could not create the employee profile.');
+      showResult('success', `Employee profile created for ${body.name}. Opening plan generation…`);
+      window.setTimeout(() => { window.location.href = `/dashboard?generate_for=${body.id}`; }, 700);
+    } catch (error) {
+      showResult('danger', error.message || 'Could not create the employee profile.');
+      submit.disabled = false;
+      submit.innerHTML = '<i class="bi bi-person-plus me-1"></i>Create Employee';
+    }
+  });
+})();
+
+(() => {
+  const form = document.getElementById('employee-import-form');
+  if (!form) return;
+
+  const input = document.getElementById('employee-import-file');
+  const submit = document.getElementById('employee-import-submit');
+  const result = document.getElementById('employee-import-result');
+  const allowedExtensions = ['csv', 'xlsx', 'json'];
+
+  function showResult(type, message) {
+    result.className = `alert alert-${type} mt-3`;
+    result.innerHTML = message;
+  }
+
+  function escapeHtml(value) {
+    const element = document.createElement('div');
+    element.textContent = value;
+    return element.innerHTML;
+  }
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const file = input.files[0];
+    const extension = file?.name.split('.').pop()?.toLowerCase();
+    if (!file || !allowedExtensions.includes(extension)) {
+      showResult('danger', 'Choose a CSV, XLSX, or JSON employee file.');
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      showResult('danger', 'The employee import file exceeds the 20 MB limit.');
+      return;
+    }
+
+    submit.disabled = true;
+    submit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Importing…';
+    try {
+      const data = new FormData();
+      data.append('file', file);
+      const response = await fetch('/api/employees/import', {
+        method: 'POST',
+        body: data,
+        headers: {'Accept': 'application/json'},
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const rows = body.details?.rows || [];
+        const issues = rows.map(item => {
+          const label = item.employee_code ? `Row ${item.row} (${item.employee_code})` : `Row ${item.row}`;
+          return `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(item.errors.join(' '))}</li>`;
+        }).join('');
+        const detail = issues ? `<ul class="mb-0 mt-2">${issues}</ul>` : '';
+        throw new Error(`${escapeHtml(body.error || 'Could not import the employee file.')}${detail}`);
+      }
+      showResult('success', `${body.message} <a href="/dashboard">Open the dashboard to generate plans.</a>`);
+      form.reset();
+    } catch (error) {
+      showResult('danger', error.message || 'Could not import the employee file.');
+    } finally {
+      submit.disabled = false;
+      submit.innerHTML = '<i class="bi bi-upload me-1"></i>Import Employees';
+    }
+  });
+})();
+</script>
+{% endblock %}

@@ -9,6 +9,12 @@
     <div class="subtitle">NovaCart · Live system metrics, compliance coverage &amp; team overview</div>
   </div>
   <div class="page-header-actions">
+    {% if user.app_role in ('Admin', 'Training Manager') %}
+    <a href="/employees/new" class="btn btn-outline btn-sm"><i class="bi bi-person-plus"></i> Add Employee</a>
+    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#generatePlanModal">
+      <i class="bi bi-magic"></i> Generate AI Plan
+    </button>
+    {% endif %}
     <a href="/documents/upload" class="btn btn-teal btn-sm"><i class="bi bi-cloud-upload"></i>Upload Docs</a>
     <a href="/reviews" class="btn btn-primary btn-sm"><i class="bi bi-clipboard-check"></i>Review Queue</a>
   </div>
@@ -180,8 +186,23 @@
                 <a href="/plans/{{ plan_ids[emp.id] }}" class="btn btn-teal btn-sm">
                   <i class="bi bi-eye"></i>View
                 </a>
+                {% if user.app_role in ('Admin', 'Training Manager') %}
+                <button type="button" class="btn btn-outline btn-sm plan-generate-trigger"
+                        data-employee-id="{{ emp.id }}"
+                        data-bs-toggle="modal" data-bs-target="#generatePlanModal">
+                  <i class="bi bi-arrow-repeat"></i><span class="d-none d-xl-inline"> Regenerate</span>
+                </button>
+                {% endif %}
                 {% else %}
-                <span style="color:var(--text-muted);font-size:0.78rem;">—</span>
+                  {% if user.app_role in ('Admin', 'Training Manager') %}
+                  <button type="button" class="btn btn-primary btn-sm plan-generate-trigger"
+                          data-employee-id="{{ emp.id }}"
+                          data-bs-toggle="modal" data-bs-target="#generatePlanModal">
+                    <i class="bi bi-magic"></i> Generate
+                  </button>
+                  {% else %}
+                  <span style="color:var(--text-muted);font-size:0.78rem;">—</span>
+                  {% endif %}
                 {% endif %}
               </td>
             </tr>
@@ -213,6 +234,14 @@
     <div class="card animate-fade">
       <div class="card-header"><i class="bi bi-lightning-charge"></i>Quick Actions</div>
       <div class="card-body d-flex flex-column gap-2">
+        {% if user.app_role in ('Admin', 'Training Manager') %}
+        <a href="/employees/new" class="btn btn-outline btn-sm w-100">
+          <i class="bi bi-person-plus"></i> Add New Employee
+        </a>
+        <button type="button" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#generatePlanModal">
+          <i class="bi bi-magic"></i> Generate AI Plan
+        </button>
+        {% endif %}
         <a href="/documents/upload" id="upload-docs-btn" class="btn btn-primary btn-sm w-100">
           <i class="bi bi-cloud-upload"></i>Upload Documents
         </a>
@@ -232,4 +261,114 @@
     </div>
   </div>
 </div>
+
+{% if user.app_role in ('Admin', 'Training Manager') %}
+<div class="modal fade" id="generatePlanModal" tabindex="-1" aria-labelledby="generatePlanModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form id="plan-generation-form">
+        <div class="modal-header">
+          <h2 class="modal-title" id="generatePlanModalLabel"><i class="bi bi-magic me-2"></i>Generate AI Onboarding Plan</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted-sm mb-3">The plan is created from approved documents and role requirements, then automatically checked by the independent Python validation pipeline. Generation can take a moment.</p>
+          <label for="plan-employee-id" class="form-label">Employee</label>
+          <select id="plan-employee-id" class="form-select" required>
+            <option value="" selected disabled>Select an employee</option>
+            {% for emp in employees %}
+            <option value="{{ emp.id }}">{{ emp.name }} — {{ emp.role.title if emp.role else 'No role assigned' }}</option>
+            {% endfor %}
+          </select>
+          <div id="plan-generation-feedback" class="mt-3" role="status" aria-live="polite"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button id="generate-plan-submit" type="submit" class="btn btn-primary">
+            <i class="bi bi-magic"></i> Generate Plan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if user.app_role in ('Admin', 'Training Manager') %}
+<script>
+(() => {
+  const form = document.getElementById('plan-generation-form');
+  const employeeSelect = document.getElementById('plan-employee-id');
+  const submitButton = document.getElementById('generate-plan-submit');
+  const feedback = document.getElementById('plan-generation-feedback');
+  const modal = document.getElementById('generatePlanModal');
+
+  function showFeedback(kind, message) {
+    feedback.innerHTML = `<div class="alert alert-${kind} mb-0">${message}</div>`;
+  }
+
+  function readableError(payload) {
+    if (typeof payload?.error === 'string') return payload.error;
+    if (typeof payload?.detail === 'string') return payload.detail;
+    return 'Could not generate the plan. Please try again.';
+  }
+
+  modal.addEventListener('show.bs.modal', event => {
+    const trigger = event.relatedTarget;
+    if (trigger?.dataset.employeeId) employeeSelect.value = trigger.dataset.employeeId;
+    feedback.innerHTML = '';
+    submitButton.disabled = false;
+    submitButton.innerHTML = '<i class="bi bi-magic"></i> Generate Plan';
+  });
+
+  const employeeIdToGenerate = new URLSearchParams(window.location.search).get('generate_for');
+  if (employeeIdToGenerate) {
+    employeeSelect.value = employeeIdToGenerate;
+    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('generatePlanModal'));
+    modal.show();
+    window.history.replaceState({}, '', '/dashboard');
+  }
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const employeeId = employeeSelect.value;
+    if (!employeeId) return;
+
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span> Generating…';
+    showFeedback('info', 'Generating the plan from the approved source documents…');
+
+    try {
+      const response = await fetch(`/api/plans/generate/${encodeURIComponent(employeeId)}`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(readableError(payload));
+
+      const validation = payload.validation || {};
+      const status = validation.overall_status || 'Validation completed';
+      const score = validation.coverage_score == null ? '' : ` Coverage: ${validation.coverage_score}%.`;
+      const requiresReview = [
+        'Source Support Missing', 'Requirement Missing', 'Unsupported Requirement',
+        'Outdated Source', 'Contradiction Detected', 'Manual Review Required', 'Partially Verified'
+      ].includes(status);
+      const reviewLink = requiresReview ? ' <a href="/reviews" class="alert-link">Open review queue</a>' : '';
+      const fallback = payload.structured_json?.generation_status === 'failed_after_retries';
+      const message = fallback
+        ? `AI generation did not complete after its allowed retries. A source-grounded fallback plan was saved for human review. <a href="/plans/${payload.id}" class="alert-link">Open plan</a>${reviewLink}`
+        : `Plan generated and validated. Status: <strong>${status}</strong>.${score} <a href="/plans/${payload.id}" class="alert-link">Open plan</a>${reviewLink}`;
+      showFeedback(fallback ? 'warning' : (status === 'Verified' ? 'success' : 'warning'), message);
+      submitButton.innerHTML = '<i class="bi bi-check2"></i> Plan Generated';
+    } catch (error) {
+      showFeedback('danger', error.message || 'Could not generate the plan. Please try again.');
+      submitButton.disabled = false;
+      submitButton.innerHTML = '<i class="bi bi-magic"></i> Generate Plan';
+    }
+  });
+})();
+</script>
+{% endif %}
 {% endblock %}

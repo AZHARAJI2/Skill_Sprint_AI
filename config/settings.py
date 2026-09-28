@@ -33,7 +33,51 @@ class Settings:
         self.gemini_api_key: str | None = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         self.gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         self.gemini_thinking_budget: int = int(os.getenv("GEMINI_THINKING_BUDGET", "0"))
-        self.genai_max_retries: int = int(os.getenv("SKILLSPRINT_GENAI_MAX_RETRIES", "3"))
+        self.gemini_request_timeout_seconds: float = float(
+            # Gemini rejects manually configured request deadlines below 10 seconds.
+            os.getenv("SKILLSPRINT_GEMINI_TIMEOUT_SECONDS", "10")
+        )
+        self.groq_api_key: str | None = os.getenv("GROQ_API_KEY")
+        self.groq_model: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
+        self.groq_request_timeout_seconds: float = float(
+            os.getenv("SKILLSPRINT_GROQ_TIMEOUT_SECONDS", "20")
+        )
+        # One complete plan call has a strict end-to-end budget.  A second
+        # attempt is reserved only for malformed structured output.
+        self.plan_generation_timeout_seconds: float = float(
+            os.getenv("SKILLSPRINT_PLAN_TIMEOUT_SECONDS", "25")
+        )
+        self.genai_max_retries: int = int(os.getenv("SKILLSPRINT_GENAI_MAX_RETRIES", "2"))
+        self.genai_retry_backoff_seconds: float = float(
+            os.getenv("SKILLSPRINT_GENAI_RETRY_BACKOFF_SECONDS", "1")
+        )
+        # A complete plan already has one source-grounded call per stage group.
+        # Extra wording-only calls are opt-in so a free-tier key is not exhausted
+        # before the required generation calls complete.
+        self.genai_enable_enrichment: bool = os.getenv(
+            "SKILLSPRINT_ENABLE_GENAI_ENRICHMENT", "false"
+        ).strip().lower() in {"1", "true", "yes"}
+
+        # -----------------------------------------------------------------------
+        # Progress-tracking configuration (SRS Steps 17, 18, 50, 53, 54)
+        # Stage offsets in calendar days from employee joining_date.
+        # An item is overdue when today - joining_date > stage offset (days).
+        # Override via environment variables to avoid code changes during evaluation.
+        # -----------------------------------------------------------------------
+        self.stage_duration_days: dict[str, int] = {
+            "Day 1": int(os.getenv("SKILLSPRINT_STAGE_DAY1", "1")),
+            "Week 1": int(os.getenv("SKILLSPRINT_STAGE_WEEK1", "7")),
+            "Week 2": int(os.getenv("SKILLSPRINT_STAGE_WEEK2", "14")),
+            "First 30 Days": int(os.getenv("SKILLSPRINT_STAGE_30", "30")),
+            "First 60 Days": int(os.getenv("SKILLSPRINT_STAGE_60", "60")),
+            "First 90 Days": int(os.getenv("SKILLSPRINT_STAGE_90", "90")),
+        }
+        # Step 54 status thresholds (percent of overall_pct)
+        self.progress_behind_threshold: int = int(os.getenv("SKILLSPRINT_BEHIND_THRESHOLD", "30"))
+        self.progress_attention_quiz_min: int = int(os.getenv("SKILLSPRINT_ATTENTION_QUIZ_MIN", "60"))
+        self.progress_assessment_required_pct: int = int(os.getenv("SKILLSPRINT_ASSESS_REQUIRED_PCT", "80"))
+        # Minimum passing score for quizzes (Step 53)
+        self.quiz_pass_score: int = int(os.getenv("SKILLSPRINT_QUIZ_PASS_SCORE", "70"))
 
     def ensure_runtime_dirs(self) -> None:
         """Create upload, log, and data directories if they do not exist."""

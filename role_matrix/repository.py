@@ -5,7 +5,7 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 
 from database.base import BaseRepository
-from role_matrix.models import RequirementMatrixEntry
+from role_matrix.models import RequirementMatrixEntry, RoleRequirementDraft
 
 
 class RoleMatrixRepository(BaseRepository[RequirementMatrixEntry]):
@@ -52,3 +52,17 @@ class RoleMatrixRepository(BaseRepository[RequirementMatrixEntry]):
         """Remove all matrix rows (used when reloading the seed CSV)."""
         self.session.query(RequirementMatrixEntry).delete()
         self.session.flush()
+
+
+class RoleRequirementDraftRepository(BaseRepository[RoleRequirementDraft]):
+    """Data access for role requirements that have not yet been approved."""
+
+    def __init__(self, session: Session) -> None:
+        super().__init__(session, RoleRequirementDraft)
+
+    def list_by_status(self, status: str | None = None) -> list[RoleRequirementDraft]:
+        """Return pending or historical draft requirements newest first."""
+        query = self.session.query(RoleRequirementDraft)
+        if status:
+            query = query.filter(RoleRequirementDraft.status == status)
+        return list(query.order_by(RoleRequirementDraft.submitted_at.desc()).all())

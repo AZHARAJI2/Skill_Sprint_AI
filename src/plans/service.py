@@ -157,7 +157,7 @@ class PlanGenerationService:
 
     def _record_prompt_templates(self) -> None:
         for name in ("onboarding_plan", "learning_module", "quiz_generation", "assessment", "scenario_task"):
-            version = "v2" if name == "onboarding_plan" else "v1"
+            version = "v3" if name == "onboarding_plan" else "v1"
             template = self.prompt_manager.load(name, version)
             self.templates.upsert(template.name, template.version, template.system + "\n" + template.user, template.variables)
 
@@ -223,9 +223,10 @@ class PlanGenerationService:
                     assessment_type=assessment.assessment_type.value,
                 )
             )
+        prompt_name, _, prompt_version = (telemetry.get("prompt_version") or "").rpartition("_")
         template_row = (
             self.session.query(PromptTemplate)
-            .filter(PromptTemplate.name == "onboarding_plan", PromptTemplate.version == "v1")
+            .filter(PromptTemplate.name == prompt_name, PromptTemplate.version == prompt_version)
             .one_or_none()
         )
         self.metadata.add(
@@ -240,6 +241,7 @@ class PlanGenerationService:
                 log_payload={
                     "recovered_from_assembler": telemetry.get("recovered_from_assembler"),
                     "prompt_version": telemetry.get("prompt_version"),
+                    "stage_failures": telemetry.get("stage_failures", []),
                 },
             )
         )

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
 import json
+import time
 
 from config.logging_config import get_logger
 from config.settings import settings
@@ -23,12 +24,12 @@ logger = get_logger("plan_generator")
 
 
 class PlanGenerator:
-    """Run the GenAI plan call in phased stage groups and merge onto the Python-assembled backbone."""
+    """Generate one full structured plan and merge it onto the Python-assembled backbone."""
 
+    # One structured call is materially faster and avoids the old three-call
+    # free-tier burst.  The Python assembler still supplies every stage/item.
     STAGE_GROUPS: list[tuple[str, set[str]]] = [
-        ("Day 1 + Week 1", {"Day 1", "Week 1"}),
-        ("Week 2 + First 30 Days", {"Week 2", "First 30 Days"}),
-        ("First 60 Days + First 90 Days", {"First 60 Days", "First 90 Days"}),
+        ("All onboarding stages", {"Day 1", "Week 1", "Week 2", "First 30 Days", "First 60 Days", "First 90 Days"})
     ]
 
     def __init__(self, provider: BaseGenAIProvider, prompt_manager: PromptManager | None = None) -> None:
@@ -56,9 +57,12 @@ class PlanGenerator:
         """Generate plan incrementally across stage groups. Failure after retries marks ungenerated items."""
         del requirements_json
         try:
-            template = self.prompt_manager.load("onboarding_plan", "v2")
+            template = self.prompt_manager.load("onboarding_plan", "v3")
         except Exception:
-            template = self.prompt_manager.load("onboarding_plan", "v1")
+            try:
+                template = self.prompt_manager.load("onboarding_plan", "v2")
+            except Exception:
+                template = self.prompt_manager.load("onboarding_plan", "v1")
 
         telemetry = {
             "prompt_version": template.version_label,
@@ -68,6 +72,7 @@ class PlanGenerator:
             "recovered_from_assembler": False,
             "stage_failures": [],
         }
+        deadline_monotonic = time.monotonic() + settings.plan_generation_timeout_seconds
 
         req_stage_map = {r.requirement_id: r.due_stage for r in assembled.classified_requirements}
         merged_groups: list[GeneratedPlan] = []
@@ -116,6 +121,8 @@ class PlanGenerator:
             }
             if "stage_group" in template.variables:
                 prompt_kwargs["stage_group"] = group_name
+            if "plan_skeleton_json" in template.variables:
+                prompt_kwargs["plan_skeleton_json"] = sub_assembled.model_dump_json()
 
             prompt = self.prompt_manager.render(template, **prompt_kwargs)
 
@@ -123,23 +130,26 @@ class PlanGenerator:
                 cfg = GenerationConfig(
                     temperature=0.15,
                     thinking_budget=getattr(settings, "gemini_thinking_budget", 0),
+                    timeout_seconds=max(1.0, deadline_monotonic - time.monotonic()),
+                    deadline_monotonic=deadline_monotonic,
                 )
-                response = RetryManager(self.provider).run(prompt, schema=GeneratedPlan, config=cfg)
+                response = RetryManager(
+                    self.provider, max_attempts=settings.genai_max_retries
+                ).run(prompt, schema=GeneratedPlan, config=cfg, deadline_monotonic=deadline_monotonic)
                 model_plan = GeneratedPlan.model_validate(response.parsed)
                 group_merged = self._merge(sub_assembled, model_plan)
                 return group_idx, group_name, group_merged, response, None
             except AppError as exc:
-                if exc.status_code in {401, 403, 503}:
+                if exc.status_code in {401, 403}:
                     raise
                 failed_sub = self._mark_as_failed(sub_assembled)
                 return group_idx, group_name, failed_sub, None, exc
 
-        with ThreadPoolExecutor(max_workers=len(self.STAGE_GROUPS)) as executor:
-            futures = [
-                executor.submit(_generate_group, idx, name, stgs)
-                for idx, (name, stgs) in enumerate(self.STAGE_GROUPS)
-            ]
-            group_results = [f.result() for f in futures]
+        # One all-stage request stays inside the 25-second generation budget.
+        group_results = [
+            _generate_group(idx, name, stages)
+            for idx, (name, stages) in enumerate(self.STAGE_GROUPS)
+        ]
 
         group_results.sort(key=lambda x: x[0])
 
@@ -215,7 +225,12 @@ class PlanGenerator:
             generation_status=overall_gen_status,
         )
 
-        if enrich and not failed_stage_groups and not telemetry["recovered_from_assembler"]:
+        if (
+            enrich
+            and settings.genai_enable_enrichment
+            and not failed_stage_groups
+            and not telemetry["recovered_from_assembler"]
+        ):
             with ThreadPoolExecutor(max_workers=4) as executor:
                 fut_modules = executor.submit(self.modules.enrich, plan, source_chunks_block)
                 fut_quizzes = executor.submit(self.quizzes.enrich, plan, source_chunks_block, excerpts or {})

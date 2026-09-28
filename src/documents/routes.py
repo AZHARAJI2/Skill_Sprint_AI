@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from typing import Literal
+
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 from sqlalchemy.orm import Session
 
 from config.settings import settings
@@ -19,12 +21,18 @@ router = APIRouter(prefix="/api/documents", tags=["documents"])
 @router.post("/upload")
 async def upload_document(
     file: UploadFile = File(...),
+    upload_scope: Literal["company_policy", "new_employee_training"] = Form("company_policy"),
     session: Session = Depends(get_session),
     user: User = Depends(require_role("Admin", "Training Manager")),
 ) -> dict:
-    """Upload one PDF/DOCX/TXT/MD/CSV file through the ingest pipeline."""
+    """Upload a company policy or approved new-employee training input."""
     raw = await file.read()
-    document = DocumentService(session).ingest_bytes(file.filename or "upload.bin", raw, actor=user.username)
+    document = DocumentService(session).ingest_bytes(
+        file.filename or "upload.bin",
+        raw,
+        actor=user.username,
+        category_override=upload_scope,
+    )
     return _document_payload(document)
 
 
@@ -37,6 +45,16 @@ def ingest_sample(
     stored = DocumentService(session).ingest_directory(settings.sample_documents_dir, actor=user.username)
     metrics = CorpusMetricsService(session).compute()
     return {"ingested": len(stored), "metrics": metrics}
+
+
+@router.post("/sync-roles")
+def sync_roles_from_documents(
+    session: Session = Depends(get_session),
+    user: User = Depends(require_role("Admin", "Training Manager")),
+) -> dict:
+    """Create any missing job roles from already-uploaded ROLE descriptions."""
+    created = DocumentService(session).sync_roles_from_active_descriptions(actor=user.username)
+    return {"created": created, "count": len(created)}
 
 
 @router.get("")

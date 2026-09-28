@@ -43,8 +43,10 @@ class RoleService:
             raise AppError("Role not found", status_code=404)
         return role
 
-    def ensure_role(self, title: str, department: str, description: str | None = None) -> EmployeeRole:
-        """Idempotent create used by seeding."""
+    def ensure_role(
+        self, title: str, department: str, description: str | None = None, actor: str = "system"
+    ) -> EmployeeRole:
+        """Idempotent role creation used by seeding and parsed role descriptions."""
         existing = self.roles.get_by_title(title)
         if existing:
             return existing

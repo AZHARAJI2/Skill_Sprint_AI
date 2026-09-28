@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Set Up Role and Requirements{% endblock %}
+{% block content %}
+<div class="page-header animate-fade">
+  <div>
+    <h1><i class="bi bi-diagram-3 me-2" style="color:var(--teal)"></i>Set Up Role and Requirements</h1>
+    <div class="subtitle">Choose one clear route: create a role from its description, import an approved requirements CSV, or submit one requirement for review.</div>
+  </div>
+  <div class="page-header-actions"><a href="/employees/new" class="btn btn-outline btn-sm"><i class="bi bi-person-plus"></i> Add Employee</a></div>
+</div>
+
+<div class="alert alert-info animate-fade mb-4 d-flex flex-wrap align-items-center justify-content-between gap-2"><span><i class="bi bi-shield-check me-1"></i><strong>What goes where:</strong> a role description explains one job; an approved CSV contains many training requirements; the form below adds one requirement at a time. A role description never activates requirements automatically.</span><button id="sync-role-documents" class="btn btn-outline btn-sm" type="button"><i class="bi bi-arrow-repeat me-1"></i>Sync Uploaded Role Documents</button></div>
+<div id="server-page-warning" class="alert alert-danger d-none mb-4" role="alert"></div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card animate-fade h-100">
+      <div class="card-header"><span class="badge badge-teal me-2">1</span>Create Job Role</div>
+      <div class="card-body">
+        <form id="role-create-form">
+          <div class="mb-3"><label class="form-label" for="role-title">Role Title <span class="text-danger">*</span></label><input id="role-title" class="form-control" maxlength="128" required placeholder="e.g. Cybersecurity Analyst"><div class="form-text">The job name employees will be assigned to.</div></div>
+          <div class="mb-3"><label class="form-label" for="role-department">Department <span class="text-danger">*</span></label><input id="role-department" class="form-control" maxlength="128" required placeholder="e.g. Security"><div class="form-text">The team or business unit that owns this role.</div></div>
+          <div class="mb-3"><label class="form-label" for="role-description">Role Description</label><textarea id="role-description" class="form-control" rows="4" placeholder="Short approved role summary."></textarea><div class="form-text">A brief approved summary of responsibilities. You may instead upload a role-description document in Document Upload.</div></div>
+          <button class="btn btn-primary" type="submit"><i class="bi bi-plus-circle me-1"></i>Create Role</button>
+        </form>
+        <div id="role-create-result" class="mt-3 d-none" role="status"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card animate-fade h-100">
+      <div class="card-header"><span class="badge badge-teal me-2">3</span>Submit One Training Requirement for Review</div>
+      <div class="card-body">
+        {% if roles and documents %}
+        <form id="requirement-create-form">
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label" for="requirement-role">Job Role <span class="text-danger">*</span></label><select id="requirement-role" class="form-select" required>{% for role in roles %}<option value="{{ role.title }}">{{ role.title }} — {{ role.department }}</option>{% endfor %}</select><div class="form-text">Select the role this training rule applies to.</div></div>
+            <div class="col-md-6"><label class="form-label" for="requirement-stage">Due Stage <span class="text-danger">*</span></label><select id="requirement-stage" class="form-select" required><option>Day 1</option><option>Week 1</option><option>Week 2</option><option>First 30 Days</option><option>First 60 Days</option><option>First 90 Days</option></select><div class="form-text">When the employee should complete it.</div></div>
+            <div class="col-12"><label class="form-label" for="requirement-text">Requirement <span class="text-danger">*</span></label><textarea id="requirement-text" class="form-control" rows="2" required placeholder="State the required employee action from the approved source."></textarea><div class="form-text">The exact learning action, for example: “Complete incident-response escalation training.”</div></div>
+            <div class="col-md-6"><label class="form-label" for="requirement-competency">Competency <span class="text-danger">*</span></label><input id="requirement-competency" class="form-control" required placeholder="e.g. Incident Response"><div class="form-text">The skill the employee will gain or demonstrate.</div></div>
+            <div class="col-md-3"><label class="form-label" for="requirement-priority">Priority</label><select id="requirement-priority" class="form-select"><option>High</option><option>Medium</option><option>Low</option></select><div class="form-text">High = essential; Low = useful but not urgent.</div></div>
+            <div class="col-md-3 d-flex align-items-end"><div class="form-check mb-2"><input id="requirement-mandatory" class="form-check-input" type="checkbox" checked><label class="form-check-label" for="requirement-mandatory">Mandatory</label><div class="form-text">Required for the employee to complete onboarding.</div></div></div>
+            <div class="col-md-6"><label class="form-label" for="requirement-document">Source Document <span class="text-danger">*</span></label><select id="requirement-document" class="form-select" required>{% for document in documents %}<option value="{{ document.id }}" data-document-id="{{ document.document_id }}">{{ document.document_id }} — {{ document.title }}</option>{% endfor %}</select><div class="form-text">The uploaded policy, SOP, or role description that proves this rule.</div></div>
+            <div class="col-md-6"><label class="form-label" for="requirement-section">Source Section <span class="text-danger">*</span></label><select id="requirement-section" class="form-select" required></select><div class="form-text">The exact section in that document where the requirement appears.</div></div>
+            <div class="col-12"><label class="form-label" for="requirement-assessment">Assessment or Completion Evidence <span class="text-danger">*</span></label><input id="requirement-assessment" class="form-control" required placeholder="e.g. Manager observes and confirms the response process."><div class="form-text">How the manager will know the employee completed the requirement.</div></div>
+          </div>
+          <button class="btn btn-teal mt-4" type="submit"><i class="bi bi-send me-1"></i>Submit for Review</button>
+        </form>
+        {% else %}
+        <div class="alert alert-warning mb-0">Create a job role and upload an approved source document before adding requirements.</div>
+        {% endif %}
+        <div id="requirement-create-result" class="mt-3 d-none" role="status"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if user.app_role in ('Admin', 'Reviewer') %}
+<div class="card animate-fade mt-4">
+  <div class="card-header"><span class="badge badge-teal me-2">2</span>Import an Approved Requirements CSV</div>
+  <div class="card-body">
+    <p class="mb-2">Use this only when you already have several <strong>human-approved</strong> training requirements. It adds rows to the active matrix immediately; it does not replace existing requirements.</p>
+    <p class="text-muted-sm mb-3">One row = one requirement. The source document and source section must refer to documents already uploaded to the system. <a href="/api/matrix/template">Download the blank CSV template</a>.</p>
+    <form id="matrix-import-form" class="row g-3" enctype="multipart/form-data">
+      <div class="col-md-8"><label class="form-label" for="matrix-file">Approved Requirements CSV <span class="text-danger">*</span></label><input id="matrix-file" name="file" class="form-control" type="file" accept=".csv,text/csv" required><div class="form-text">CSV only, UTF-8, maximum 20 MB. Do not upload employee files, policies, or role-description documents here.</div></div>
+      <div class="col-md-4 d-flex align-items-end"><button class="btn btn-teal w-100" type="submit"><i class="bi bi-upload me-1"></i>Import Approved CSV</button></div>
+    </form>
+    <div id="matrix-import-result" class="mt-3 d-none" role="status"></div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card animate-fade mt-4">
+  <div class="card-header"><i class="bi bi-clipboard-check me-1"></i>Requirement Review Queue</div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead><tr><th>Role</th><th>Requirement</th><th>Source</th><th>Status</th><th>Submitted By</th>{% if user.app_role in ('Admin', 'Reviewer') %}<th>Review</th>{% endif %}</tr></thead>
+        <tbody>
+        {% for draft in drafts %}
+          <tr>
+            <td>{{ draft.role_title }}</td><td>{{ draft.requirement_text }}</td><td><code>{{ draft.source_document_id }} §{{ draft.source_section_id }}</code></td>
+            <td><span class="badge {{ 'badge-warning' if draft.status == 'pending_review' else ('badge-success' if draft.status == 'approved' else 'badge-danger') }}">{{ draft.status.replace('_', ' ').title() }}</span>{% if draft.review_comment %}<div class="text-muted-sm mt-1">{{ draft.review_comment }}</div>{% endif %}</td>
+            <td>{{ draft.submitted_by }}</td>
+            {% if user.app_role in ('Admin', 'Reviewer') %}<td>{% if draft.status == 'pending_review' %}<button class="btn btn-success btn-sm draft-review" data-action="approve" data-id="{{ draft.id }}">Approve</button> <button class="btn btn-outline-danger btn-sm draft-review" data-action="reject" data-id="{{ draft.id }}">Reject</button>{% else %}<span class="text-muted-sm">{{ draft.reviewer or '—' }}</span>{% endif %}</td>{% endif %}
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="text-muted text-center py-3">No requirement drafts have been submitted.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  const result = (id, type, message) => { const el = document.getElementById(id); el.className = `alert alert-${type} mt-3`; el.textContent = message; };
+  if (window.location.protocol === 'file:') {
+    const warning = document.getElementById('server-page-warning');
+    warning.classList.remove('d-none');
+    warning.textContent = 'This page was opened as a local file, so uploads and downloads cannot reach the API. Open the application at http://127.0.0.1:8000/roles/new instead.';
+  }
+  const roleForm = document.getElementById('role-create-form');
+  document.getElementById('sync-role-documents')?.addEventListener('click', async event => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    try {
+      const response = await fetch('/api/documents/sync-roles', {method: 'POST'});
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || 'Could not sync role documents.');
+      result('role-create-result', 'success', body.count ? `Created roles: ${body.created.join(', ')}. Reloading…` : 'All uploaded role documents already have job roles.');
+      if (body.count) window.setTimeout(() => window.location.reload(), 700);
+    } catch (error) { result('role-create-result', 'danger', error.message || 'Could not sync role documents.'); }
+    finally { button.disabled = false; }
+  });
+  roleForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const response = await fetch('/api/roles', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({title: document.getElementById('role-title').value.trim(), department: document.getElementById('role-department').value.trim(), description: document.getElementById('role-description').value.trim() || null})});
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) { result('role-create-result', 'danger', body.error || 'Could not create the role.'); return; }
+    result('role-create-result', 'success', `Created ${body.title}. Reloading the role list…`);
+    window.setTimeout(() => window.location.reload(), 700);
+  });
+
+  document.getElementById('matrix-import-form')?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const file = document.getElementById('matrix-file').files[0];
+    if (!file) return;
+    const response = await fetch('/api/matrix/import', {method: 'POST', body: new FormData(event.currentTarget)});
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const details = Array.isArray(body.details) ? ` ${body.details.join(' ')}` : (body.details ? ` ${body.details}` : '');
+      result('matrix-import-result', 'danger', `${body.error || `CSV import failed (HTTP ${response.status}).`}${details}`);
+      return;
+    }
+    const rejected = body.rejected?.length ? ` ${body.rejected.length} row(s) were rejected; review the CSV before using them.` : '';
+    result('matrix-import-result', body.rejected?.length ? 'warning' : 'success', `${body.message}${rejected}`);
+    event.currentTarget.reset();
+  });
+
+  const documentSelect = document.getElementById('requirement-document');
+  const sectionSelect = document.getElementById('requirement-section');
+  async function loadSections() {
+    if (!documentSelect || !sectionSelect) return;
+    sectionSelect.innerHTML = '<option>Loading sections…</option>';
+    const response = await fetch(`/api/documents/${documentSelect.value}/chunks`);
+    const chunks = response.ok ? await response.json() : [];
+    const seen = new Set();
+    const sections = chunks.filter(chunk => !seen.has(chunk.section_id) && seen.add(chunk.section_id));
+    sectionSelect.replaceChildren(...sections.map(chunk => { const option = document.createElement('option'); option.value = chunk.section_id; option.textContent = `${chunk.section_id}${chunk.heading ? ` — ${chunk.heading}` : ''}`; return option; }));
+    if (!sections.length) sectionSelect.innerHTML = '<option value="">No parsed sections found</option>';
+  }
+  documentSelect?.addEventListener('change', loadSections);
+  loadSections();
+
+  document.getElementById('requirement-create-form')?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const selectedDocument = documentSelect.options[documentSelect.selectedIndex];
+    const payload = {role_title: document.getElementById('requirement-role').value, requirement_text: document.getElementById('requirement-text').value.trim(), mandatory: document.getElementById('requirement-mandatory').checked, priority: document.getElementById('requirement-priority').value, due_stage: document.getElementById('requirement-stage').value, source_document_id: selectedDocument.dataset.documentId, source_section_id: sectionSelect.value, competency: document.getElementById('requirement-competency').value.trim(), assessment_requirement: document.getElementById('requirement-assessment').value.trim()};
+    const response = await fetch('/api/matrix/requirements', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) { result('requirement-create-result', 'danger', body.error || 'Could not submit the requirement.'); return; }
+    result('requirement-create-result', 'success', `Submitted draft #${body.draft_id} for ${body.role}, linked to ${body.source_document_id} §${body.source_section_id}. It cannot be used for plan generation until an Admin or Reviewer approves it.`);
+    document.getElementById('requirement-text').value = '';
+    document.getElementById('requirement-competency').value = '';
+    document.getElementById('requirement-assessment').value = '';
+  });
+
+  document.querySelectorAll('.draft-review').forEach(button => button.addEventListener('click', async () => {
+    const action = button.dataset.action;
+    const comment = action === 'reject' ? window.prompt('Enter the reason for rejection:') : window.prompt('Optional approval note:');
+    if (action === 'reject' && !comment?.trim()) return;
+    const response = await fetch(`/api/matrix/requirements/drafts/${button.dataset.id}/${action}`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({comment: comment || null})});
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) { window.alert(body.error || 'Could not record the review.'); return; }
+    window.location.reload();
+  }));
+})();
+</script>
+{% endblock %}

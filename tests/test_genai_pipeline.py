@@ -16,6 +16,7 @@ from config.settings import settings
 from database.base import get_session
 from database.migrations import create_schema
 from genai_pipeline.base_provider import GenerationConfig
+from genai_pipeline.failover_provider import FailoverProvider
 from genai_pipeline.gemini_provider import GeminiProvider
 from genai_pipeline.plan_assembler import PlanAssembler, SourceExcerpt
 from genai_pipeline.plan_generator import PlanGenerator
@@ -245,6 +246,36 @@ def test_retry_recovers_then_caps() -> None:
     assert response.parsed["ok"] is True
 
 
+def test_failover_stays_on_fallback_after_primary_service_outage() -> None:
+    """A Gemini-style 503 switches the current plan to the fallback without repeated primary calls."""
+    from pydantic import BaseModel
+
+    class Tiny(BaseModel):
+        ok: bool
+
+    primary = ScriptedProvider([AppError("temporary overload", status_code=503)], model_name="primary")
+    fallback = ScriptedProvider([{"ok": True}], model_name="fallback")
+    provider = FailoverProvider(primary, fallback)
+
+    response = RetryManager(provider, max_attempts=2).run("prompt", schema=Tiny)
+    assert response.parsed == {"ok": True}
+    assert primary.calls == 1
+    assert fallback.calls == 1
+    assert provider.model == "fallback"
+
+
+def test_configured_groq_is_selected_before_gemini(monkeypatch) -> None:
+    """The low-latency provider receives the full plan budget when its key is configured."""
+    from genai_pipeline.failover_provider import FailoverProvider
+    from genai_pipeline.groq_provider import GroqProvider
+    from src.plans.dependencies import get_genai_provider
+
+    monkeypatch.setattr("genai_pipeline.groq_provider.settings.groq_api_key", "test-key")
+    provider = get_genai_provider()
+    assert isinstance(provider, FailoverProvider)
+    assert isinstance(provider.primary, GroqProvider)
+
+
 def test_gemini_fails_closed_without_api_key(monkeypatch) -> None:
     """F12: missing key never fabricates a plan."""
     monkeypatch.setattr("genai_pipeline.gemini_provider.settings.gemini_api_key", None)
@@ -313,7 +344,7 @@ def test_plans_for_all_ten_roles(session: Session) -> None:
         assessment_types = {item["assessment_type"] for item in payload["assessments"]}
         assert {"knowledge", "practical", "scenario", "role-specific"} <= assessment_types
         titles_by_role[title] = {module["title"] for module in payload["modules"]}
-        assert stored.prompt_version in {"onboarding_plan_v1", "onboarding_plan_v2"}
+        assert stored.prompt_version in {"onboarding_plan_v1", "onboarding_plan_v2", "onboarding_plan_v3"}
         assert stored.model_used
 
         meta = session.query(GenerationMetadata).filter(GenerationMetadata.plan_id == stored.id).one()
@@ -423,7 +454,7 @@ def test_api_generate_requires_admin(session: Session) -> None:
         )
         assert created.status_code == 200
         body = created.json()
-        assert body["prompt_version"] in {"onboarding_plan_v1", "onboarding_plan_v2"}
+        assert body["prompt_version"] in {"onboarding_plan_v1", "onboarding_plan_v2", "onboarding_plan_v3"}
         assert body["structured_json"]["role_title"] == "Software Engineer"
 
         fetched = client.get(f"/api/plans/{body['id']}", headers={"Authorization": f"Bearer {admin_token}"})

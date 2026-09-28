@@ -12,6 +12,7 @@ from src.auth.models import User
 from src.errors import AppError
 from src.plans.dependencies import get_genai_provider
 from src.plans.service import PlanGenerationService
+from src.plans.validation_service import PlanValidationService
 
 router = APIRouter(prefix="/api/plans", tags=["plans"])
 
@@ -31,6 +32,20 @@ def _plan_payload(plan) -> dict:
     }
 
 
+def _validation_payload(report) -> dict:
+    """Serialize a persisted Pipeline 2 report without exposing ORM details."""
+    return {
+        "plan_id": report.plan_id,
+        "coverage_score": report.coverage_score,
+        "traceability_score": report.traceability_score,
+        "consistency_score": report.consistency_score,
+        "missing_count": report.missing_count,
+        "unsupported_count": report.unsupported_count,
+        "contradiction_count": report.contradiction_count,
+        "overall_status": report.overall_status,
+    }
+
+
 @router.post("/generate/{employee_id}")
 def generate_plan(
     employee_id: int,
@@ -38,11 +53,30 @@ def generate_plan(
     user: User = Depends(require_role("Admin", "Training Manager")),
     provider: BaseGenAIProvider = Depends(get_genai_provider),
 ) -> dict:
-    """Generate a personalized onboarding plan for the employee (Pipeline 1)."""
+    """Generate, validate, and persist a personalized onboarding plan.
+
+    Pipeline 1 is the only GenAI stage.  Pipeline 2 runs immediately afterwards
+    using deterministic Python validators, so the UI never treats raw model
+    output as approved training content.
+    """
     plan = PlanGenerationService(session, provider=provider).generate_for_employee(
         employee_id, actor=user.username
     )
-    return _plan_payload(plan)
+    validation = PlanValidationService(session).validate(plan.id, actor=user.username)
+    payload = _plan_payload(plan)
+    payload["validation"] = _validation_payload(validation)
+    return payload
+
+
+@router.post("/{plan_id}/validate")
+def validate_plan(
+    plan_id: int,
+    session: Session = Depends(get_session),
+    user: User = Depends(require_role("Admin", "Training Manager", "Reviewer")),
+) -> dict:
+    """Re-run Pipeline 2 only; this endpoint never makes a GenAI call."""
+    report = PlanValidationService(session).validate(plan_id, actor=user.username)
+    return _validation_payload(report)
 
 
 @router.get("/employee/{employee_id}")

@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import time
+
 from pydantic import BaseModel, ValidationError
 
 from config.logging_config import get_logger
+from config.settings import settings
 from genai_pipeline.base_provider import BaseGenAIProvider, GenerationConfig, GenAIResponse
 from src.errors import AppError
 
@@ -25,17 +28,26 @@ class RetryManager:
         prompt: str,
         schema: type[BaseModel] | None = None,
         config: GenerationConfig | None = None,
+        deadline_monotonic: float | None = None,
     ) -> GenAIResponse:
         """Attempt generation until schema validation succeeds or the cap is hit."""
         last_error: str | None = None
         working_prompt = prompt
         for attempt in range(1, self.max_attempts + 1):
             try:
+                call_config = config
+                if deadline_monotonic is not None:
+                    remaining = deadline_monotonic - time.monotonic()
+                    if remaining <= 0:
+                        raise AppError("Plan-generation time budget was exhausted.", status_code=503)
+                    call_config = (config or GenerationConfig()).model_copy(
+                        update={"timeout_seconds": min((config or GenerationConfig()).timeout_seconds or remaining, remaining), "deadline_monotonic": deadline_monotonic}
+                    )
                 # Pass the schema through so providers with constrained-generation
                 # support (e.g. Gemini response_json_schema) emit conformant JSON
                 # on the first attempt instead of guessing the shape. The result
                 # is still validated below as a safety net.
-                response = self.provider.generate(working_prompt, schema=schema, config=config)
+                response = self.provider.generate(working_prompt, schema=schema, config=call_config)
                 if schema is not None:
                     parsed_model = schema.model_validate(response.parsed)
                     response.parsed = parsed_model.model_dump(mode="json")
@@ -48,6 +60,12 @@ class RetryManager:
                     raise
                 last_error = str(exc)
                 logger.warning("genai_retry_failed attempt=%s/%s error=%s", attempt, self.max_attempts, last_error)
+                if attempt < self.max_attempts and getattr(self.provider, "network_backed", False):
+                    delay = settings.genai_retry_backoff_seconds * attempt
+                    if deadline_monotonic is not None:
+                        delay = min(delay, max(0, deadline_monotonic - time.monotonic()))
+                    logger.info("genai_retry_backoff seconds=%.1f", delay)
+                    time.sleep(delay)
                 working_prompt = (
                     f"{prompt}\n\nPREVIOUS_OUTPUT_WAS_INVALID. Fix these errors and return JSON only:\n{last_error}"
                 )

@@ -1,19 +1,79 @@
 {% extends "base.html" %}
-{% block title %}Upload documents{% endblock %}
+{% block title %}Training Source Documents{% endblock %}
 {% block content %}
-<h1 class="h3">Document upload</h1>
-<p>PDF and DOCX are required formats. TXT, Markdown, and CSV are accepted for hidden-evaluation compatibility.</p>
-<form id="upload-form" class="mb-3">
-  <input class="form-control mb-2" type="file" name="file" required>
-  <button class="btn btn-primary" type="submit">Upload</button>
-</form>
-<pre id="upload-result" class="bg-light p-3"></pre>
+<div class="page-header animate-fade">
+  <div>
+    <h1><i class="bi bi-folder2-open me-2" style="color:var(--teal)"></i>Training Source Documents</h1>
+    <div class="subtitle">Upload approved knowledge sources used to build safe, role-specific onboarding plans.</div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card animate-fade h-100">
+      <div class="card-header"><i class="bi bi-building me-1"></i>Company Policies &amp; Knowledge Base</div>
+      <div class="card-body d-flex flex-column">
+        <p>Upload approved documents that apply across the company or a department. The system validates, extracts, and cites these sources when it generates training plans.</p>
+        <div class="mb-3">
+          <div class="fw-700 text-navy mb-1">Upload here</div>
+          <ul class="mb-0 ps-3 text-muted-sm">
+            <li>Company policies and compliance procedures</li>
+            <li>Standard operating procedures (SOPs)</li>
+            <li>Employee handbooks and approved FAQs</li>
+            <li>Approved role descriptions and job requirements</li>
+          </ul>
+        </div>
+        <div class="alert alert-info py-2 mb-3 text-muted-sm"><strong>Supported formats:</strong> PDF, DOCX, TXT, Markdown (.md), and CSV. <strong>Maximum file size:</strong> 20 MB.</div>
+        <form class="document-upload-form mt-auto" data-result="policy-upload-result">
+          <input type="hidden" name="upload_scope" value="company_policy">
+          <label for="policy-document-file" class="form-label">Company policy or knowledge document</label>
+          <input id="policy-document-file" class="form-control mb-3" type="file" name="file" accept=".pdf,.docx,.txt,.md,.csv" required>
+          <button class="btn btn-primary" type="submit"><i class="bi bi-cloud-arrow-up me-1"></i>Upload Company Document</button>
+        </form>
+        <pre id="policy-upload-result" class="bg-light p-3 mt-3 mb-0 d-none" aria-live="polite"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card animate-fade h-100">
+      <div class="card-header"><i class="bi bi-diagram-3 me-1"></i>Role &amp; Training Inputs</div>
+      <div class="card-body d-flex flex-column">
+        <p>Upload approved training inputs for a new role or an employee's onboarding needs. These documents support training design; they do not create an employee profile.</p>
+        <div class="mb-3">
+          <div class="fw-700 text-navy mb-1">Upload here</div>
+          <ul class="mb-0 ps-3 text-muted-sm">
+            <li>Role descriptions and onboarding requirement documents</li>
+            <li>Manager-approved skills-gap or learning-needs assessments</li>
+            <li>Department-specific training checklists and role guides</li>
+          </ul>
+        </div>
+        <div class="alert alert-warning py-2 mb-3 text-muted-sm"><strong>Do not upload:</strong> resumes, ID documents, contracts, medical records, or other private employee files. <strong>Supported formats:</strong> PDF, DOCX, TXT, Markdown (.md), and CSV. <strong>Maximum file size:</strong> 20 MB.</div>
+        <div class="text-muted-sm mb-3">After uploading a new role description, create the job role and link its approved requirements to the document sections.</div>
+        <form class="document-upload-form mt-auto" data-result="employee-upload-result">
+          <input type="hidden" name="upload_scope" value="new_employee_training">
+          <label for="employee-training-file" class="form-label">New employee training input</label>
+          <input id="employee-training-file" class="form-control mb-3" type="file" name="file" accept=".pdf,.docx,.txt,.md,.csv" required>
+          <button class="btn btn-teal" type="submit"><i class="bi bi-cloud-arrow-up me-1"></i>Upload Training Input</button>
+        </form>
+        <pre id="employee-upload-result" class="bg-light p-3 mt-3 mb-0 d-none" aria-live="polite"></pre>
+        <a href="/employees/new" class="btn btn-outline btn-sm mt-3"><i class="bi bi-person-plus me-1"></i>Need to add an employee? Create Employee Profile</a>
+        <a href="/roles/new" class="btn btn-outline btn-sm mt-2"><i class="bi bi-diagram-3 me-1"></i>Set up a new role and requirements</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-document.getElementById("upload-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const data = new FormData(event.target);
-  const response = await fetch("/api/documents/upload", { method: "POST", body: data });
-  document.getElementById("upload-result").textContent = await response.text();
+document.querySelectorAll(".document-upload-form").forEach(form => {
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const result = document.getElementById(form.dataset.result);
+    result.textContent = "Uploading and validating document…";
+    result.classList.remove("d-none");
+    const response = await fetch("/api/documents/upload", { method: "POST", body: new FormData(form) });
+    result.textContent = await response.text();
+  });
 });
 </script>
 {% endblock %}

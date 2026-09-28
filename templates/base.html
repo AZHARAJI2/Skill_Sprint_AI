@@ -33,6 +33,16 @@
         </li>
         {% if user.app_role in ('Admin','Training Manager') %}
         <li class="nav-item">
+          <a class="nav-link{% if request.url.path.startswith('/employees') %} active{% endif %}" href="/employees/new">
+            <i class="bi bi-person-plus"></i>Employees
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.url.path.startswith('/roles') %} active{% endif %}" href="/roles/new">
+            <i class="bi bi-diagram-3"></i>Roles &amp; Requirements
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link{% if request.url.path.startswith('/documents') %} active{% endif %}" href="/documents/upload">
             <i class="bi bi-cloud-upload"></i>Documents
           </a>

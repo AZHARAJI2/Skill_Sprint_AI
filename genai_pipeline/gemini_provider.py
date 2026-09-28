@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import time
 from typing import Any
 
@@ -23,6 +24,8 @@ class GeminiProvider(BaseGenAIProvider):
     invents a plan in place of a model response.
     """
 
+    network_backed = True
+
     def __init__(self, api_key: str | None = None, model: str | None = None) -> None:
         self.api_key = api_key if api_key is not None else settings.gemini_api_key
         self.model = model or getattr(settings, "gemini_model", None) or "gemini-2.5-flash"
@@ -36,8 +39,12 @@ class GeminiProvider(BaseGenAIProvider):
             )
         if self._client is None:
             from google import genai
+            from google.genai import types
 
-            self._client = genai.Client(api_key=self.api_key)
+            self._client = genai.Client(
+                api_key=self.api_key,
+                http_options=types.HttpOptions(timeout=settings.gemini_request_timeout_seconds * 1000),
+            )
         return self._client
 
     def generate(
@@ -80,7 +87,15 @@ class GeminiProvider(BaseGenAIProvider):
             raise
         except Exception as exc:
             logger.error("gemini_call_failed error=%s", exc)
-            raise AppError("Gemini API call failed", status_code=502, details=str(exc)) from exc
+            status_code = self._provider_status_code(exc)
+            unavailable = status_code in {503, 504} or any(
+                word in str(exc).lower() for word in ("timeout", "timed out", "unavailable", "connection")
+            )
+            raise AppError(
+                "Gemini API call failed",
+                status_code=503 if unavailable else 502,
+                details={"provider": "gemini", "status_code": status_code, "message": str(exc)},
+            ) from exc
         raw_text = getattr(response, "text", None) or ""
         parsed = self._parse_json(raw_text)
         if schema is not None:
@@ -109,6 +124,16 @@ class GeminiProvider(BaseGenAIProvider):
         from genai_pipeline.retry_manager import RetryManager
 
         return RetryManager(self, max_attempts=max_retries).run(prompt, schema=schema, config=config)
+
+    @staticmethod
+    def _provider_status_code(exc: Exception) -> int | None:
+        """Extract an HTTP status without depending on one SDK exception class."""
+        response = getattr(exc, "response", None)
+        value = getattr(response, "status_code", None) or getattr(exc, "code", None)
+        if isinstance(value, int):
+            return value
+        match = re.search(r"\b(4\d{2}|5\d{2})\b", str(exc))
+        return int(match.group(1)) if match else None
 
     @staticmethod
     def _parse_json(raw_text: str) -> dict[str, Any]:

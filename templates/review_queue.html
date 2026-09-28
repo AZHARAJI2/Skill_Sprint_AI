@@ -97,22 +97,30 @@
           </td>
           <td>
             <div class="action-btn-group">
+              <button class="btn btn-outline btn-sm details-btn"
+                data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
+                data-original='{{ item.original_result | tojson }}'
+                title="View content and validation evidence">
+                <i class="bi bi-eye"></i><span class="d-none d-xl-inline"> Details</span>
+              </button>
+              {% if user.app_role in ('Admin', 'Training Manager', 'Reviewer') %}
               <button class="btn btn-success btn-sm action-btn"
-                data-action="approve" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}"
+                data-action="approve" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
                 data-original='{{ item.original_result | tojson }}'
                 title="Approve"><i class="bi bi-check-lg"></i></button>
               <button class="btn btn-danger btn-sm action-btn"
-                data-action="reject" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}"
+                data-action="reject" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
                 data-original='{{ item.original_result | tojson }}'
                 title="Reject"><i class="bi bi-x-lg"></i></button>
               <button class="btn btn-warning btn-sm action-btn"
-                data-action="edit" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}"
+                data-action="edit" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
                 data-original='{{ item.original_result | tojson }}'
                 title="Edit"><i class="bi bi-pencil"></i></button>
               <button class="btn btn-info btn-sm action-btn"
-                data-action="regenerate" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}"
+                data-action="regenerate" data-item="{{ item.item_id }}" data-type="{{ item.item_type }}" data-plan="{{ item.plan_id }}"
                 data-original='{{ item.original_result | tojson }}'
                 title="Regenerate"><i class="bi bi-arrow-clockwise"></i></button>
+              {% endif %}
             </div>
           </td>
         </tr>
@@ -134,6 +142,45 @@
   </div>
 </div>
 {% endif %}
+
+<!-- Read-only item evidence modal: review content before choosing an action. -->
+<div class="modal fade" id="reviewDetailModal" tabindex="-1" aria-labelledby="reviewDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="reviewDetailModalLabel"><i class="bi bi-file-earmark-text me-2"></i>Review item</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="review-detail-loading" class="text-muted-sm"><span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading the plan content and audit history…</div>
+        <div id="review-detail-content" class="d-none">
+          <div class="row g-3">
+            <div class="col-lg-7">
+              <div class="card h-100">
+                <div class="card-header"><i class="bi bi-journal-text me-1"></i>Generated content</div>
+                <div class="card-body" id="review-item-content"></div>
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <div class="card mb-3">
+                <div class="card-header"><i class="bi bi-shield-check me-1"></i>Validation evidence</div>
+                <div class="card-body" id="review-validation-evidence"></div>
+              </div>
+              <div class="card">
+                <div class="card-header"><i class="bi bi-clock-history me-1"></i>Decision history</div>
+                <div class="card-body" id="review-decision-history"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a id="open-plan-link" class="btn btn-outline" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right me-1"></i>Open full plan</a>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Action Modal -->
 <div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
@@ -180,6 +227,7 @@
 <script>
 let currentAction = null, currentItem = null, currentType = null, currentOriginal = null;
 const modal = new bootstrap.Modal(document.getElementById('actionModal'));
+const detailModal = new bootstrap.Modal(document.getElementById('reviewDetailModal'));
 const actionConfig = {
   approve:    { label:'Approve',    icon:'bi-check-circle',    cls:'btn-success', alertType:'success' },
   reject:     { label:'Reject',     icon:'bi-x-circle',       cls:'btn-danger',  alertType:'danger' },
@@ -198,8 +246,11 @@ document.querySelectorAll('.action-btn').forEach(btn => {
     document.getElementById('actionModalLabel-text').textContent = `${cfg.label}: ${currentItem}`;
     document.getElementById('modal-action-icon').innerHTML = `<i class="bi ${cfg.icon} me-2" style="color:var(--accent-${currentAction === 'approve' ? 'success' : currentAction === 'reject' ? 'danger' : currentAction === 'edit' ? 'warning' : 'info'})"></i>`;
     document.getElementById('modal-desc').className = `alert alert-${cfg.alertType} mb-3`;
-    document.getElementById('modal-desc').innerHTML = `You are about to <strong>${cfg.label.toLowerCase()}</strong> item <code>${currentItem}</code> (type: ${currentType}).`;
+    document.getElementById('modal-desc').innerHTML = currentAction === 'regenerate'
+      ? `You are requesting a new generation for <code>${currentItem}</code>. This records the request and keeps the existing item in the review queue until an Admin or Training Manager generates a replacement plan.`
+      : `You are about to <strong>${cfg.label.toLowerCase()}</strong> item <code>${currentItem}</code> (type: ${currentType}).`;
     document.getElementById('edit-section').classList.toggle('d-none', currentAction !== 'edit');
+    document.getElementById('edit-content').value = '';
     document.getElementById('comment-label').innerHTML = currentAction === 'reject'
       ? '<i class="bi bi-chat-left-text me-1"></i>Reason <span style="color:var(--accent-danger)">*required</span>'
       : '<i class="bi bi-chat-left-text me-1"></i>Comment <span style="color:var(--text-muted)">(optional)</span>';
@@ -210,6 +261,164 @@ document.querySelectorAll('.action-btn').forEach(btn => {
     confirmBtn.className = `btn ${cfg.cls}`;
     confirmBtn.innerHTML = `<i class="bi ${cfg.icon} me-1"></i>${cfg.label}`;
     modal.show();
+
+    if (currentAction === 'edit') loadEditableContent(Number(btn.dataset.plan), currentItem, currentType, confirmBtn);
+  });
+});
+
+function appendField(container, label, value) {
+  if (value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0)) return;
+  const block = document.createElement('div');
+  block.className = 'mb-3';
+  const heading = document.createElement('div');
+  heading.className = 'text-muted-sm fw-700 mb-1';
+  heading.textContent = label;
+  const body = document.createElement(Array.isArray(value) ? 'ul' : 'div');
+  body.className = Array.isArray(value) ? 'mb-0 ps-3' : '';
+  if (Array.isArray(value)) {
+    value.forEach(entry => {
+      const line = document.createElement('li');
+      line.textContent = typeof entry === 'string' ? entry : JSON.stringify(entry);
+      body.appendChild(line);
+    });
+  } else {
+    body.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+  }
+  block.append(heading, body);
+  container.appendChild(block);
+}
+
+function findPlanItem(plan, itemId, itemType) {
+  const fields = {
+    module: ['modules', 'module_id'],
+    learning_module: ['modules', 'module_id'],
+    task: ['tasks', 'task_id'],
+    task_item: ['tasks', 'task_id'],
+    checklist: ['checklists', 'item_id'],
+    checklist_item: ['checklists', 'item_id'],
+    quiz_question: ['quizzes', 'question_id'],
+    assessment: ['assessments', 'assessment_id'],
+  };
+  const [collection, idField] = fields[itemType] || [];
+  return collection ? (plan?.[collection] || []).find(item => String(item[idField]) === String(itemId)) : null;
+}
+
+async function loadEditableContent(planId, itemId, itemType, confirmButton) {
+  const input = document.getElementById('edit-content');
+  input.disabled = true;
+  input.placeholder = 'Loading the current generated content…';
+  confirmButton.disabled = true;
+  try {
+    if (planId <= 0) throw new Error('No plan is linked to this review item.');
+    const response = await fetch(`/api/plans/${planId}`);
+    if (!response.ok) throw new Error('Could not load the generated plan.');
+    const plan = await response.json();
+    const item = findPlanItem(plan.structured_json, itemId, itemType);
+    if (!item) throw new Error('The generated item was not found in the plan.');
+    input.value = JSON.stringify(item, null, 2);
+  } catch (error) {
+    input.placeholder = error.message || 'Could not load the current content.';
+  } finally {
+    input.disabled = false;
+    confirmButton.disabled = false;
+  }
+}
+
+function renderPlanItem(item, itemId) {
+  const container = document.getElementById('review-item-content');
+  container.replaceChildren();
+  if (!item) {
+    const note = document.createElement('p');
+    note.className = 'text-muted mb-0';
+    note.textContent = `The generated content for ${itemId} could not be found in this plan.`;
+    container.appendChild(note);
+    return;
+  }
+  appendField(container, 'Title', item.title);
+  appendField(container, 'Purpose', item.purpose);
+  appendField(container, 'Activity', item.activity);
+  appendField(container, 'Task description', item.description);
+  appendField(container, 'Question', item.question_text);
+  appendField(container, 'Objectives', item.objectives);
+  appendField(container, 'Options', item.options);
+  appendField(container, 'Correct answer', item.correct_answer);
+  appendField(container, 'Expected outcome', item.expected_outcome);
+  appendField(container, 'Completion criteria', item.completion_criteria);
+  appendField(container, 'Source document', item.source_document_id);
+  appendField(container, 'Source section', item.source_section_id);
+}
+
+function renderEvidence(original) {
+  const container = document.getElementById('review-validation-evidence');
+  container.replaceChildren();
+  appendField(container, 'Validation status', original?.verification_status);
+  appendField(container, 'Why this needs review', original?.details);
+  appendField(container, 'Source references', original?.source_references);
+}
+
+function renderHistory(decisions) {
+  const container = document.getElementById('review-decision-history');
+  container.replaceChildren();
+  if (!decisions.length) {
+    const note = document.createElement('p');
+    note.className = 'text-muted-sm mb-0';
+    note.textContent = 'No previous reviewer decisions.';
+    container.appendChild(note);
+    return;
+  }
+  decisions.forEach(decision => {
+    const entry = document.createElement('div');
+    entry.className = 'pb-2 mb-2 border-bottom';
+    const action = document.createElement('strong');
+    action.textContent = decision.action.replace('_', ' ');
+    const time = document.createElement('div');
+    time.className = 'text-muted-sm';
+    time.textContent = decision.timestamp || '—';
+    entry.append(action, time);
+    if (decision.comment) {
+      const comment = document.createElement('div');
+      comment.className = 'mt-1';
+      comment.textContent = decision.comment;
+      entry.appendChild(comment);
+    }
+    container.appendChild(entry);
+  });
+}
+
+document.querySelectorAll('.details-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const itemId = btn.dataset.item;
+    const itemType = btn.dataset.type;
+    const planId = Number(btn.dataset.plan);
+    let original = {};
+    try { original = JSON.parse(btn.dataset.original); } catch { /* keep empty evidence */ }
+
+    document.getElementById('reviewDetailModalLabel').textContent = `Review: ${itemId}`;
+    document.getElementById('review-detail-loading').classList.remove('d-none');
+    document.getElementById('review-detail-content').classList.add('d-none');
+    const planLink = document.getElementById('open-plan-link');
+    planLink.href = planId > 0 ? `/plans/${planId}` : '#';
+    planLink.classList.toggle('d-none', planId <= 0);
+    detailModal.show();
+
+    try {
+      const [planResponse, historyResponse] = await Promise.all([
+        planId > 0 ? fetch(`/api/plans/${planId}`) : Promise.resolve(null),
+        fetch(`/api/reviews/${encodeURIComponent(itemId)}/decisions`),
+      ]);
+      const planPayload = planResponse?.ok ? await planResponse.json() : {};
+      const decisions = historyResponse.ok ? await historyResponse.json() : [];
+      renderPlanItem(findPlanItem(planPayload.structured_json, itemId, itemType), itemId);
+      renderEvidence(original);
+      renderHistory(Array.isArray(decisions) ? decisions : []);
+    } catch {
+      renderPlanItem(null, itemId);
+      renderEvidence(original);
+      renderHistory([]);
+    } finally {
+      document.getElementById('review-detail-loading').classList.add('d-none');
+      document.getElementById('review-detail-content').classList.remove('d-none');
+    }
   });
 });
 

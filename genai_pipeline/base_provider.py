@@ -15,6 +15,8 @@ class GenerationConfig(BaseModel):
     max_output_tokens: int = 16384
     model: str | None = None
     thinking_budget: int | None = None
+    timeout_seconds: float | None = None
+    deadline_monotonic: float | None = None
 
 
 
@@ -31,6 +33,8 @@ class GenAIResponse(BaseModel):
 
 class BaseGenAIProvider(ABC):
     """Abstract base for all GenAI API providers."""
+
+    network_backed: bool = False
 
     @abstractmethod
     def generate(

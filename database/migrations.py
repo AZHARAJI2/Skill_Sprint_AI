@@ -17,7 +17,7 @@ from src.plans.models import (  # noqa: F401
     TaskRecord,
 )
 from src.reviews.models import AuditEntry, ReviewDecision, ValidationReportRecord
-from role_matrix.models import RequirementMatrixEntry  # noqa: F401
+from role_matrix.models import RequirementMatrixEntry, RoleRequirementDraft  # noqa: F401
 
 
 def create_schema(bind=None) -> None:

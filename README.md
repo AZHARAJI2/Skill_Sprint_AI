@@ -12,7 +12,7 @@ loader, employee/role CRUD, auth/RBAC skeleton, and responsive HTML shells.
 ## Phase 2 status
 
 Pipeline 1 is implemented: requirement extraction, versioned prompt templates,
-`GeminiProvider` (fails closed without an API key), Pydantic JSON schemas,
+`GeminiProvider` (fails closed without an API key), optional `GroqProvider` failover,
 capped retry, source-grounded plan/module/checklist/task/quiz/assessment
 generation, injection fencing, and `/api/plans*` routes. Evidence: `reports/d4_genai_pipeline_evidence.md`.
 
@@ -31,6 +31,19 @@ pip install -r requirements.txt
 ```
 
 Set `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) in the environment before live generation.
+For fast full-plan generation, also set `GROQ_API_KEY`.
+When it is configured, the request uses Groq first and stays on Gemini only if Groq is temporarily unavailable. Without a Groq key, the application keeps Gemini as the primary provider.
+It generates the complete structured plan in one request with a 25-second total budget.
+
+Example for the PowerShell session that starts the app:
+
+```powershell
+$env:GROQ_API_KEY = "your-groq-key"
+$env:SKILLSPRINT_PLAN_TIMEOUT_SECONDS = "25"
+uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Use a Groq **API key** from the Groq Console. A copied browser/session token or a placeholder value will be rejected with HTTP 401.
 Without a key the API returns 503 rather than inventing a plan.
 
 ## Seed demo data

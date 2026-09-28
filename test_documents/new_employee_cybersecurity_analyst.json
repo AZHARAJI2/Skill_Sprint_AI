@@ -1,0 +1,17 @@
+{
+  "employee_code": "EMP-SEC-012",
+  "name": "Lina Hassan",
+  "role_title": "Cybersecurity Analyst",
+  "department": "Security",
+  "experience_level": "Beginner",
+  "location": "Riyadh Office",
+  "joining_date": "2026-09-28",
+  "reporting_manager": "CISO",
+  "required_competencies": [
+    "Threat Monitoring",
+    "Incident Response",
+    "Vulnerability Scanning"
+  ],
+  "prior_experience": "Completed an entry-level cybersecurity training program.",
+  "training_status": "not_started"
+}

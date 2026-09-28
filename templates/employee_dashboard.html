@@ -119,6 +119,12 @@
       </div>
       <div class="card-body p-0">
         {% if plan and plan_detail %}
+        {% if plan_detail.generation_status == 'failed_after_retries' %}
+        <div class="alert alert-warning m-3 mb-0">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+          The source-based fallback plan is shown because AI generation did not complete after its allowed retries. It still needs Training Manager or Reviewer approval before use.
+        </div>
+        {% endif %}
         <ul class="nav nav-tabs px-3 pt-2" id="planTab" role="tablist">
           <li class="nav-item">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabModules">
@@ -150,6 +156,12 @@
               <div class="flex-grow-1">
                 <div class="plan-item-title">{{ m.title }}</div>
                 <div class="plan-item-sub">{{ m.purpose }}</div>
+                <details class="mt-2" style="font-size:0.78rem;color:var(--text-secondary)">
+                  <summary style="cursor:pointer;color:var(--teal)">View module details</summary>
+                  {% if m.objectives %}<div class="mt-2"><strong>Objectives</strong><ul class="mb-2 ps-3">{% for objective in m.objectives %}<li>{{ objective }}</li>{% endfor %}</ul></div>{% endif %}
+                  {% if m.activities %}<div><strong>Activities</strong><ul class="mb-2 ps-3">{% for activity in m.activities %}<li>{{ activity }}</li>{% endfor %}</ul></div>{% endif %}
+                  {% if m.completion_criteria %}<div><strong>Completion:</strong> {{ m.completion_criteria }}</div>{% endif %}
+                </details>
                 <div class="d-flex align-items-center gap-2 mt-1">
                   <code style="font-size:0.72rem;color:var(--teal)">{{ m.source_document_id }} §{{ m.source_section_id }}</code>
                   {% if m.duration_minutes %}

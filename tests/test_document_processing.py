@@ -12,6 +12,7 @@ from document_processing.validator import DocumentFileValidator
 from src.documents.metrics import CorpusMetricsService
 from src.documents.repository import DocumentRevisionRepository
 from src.documents.service import DocumentService
+from src.employees.service import RoleService
 from src.errors import AppError
 
 
@@ -51,6 +52,16 @@ def test_ingest_rejects_duplicate_hash(session) -> None:
     with pytest.raises(AppError) as exc:
         service.ingest_file(path)
     assert exc.value.status_code in {400, 409}
+
+
+def test_role_description_creates_the_job_role_but_not_matrix_requirements(session) -> None:
+    """A new ROLE source creates its deterministic role record for later review setup."""
+    path = settings.sample_documents_dir / "role_descriptions" / "ROLE-07_Recruiter-Role-Description.docx"
+
+    DocumentService(session).ingest_file(path, actor="admin")
+
+    role = next(item for item in RoleService(session).list_roles() if item.title == "Recruiter")
+    assert role.department == "People & Culture"
 
 
 def test_ingest_full_sample_corpus(session) -> None:

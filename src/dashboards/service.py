@@ -527,31 +527,46 @@ class DashboardService:
         )
 
     @staticmethod
-    def _assess_status(overall_pct: int, avg_quiz: int, checklists_done: int, checklists_total: int) -> str:
-        """Compute progress assessment status from real metrics.
+    def _assess_status(
+        overall_pct: int,
+        avg_quiz: int,
+        checklists_done: int,
+        checklists_total: int,
+        has_overdue: bool = False,
+    ) -> str:
+        """Compute progress assessment status from real metrics (SRS Step 54).
 
-        Statuses (in priority order):
-          Completed → overall 100%
-          Assessment Required → all content done but quiz avg < 60%
-          Behind Schedule → overall < 30%
-          Requires Attention → quiz avg < 60% or many checklists incomplete
-          On Track → otherwise
+        Priority order (first match wins):
+          Completed          → overall == 100%
+          Behind Schedule    → has_overdue items OR overall < behind threshold
+          Assessment Required → overall >= assess_required_pct AND avg_quiz < attention min
+          Requires Attention → avg_quiz < attention min OR checklist ratio < 50%
+          On Track           → otherwise
+
+        All thresholds read from config/settings.py (no hardcoded numbers).
 
         Args:
             overall_pct: Weighted completion percentage 0-100.
             avg_quiz: Average quiz score 0-100.
             checklists_done: Number of completed checklist items.
             checklists_total: Total checklist items.
+            has_overdue: True if any item's stage due date has passed (measured from joining_date).
 
         Returns:
-            Status string matching the spec.
+            Status string matching the SRS Step 54 spec.
         """
+        from config.settings import settings  # local import to allow re-import in tests
+        behind_thr = settings.progress_behind_threshold
+        quiz_min = settings.progress_attention_quiz_min
+        assess_pct = settings.progress_assessment_required_pct
+
         if overall_pct >= 100:
             return "Completed"
-        if overall_pct >= 80 and avg_quiz < 60:
-            return "Assessment Required"
-        if overall_pct < 30:
+        if has_overdue or overall_pct < behind_thr:
             return "Behind Schedule"
-        if avg_quiz < 60 or (checklists_total > 0 and checklists_done < checklists_total * 0.5):
+        if overall_pct >= assess_pct and avg_quiz < quiz_min:
+            return "Assessment Required"
+        if avg_quiz < quiz_min or (checklists_total > 0 and checklists_done < checklists_total * 0.5):
             return "Requires Attention"
         return "On Track"
+

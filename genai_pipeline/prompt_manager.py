@@ -52,7 +52,9 @@ class PromptManager:
         missing = [key for key in template.variables if key not in values]
         if missing:
             raise AppError(f"Missing prompt variables: {missing}", status_code=500)
+        system = template.system
         user = template.user
         for key, value in values.items():
+            system = system.replace("{{" + key + "}}", value)
             user = user.replace("{{" + key + "}}", value)
-        return f"{template.system}\n\n{user}"
+        return f"{system}\n\n{user}"

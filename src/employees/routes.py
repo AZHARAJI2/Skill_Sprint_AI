@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -12,6 +12,7 @@ from database.base import get_session
 from src.auth.dependencies import get_current_user, require_role
 from src.auth.models import User
 from src.employees.service import EmployeeService, RoleService
+from src.employees.import_service import EmployeeImportService
 
 router = APIRouter(prefix="/api", tags=["employees"])
 
@@ -106,6 +107,25 @@ def create_employee(
     """Create an employee profile."""
     employee = EmployeeService(session).create(actor=user.username, **body.model_dump())
     return _employee_payload(employee)
+
+
+@router.post("/employees/import")
+async def import_employees(
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+    user: User = Depends(require_role("Admin", "Training Manager")),
+) -> dict:
+    """Create one or more employee profiles from a CSV, XLSX, or JSON file."""
+    employees = EmployeeImportService(session).import_file(
+        file.filename or "employee-import",
+        await file.read(),
+        actor=user.username,
+    )
+    return {
+        "created": len(employees),
+        "employees": [_employee_payload(employee) for employee in employees],
+        "message": f"Created {len(employees)} employee profile(s).",
+    }
 
 
 @router.get("/employees")
