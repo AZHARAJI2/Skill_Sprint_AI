@@ -146,13 +146,11 @@
               <i class="bi bi-patch-question me-1"></i>Quizzes ({{ quiz_items|length }})
             </button>
           </li>
-          {% if user.app_role != 'Employee' %}
           <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabAssessments">
               <i class="bi bi-clipboard2-check me-1"></i>Assessments ({{ plan_detail.assessments|length }})
             </button>
           </li>
-          {% endif %}
         </ul>
         <div class="tab-content px-3 pb-3 pt-2">
           <!-- Modules -->
@@ -367,7 +365,6 @@
             {% endfor %}
           </div>
 
-          {% if user.app_role != 'Employee' %}
           <div class="tab-pane fade" id="tabAssessments">
             {% for a in plan_detail.assessments %}
             {% set state = item_statuses.get('assessment:' ~ a.assessment_id, 'not_started') %}
@@ -382,7 +379,6 @@
             </div>
             {% else %}<div class="empty-state"><div class="empty-icon"><i class="bi bi-clipboard2-check"></i></div><p>No assessments in this plan.</p></div>{% endfor %}
           </div>
-          {% endif %}
         </div>
         {% else %}
         <div class="empty-state">
@@ -472,7 +468,7 @@
     const total = QUIZ_DATA.length;
     const answeredCount = Object.keys(userAnswers).length;
     const correctCount = Object.values(userAnswers).filter(a => a.correct).length;
-    const pct = answeredCount > 0 ? Math.round(correctCount / total * 100) : 0;
+    const pct = total > 0 ? Math.round(correctCount / total * 100) : 0;
     const correctEl = document.getElementById('quiz-correct-count');
     const scorePctEl = document.getElementById('quiz-score-pct');
     const badgeEl = document.getElementById('quiz-status-badge');
@@ -526,8 +522,7 @@
       const isSelected = selectedValues.some(v => normalize(v) === normalize(val));
       const isCorrectOpt = correctValues.some(v => normalize(v) === normalize(val));
       const icon = btn.querySelector('.quiz-opt-icon');
-      btn.classList.add('locked');
-      btn.classList.remove('selected');
+      btn.classList.remove('selected', 'correct', 'incorrect');
       if (isSelected && isCorrect) {
         btn.classList.add('correct');
         if (icon) { icon.className = 'bi bi-check-circle-fill text-success quiz-opt-icon'; icon.classList.remove('d-none'); }
@@ -537,12 +532,15 @@
       } else if (!isSelected && isCorrectOpt && !isCorrect) {
         btn.classList.add('correct');
         if (icon) { icon.className = 'bi bi-check-circle-fill text-success quiz-opt-icon'; icon.classList.remove('d-none'); }
+      } else {
+        if (icon) icon.classList.add('d-none');
       }
     });
     const explBox = document.getElementById(`expl-q-${qidx}`);
     if (explBox) {
-      explBox.className = isCorrect ? 'quiz-explanation-box correct animate-fade' : 'quiz-explanation-box incorrect animate-fade';
-      explBox.innerHTML = `<strong>${isCorrect ? '✓ Correct! (إجابة صحيحة)' : '✗ Incorrect (إجابة غير صحيحة)'}</strong>${explanation ? '<br><span style="font-size:0.82rem">' + explanation + '</span>' : ''}`;
+      explBox.classList.remove('d-none');
+      explBox.className = 'quiz-explanation-box ' + (isCorrect ? 'correct' : 'incorrect') + ' animate-fade';
+      explBox.innerHTML = `<strong>${isCorrect ? '✓ Correct! (إجابة صحيحة)' : '✗ Incorrect (إجابة غير صحيحة)'}</strong>${explanation ? '<br><span style="font-size:0.84rem;margin-top:0.25rem;display:inline-block;">' + explanation + '</span>' : ''}`;
     }
   }
 
@@ -550,22 +548,37 @@
     const qidx = parseInt(btn.dataset.qidx);
     const qData = QUIZ_DATA[qidx];
     if (!qData) return;
-    if (userAnswers[qidx] && userAnswers[qidx].locked && qData.question_type !== 'MR') return;
     const selectedVal = btn.dataset.optval;
     const isMultiple = qData.question_type === 'MR';
     if (!isMultiple) {
       const container = document.getElementById(`opts-q-${qidx}`);
-      if (container) { container.querySelectorAll('.quiz-option-btn').forEach(b => b.classList.remove('selected')); }
+      if (container) {
+        container.querySelectorAll('.quiz-option-btn').forEach(b => b.classList.remove('selected'));
+      }
       btn.classList.add('selected');
       try {
         const res = await fetch(`/api/plans/${PLAN_ID}/quiz/check`, {
-          method: 'POST', headers: {'Content-Type': 'application/json'},
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ question_id: qData.question_id, selected: selectedVal })
         });
-        if (!res.ok) { console.warn('Quiz check failed'); return; }
-        applyResult(qidx, await res.json(), selectedVal);
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          console.warn('Quiz check failed', errData);
+          const explBox = document.getElementById(`expl-q-${qidx}`);
+          if (explBox) {
+            explBox.classList.remove('d-none');
+            explBox.className = 'quiz-explanation-box incorrect animate-fade';
+            explBox.textContent = errData.detail || errData.error || 'Could not verify answer with server.';
+          }
+          return;
+        }
+        const data = await res.json();
+        applyResult(qidx, data, selectedVal);
         updateScoreDisplay();
-      } catch(err) { console.error(err); }
+      } catch(err) {
+        console.error(err);
+      }
     } else {
       btn.classList.toggle('selected');
       const container = document.getElementById(`opts-q-${qidx}`);
@@ -580,52 +593,72 @@
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       Object.entries(JSON.parse(saved)).forEach(([idx, data]) => {
-        if (data.locked) { userAnswers[parseInt(idx)] = data; applyResult(parseInt(idx), data, data.selected); }
+        if (data && data.locked) {
+          userAnswers[parseInt(idx)] = data;
+          applyResult(parseInt(idx), data, data.selected);
+        }
       });
     }
   } catch(e) {}
   updateScoreDisplay();
 
-  document.querySelectorAll('.quiz-option-btn').forEach(btn => btn.addEventListener('click', () => handleOptionClick(btn)));
+  document.querySelectorAll('.quiz-option-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      handleOptionClick(this);
+    });
+  });
 
   // MR check buttons
   document.querySelectorAll('.quiz-mr-check-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const qidx = parseInt(btn.dataset.qidx);
+    btn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      const qidx = parseInt(this.dataset.qidx);
       const qData = QUIZ_DATA[qidx];
       if (!qData) return;
       const selected = (userAnswers[qidx] || {}).selected || [];
       if (!selected.length) { alert('Select at least one option.'); return; }
-      btn.disabled = true;
+      this.disabled = true;
       try {
         const res = await fetch(`/api/plans/${PLAN_ID}/quiz/check`, {
           method: 'POST', headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ question_id: qData.question_id, selected })
         });
-        if (!res.ok) { btn.disabled = false; return; }
+        if (!res.ok) { this.disabled = false; return; }
         applyResult(qidx, await res.json(), selected);
-        btn.classList.add('d-none');
+        this.classList.add('d-none');
         updateScoreDisplay();
-      } catch(err) { btn.disabled = false; }
+      } catch(err) { this.disabled = false; }
     });
   });
+
+  function resetQuiz() {
+    userAnswers = {};
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+    document.querySelectorAll('.quiz-option-btn').forEach(b => {
+      b.classList.remove('correct','incorrect','selected','locked');
+      const icon = b.querySelector('.quiz-opt-icon');
+      if (icon) icon.classList.add('d-none');
+    });
+    document.querySelectorAll('.quiz-explanation-box').forEach(box => {
+      box.className = 'quiz-explanation-box d-none';
+      box.innerHTML = '';
+    });
+    document.querySelectorAll('.quiz-mr-check-btn').forEach(b => {
+      b.disabled = false;
+      b.classList.remove('d-none');
+    });
+    const banner = document.getElementById('quiz-completion-banner');
+    if (banner) banner.classList.add('d-none');
+    updateScoreDisplay();
+  }
 
   const resetBtn = document.getElementById('quiz-reset-btn');
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
-      if (!confirm('Reset all quiz answers and retake?')) return;
-      userAnswers = {};
-      try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-      document.querySelectorAll('.quiz-option-btn').forEach(b => {
-        b.classList.remove('correct','incorrect','selected','locked');
-        const icon = b.querySelector('.quiz-opt-icon');
-        if (icon) icon.classList.add('d-none');
-      });
-      document.querySelectorAll('.quiz-explanation-box').forEach(box => { box.className = 'quiz-explanation-box d-none'; box.innerHTML = ''; });
-      document.querySelectorAll('.quiz-mr-check-btn').forEach(b => { b.disabled = false; b.classList.remove('d-none'); });
-      const banner = document.getElementById('quiz-completion-banner');
-      if (banner) banner.classList.add('d-none');
-      updateScoreDisplay();
+      if (confirm('Reset all quiz answers and retake? (إعادة الاختبار من البداية)')) {
+        resetQuiz();
+      }
     });
   }
 
