@@ -47,8 +47,8 @@ class Settings:
         # spelling is accepted as a clearer backend-host secret name.
         self.command_code_api_key: str | None = os.getenv("CMD_API_KEY") or os.getenv("COMMAND_CODE_API_KEY")
         self.command_code_model: str = os.getenv(
-            "COMMAND_CODE_MODEL", "deepseek/deepseek-v4-flash-fast"
-        ).strip() or "deepseek/deepseek-v4-flash-fast"
+            "COMMAND_CODE_MODEL", "deepseek/deepseek-chat"
+        ).strip() or "deepseek/deepseek-chat"
         self.command_code_base_url: str = os.getenv(
             "COMMAND_CODE_BASE_URL", "https://api.commandcode.ai/provider/v1"
         ).strip()

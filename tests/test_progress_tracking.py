@@ -357,6 +357,21 @@ def test_4_quiz_secrecy_and_automatic_grading(session: Session, sample_employee_
     assert audit_entry.actor == employee.name
 
 
+def test_4b_quiz_grading_rejects_incomplete_or_unknown_answer_sets(session: Session, sample_employee_and_plan):
+    """A score may be persisted only for a complete plan-level submission."""
+    employee, plan = sample_employee_and_plan
+    service = ProgressTrackingService(session)
+    question = session.query(QuizQuestionRecord).filter(QuizQuestionRecord.plan_id == plan.id).one()
+    initial_score = (question.payload or {}).get("score")
+
+    with pytest.raises(ValueError, match="every quiz question"):
+        service.grade_quiz(plan.id, {"UNKNOWN-QUESTION": "Anything"}, actor=employee.name)
+
+    session.refresh(question)
+    assert (question.payload or {}).get("completion_status") == "not_started"
+    assert (question.payload or {}).get("score") == initial_score
+
+
 def test_5_completion_recording_and_practical_confirmation(session: Session, sample_employee_and_plan):
     """Requirement 5: Practical tasks/assessments require confirmation by manager/reviewer against rubric/criteria; logged to audit."""
     employee, plan = sample_employee_and_plan

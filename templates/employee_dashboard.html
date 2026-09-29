@@ -61,7 +61,7 @@
         <span><i class="bi bi-collection me-1" style="color:var(--teal)"></i>{{ progress.modules_done }}/{{ progress.modules_total }} modules</span>
         <span><i class="bi bi-check2-square me-1" style="color:var(--teal)"></i>{{ progress.tasks_done }}/{{ progress.tasks_total }} tasks</span>
         <span><i class="bi bi-list-check me-1" style="color:var(--teal)"></i>{{ progress.checklists_done }}/{{ progress.checklists_total }} checklist</span>
-        <span><i class="bi bi-patch-question me-1" style="color:var(--teal)"></i>Avg quiz {{ progress.avg_quiz_score }}%</span>
+        <span><i class="bi bi-patch-question me-1" style="color:var(--teal)"></i>Avg quiz <span id="avg-quiz-banner">{{ progress.avg_quiz_score }}</span>%</span>
       </div>
     </div>
     <div class="text-end d-none d-md-block" style="min-width:120px;">
@@ -90,7 +90,7 @@
   <div class="col-md-3 col-6">
     <div class="stat-card {{ 'success' if progress.avg_quiz_score >= 70 else ('warning' if progress.avg_quiz_score >= 50 else 'danger') }} animate-fade">
       <div class="stat-icon"><i class="bi bi-patch-question"></i></div>
-      <div class="stat-value">{{ progress.avg_quiz_score }}<span style="font-size:1.2rem;color:var(--text-muted)">%</span></div>
+      <div class="stat-value"><span id="avg-quiz-stat">{{ progress.avg_quiz_score }}</span><span style="font-size:1.2rem;color:var(--text-muted)">%</span></div>
       <div class="stat-label">Avg Quiz Score</div>
     </div>
   </div>
@@ -276,7 +276,7 @@
                   <i class="bi bi-patch-question-fill me-1" style="color:var(--teal)"></i>Interactive Knowledge Check
                 </div>
                 <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:0.15rem;">
-                  Test your understanding · <strong style="color:var(--navy)">Passing Score: ≥ {{ passing_score or 70 }}%</strong>
+                  Select answers for every question, then submit once · <strong style="color:var(--navy)">Passing Score: ≥ {{ passing_score or 70 }}%</strong>
                 </div>
               </div>
 
@@ -350,11 +350,7 @@
               </div>
 
               {% if q.question_type == 'MR' %}
-              <div class="d-flex justify-content-end mt-2">
-                <button type="button" class="quiz-mr-check-btn btn btn-outline btn-sm" data-qidx="{{ q_idx }}">
-                  <i class="bi bi-check2 me-1"></i>Check My Answers
-                </button>
-              </div>
+              <div class="small text-muted mt-2">Select every answer that applies, then submit the complete quiz.</div>
               {% endif %}
 
               <div class="quiz-explanation-box d-none" id="expl-q-{{ q_idx }}"></div>
@@ -471,8 +467,6 @@
     {% endfor %}
   ];
   const PASSING_SCORE = {{ passing_score or 70 }};
-  const STORAGE_KEY = 'skillsprint_quiz_plan_{{ plan.id }}';
-  const IS_EMPLOYEE = {{ 'true' if user.app_role == 'Employee' else 'false' }};
   const PLAN_ID = {{ plan.id }};
   let userAnswers = {};
 
@@ -481,7 +475,8 @@
   function updateScoreDisplay() {
     const total = QUIZ_DATA.length;
     const answeredCount = Object.keys(userAnswers).length;
-    const correctCount = Object.values(userAnswers).filter(a => a.correct).length;
+    const gradedAnswers = Object.values(userAnswers).filter(a => typeof a.correct === 'boolean');
+    const correctCount = gradedAnswers.filter(a => a.correct).length;
     const pct = total > 0 ? Math.round(correctCount / total * 100) : 0;
     const correctEl = document.getElementById('quiz-correct-count');
     const scorePctEl = document.getElementById('quiz-score-pct');
@@ -497,6 +492,9 @@
       if (bannerEl) bannerEl.classList.add('d-none');
     } else if (answeredCount < total) {
       if (badgeEl) { badgeEl.className = 'badge badge-teal px-3 py-2'; badgeEl.textContent = `In Progress (${answeredCount}/${total})`; }
+      if (bannerEl) bannerEl.classList.add('d-none');
+    } else if (gradedAnswers.length < total) {
+      if (badgeEl) { badgeEl.className = 'badge badge-teal px-3 py-2'; badgeEl.textContent = 'Ready to Submit'; }
       if (bannerEl) bannerEl.classList.add('d-none');
     } else {
       const passed = pct >= PASSING_SCORE;
@@ -526,7 +524,6 @@
     const correctAnswer = result.correct_answer;
     const explanation = result.explanation || '';
     userAnswers[qidx] = { selected: selectedVal, correct: isCorrect, explanation, correct_answer: correctAnswer, locked: true };
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(userAnswers)); } catch(e) {}
     const container = document.getElementById(`opts-q-${qidx}`);
     if (!container) return;
     const selectedValues = Array.isArray(selectedVal) ? selectedVal : [selectedVal];
@@ -570,50 +567,18 @@
         container.querySelectorAll('.quiz-option-btn').forEach(b => b.classList.remove('selected'));
       }
       btn.classList.add('selected');
-      try {
-        const res = await fetch(`/api/plans/${PLAN_ID}/quiz/check`, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ question_id: qData.question_id, selected: selectedVal })
-        });
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          console.warn('Quiz check failed', errData);
-          const explBox = document.getElementById(`expl-q-${qidx}`);
-          if (explBox) {
-            explBox.classList.remove('d-none');
-            explBox.className = 'quiz-explanation-box incorrect animate-fade';
-            explBox.textContent = errData.detail || errData.error || 'Could not verify answer with server.';
-          }
-          return;
-        }
-        const data = await res.json();
-        applyResult(qidx, data, selectedVal);
-        updateScoreDisplay();
-      } catch(err) {
-        console.error(err);
-      }
+      userAnswers[qidx] = { selected: selectedVal, locked: false };
+      updateScoreDisplay();
     } else {
       btn.classList.toggle('selected');
       const container = document.getElementById(`opts-q-${qidx}`);
       const selected = [];
       if (container) container.querySelectorAll('.quiz-option-btn.selected').forEach(b => selected.push(b.dataset.optval));
       userAnswers[qidx] = { selected, locked: false };
+      updateScoreDisplay();
     }
   }
 
-  // Restore graded answers from localStorage
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      Object.entries(JSON.parse(saved)).forEach(([idx, data]) => {
-        if (data && data.locked) {
-          userAnswers[parseInt(idx)] = data;
-          applyResult(parseInt(idx), data, data.selected);
-        }
-      });
-    }
-  } catch(e) {}
   updateScoreDisplay();
 
   document.querySelectorAll('.quiz-option-btn').forEach(btn => {
@@ -623,32 +588,8 @@
     });
   });
 
-  // MR check buttons
-  document.querySelectorAll('.quiz-mr-check-btn').forEach(btn => {
-    btn.addEventListener('click', async function(e) {
-      e.preventDefault();
-      const qidx = parseInt(this.dataset.qidx);
-      const qData = QUIZ_DATA[qidx];
-      if (!qData) return;
-      const selected = (userAnswers[qidx] || {}).selected || [];
-      if (!selected.length) { alert('Select at least one option.'); return; }
-      this.disabled = true;
-      try {
-        const res = await fetch(`/api/plans/${PLAN_ID}/quiz/check`, {
-          method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ question_id: qData.question_id, selected })
-        });
-        if (!res.ok) { this.disabled = false; return; }
-        applyResult(qidx, await res.json(), selected);
-        this.classList.add('d-none');
-        updateScoreDisplay();
-      } catch(err) { this.disabled = false; }
-    });
-  });
-
   function resetQuiz() {
     userAnswers = {};
-    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
     document.querySelectorAll('.quiz-option-btn').forEach(b => {
       b.classList.remove('correct','incorrect','selected','locked');
       const icon = b.querySelector('.quiz-opt-icon');
@@ -657,10 +598,6 @@
     document.querySelectorAll('.quiz-explanation-box').forEach(box => {
       box.className = 'quiz-explanation-box d-none';
       box.innerHTML = '';
-    });
-    document.querySelectorAll('.quiz-mr-check-btn').forEach(b => {
-      b.disabled = false;
-      b.classList.remove('d-none');
     });
     const banner = document.getElementById('quiz-completion-banner');
     if (banner) banner.classList.add('d-none');
@@ -676,7 +613,16 @@
     });
   }
 
-  // Trainer bulk submit (non-employee path)
+  async function refreshPersistedQuizAverage() {
+    const response = await fetch(`/api/plans/${PLAN_ID}/progress`);
+    if (!response.ok) return;
+    const progress = await response.json();
+    document.querySelectorAll('#avg-quiz-banner, #avg-quiz-stat').forEach(el => {
+      el.textContent = progress.avg_quiz_score;
+    });
+  }
+
+  // The complete answer set is graded and persisted in one auditable submission.
   const submitQuizBtn = document.getElementById('quiz-submit-btn');
   if (submitQuizBtn) {
     submitQuizBtn.addEventListener('click', async () => {
@@ -695,8 +641,11 @@
           if (idx >= 0) applyResult(idx, detail, detail.selected);
         });
         updateScoreDisplay();
+        await refreshPersistedQuizAverage();
         submitQuizBtn.classList.add('d-none');
-      } catch(err) { alert(err.message); submitQuizBtn.disabled = false; submitQuizBtn.textContent = 'Submit quiz (Trainer view)'; }
+        document.getElementById('quiz-reset-btn')?.classList.add('d-none');
+        document.querySelectorAll('.quiz-option-btn').forEach(option => { option.disabled = true; });
+      } catch(err) { alert(err.message); submitQuizBtn.disabled = false; submitQuizBtn.textContent = 'Submit Quiz'; }
     });
   }
 })();

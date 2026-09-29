@@ -21,12 +21,6 @@ python-docx==1.2.0
 # === GenAI (Gemini API — new unified SDK, replaces deprecated google-generativeai) ===
 google-genai==2.23.0
 
-# === Semantic Analysis ===
-sentence-transformers==6.1.0
-
-# === Visualization ===
-plotly==7.0.0
-
 # === Export ===
 openpyxl==3.1.5
 reportlab==4.2.5
@@ -34,13 +28,4 @@ reportlab==4.2.5
 # === Security ===
 python-multipart==0.0.20
 python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-
-# === Testing ===
-pytest==8.3.4
-pytest-asyncio==0.24.0
 httpx==0.28.1
-
-# === Utilities ===
-pyyaml==6.0.2
-aiofiles==24.1.0

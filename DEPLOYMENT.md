@@ -1,94 +1,122 @@
-# Production deployment: Netlify + FastAPI
+# Deploy SkillSprint AI on Render Free
 
-`PROJECT_MAP.md` requires a host that supports FastAPI and a production-ready
-PostgreSQL database. Netlify is therefore the public entry point, while the
-stateful Python application runs on Render, Railway, PythonAnywhere, or another
-FastAPI host. Do not deploy the application with SQLite to a serverless host:
-employee records, audit history, uploaded documents, and generated plans must
-survive a restart.
+This project is configured for a **Render Free Web Service** with a separate
+**Render Free PostgreSQL** database. The application is stateless: employees,
+plans, validation reports, reviews, audit records, parsed document sections,
+and the role matrix are stored in PostgreSQL rather than in SQLite or the web
+service filesystem.
 
-The included `netlify.toml` creates a same-origin Netlify proxy to the backend.
-Users visit the Netlify URL while the FastAPI app continues to render the UI and
-serve the API. Netlify's 200 rewrites preserve the browser URL while proxying to
-the backend: https://docs.netlify.com/manage/routing/redirects/rewrites-proxies/
+Read Render's current [Free-instance limits](https://render.com/docs/free)
+before deploying. A free deployment is appropriate for an evaluator demo, not
+for production employee data.
 
-## 1. Deploy the FastAPI backend
+## What a fresh deployment creates
 
-Create a web service from this repository on a Python host and use:
+`bash build.sh` runs `python -m database.seed_render`. On an empty database it
+creates the schema and the reproducible evaluation dataset:
 
-```text
-Build command: pip install -r requirements.txt
-Start command: uvicorn src.main:app --host 0.0.0.0 --port $PORT
-Health check: /health
+- 11 approved demonstration job roles and 1,013 employee profiles
+- an Employee login for every seeded profile, plus Admin, Training Manager,
+  Reviewer, and Manager accounts
+- the committed 178-row role matrix and all committed sample documents
+- parsed chunks, injection-scan findings, audit entries, and 10
+  source-grounded **manual-review demo drafts** (one for every demo role)
+
+The plans are generated from the committed corpus and matrix during seeding.
+They are deliberately labelled as review-only demo drafts, not as live GenAI
+plans or approved training evidence. `database.seed_render` does not overwrite
+an existing database, so later deploys preserve imported employees, live plans,
+and progress.
+
+To create this same demo data locally, run:
+
+```powershell
+.\.venv\Scripts\python.exe -m database.seed
 ```
 
-Create a managed PostgreSQL database on the same provider or another trusted
-provider. The application normalizes provider URLs automatically; set these
-secrets in the backend host's dashboard, never in Git or Netlify:
+The local `data/skillsprint.db` is intentionally ignored by Git. It and any
+locally imported private employees are not copied to GitHub or a new Render
+database. Import those employees into the deployed application only when you
+are authorized to place their data there.
+
+## Deploy with the Blueprint
+
+1. Push the repository, including `render.yaml`, to GitHub.
+2. In Render, choose **New → Blueprint** and select that repository.
+3. Render creates `skillsprint-db` and `skillsprint-ai`; use the same region
+   for both.
+4. Add `CMD_API_KEY` in the Web Service environment page. Never commit it.
+5. Open `https://YOUR-SERVICE.onrender.com/health`, then open `/login`.
+
+`render.yaml` passes Render's database connection string to
+`SKILLSPRINT_DATABASE_URL`, generates `SKILLSPRINT_SECRET_KEY`, uses HTTPS-only
+cookies, and runs `bash build.sh` so the setup does not depend on an executable
+bit in Git. The production build installs the lean `requirements.txt`; test-only
+packages remain in `requirements-dev.txt` and are not installed on Render.
+
+## Manual setup instead of a Blueprint
+
+Create one **PostgreSQL** database and one **Web Service** in the same region.
+Use these Web Service values:
+
+| Setting | Value |
+|---|---|
+| Runtime | Python |
+| Build command | `bash build.sh` |
+| Start command | `uvicorn src.main:app --host 0.0.0.0 --port $PORT` |
+| Plan | Free |
+| Health check | `/health` |
+
+Set the following environment values:
 
 ```text
-SKILLSPRINT_DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/skillsprint
+SKILLSPRINT_DATABASE_URL=<Render PostgreSQL connection string>
 SKILLSPRINT_SECRET_KEY=<long random value>
 SKILLSPRINT_COOKIE_SECURE=true
 SKILLSPRINT_GENAI_PROVIDER=commandcode
-CMD_API_KEY=<your Command Code key>
-COMMAND_CODE_MODEL=deepseek/deepseek-v4-flash-fast
-# Use 0 to let a valid full response complete; set a positive hosting policy
-# only after benchmarking the selected model.
+CMD_API_KEY=<secret Command Code key>
+COMMAND_CODE_MODEL=deepseek/deepseek-chat
 SKILLSPRINT_COMMAND_CODE_TIMEOUT_SECONDS=0
 SKILLSPRINT_PLAN_TIMEOUT_SECONDS=0
-SKILLSPRINT_GENAI_MAX_RETRIES=3
-SKILLSPRINT_GENAI_RETRY_BACKOFF_SECONDS=2
+SKILLSPRINT_GENAI_MAX_RETRIES=2
 SKILLSPRINT_ENABLE_GENAI_ENRICHMENT=false
 SKILLSPRINT_GENAI_PARALLEL_WORKERS=3
 SKILLSPRINT_STAGE_OUTPUT_TOKENS=5120
-# Set true only after confirming the selected Command Code model supports ZDR.
 SKILLSPRINT_COMMAND_CODE_ZDR=false
+SKILLSPRINT_UPLOAD_DIR=/tmp/skillsprint/uploads
+SKILLSPRINT_LOG_DIR=/tmp/skillsprint/logs
 ```
 
-After the first successful deploy, open the provider shell once and run:
+## Free-tier storage and operational limits
 
-```text
-python -m database.seed
-```
+| Concern | What this configuration does |
+|---|---|
+| Database data | Render Free Postgres provides 1 GB. It retains employees, plans, reviews, parsed chunks, and reports. It expires 30 days after creation and has no managed backup. Export a backup before expiry. |
+| Uploaded original files | Free Web Services cannot attach a persistent disk. Uploaded PDFs/DOCX/etc. are parsed immediately and their text/chunks persist in Postgres; the original binary in `/tmp` can disappear on restart, deploy, or idle spin-down. |
+| Web-service filesystem | Ephemeral. Never use SQLite, `/tmp`, or logs as the source of truth. |
+| Idle behavior | A Free Web Service spins down after 15 idle minutes. Its next request can take about a minute while it starts. |
+| Scale | Free allows one web-service instance. The application is configured as one FastAPI instance with PostgreSQL. |
 
-Then open `https://YOUR-BACKEND/health`; it must return `status: ok` before
-continuing. The PostgreSQL driver is included as `psycopg[binary]`.
+The committed source corpus is about 1.5 MB, so the first seed easily fits.
+The database limit is shared by documents and generated plans; monitor **Disk
+Usage** in the Render database metrics. Do not upload large private document
+collections or treat the free database as long-term production storage.
 
-## 2. Publish the Netlify entry point
+For persistent original documents in a real deployment, use a paid Render disk
+or approved object storage, and keep PostgreSQL for relational data.
 
-In Netlify, import this same Git repository. Do not expose `CMD_API_KEY` in
-Netlify. Under **Project configuration → Environment variables**, create only:
+## Demo accounts
 
-```text
-SKILLSPRINT_BACKEND_URL=https://YOUR-BACKEND-HOST
-```
+Change all of these before any non-evaluation deployment:
 
-Then deploy. `netlify.toml` runs `scripts/build_netlify_proxy.py`, which creates
-a `200` rewrite for every path to the HTTPS backend. The proxy preserves the
-Netlify URL for the login page, dashboards, document APIs, and plan APIs.
+| Username | Password | Role |
+|---|---|---|
+| `admin` | `admin123` | Admin |
+| `trainer` | `trainer123` | Training Manager |
+| `reviewer` | `reviewer123` | Reviewer |
+| `manager` | `manager123` | Manager |
+| `employee` | `employee123` | Employee |
 
-Netlify supports secrets in the project environment-variable UI rather than in
-the repository, and a new deploy applies changed values:
-https://docs.netlify.com/build/environment-variables/get-started/
-
-## 3. Acceptance checks
-
-1. Open `https://YOUR-SITE.netlify.app/health` and confirm the FastAPI health JSON.
-2. Sign in with the evaluator account, then create an employee and generate one
-   complete plan using Command Code.
-3. Upload one allowed document and confirm it remains listed after a backend
-   restart.
-4. Complete one checklist item, submit a quiz, and confirm progress changes only
-   after server-side persistence.
-5. Confirm the browser source does not contain `CMD_API_KEY` or a quiz answer key.
-
-## Operational notes
-
-- Set a real `SKILLSPRINT_SECRET_KEY` before public deployment; the development
-  default is not acceptable in production.
-- Command Code balance/rate limits return a clear `429` response. It does not create
-  a short plan; add balance or wait, then regenerate the complete plan.
-  Temporary `503` overloads are retried up to three times with increasing delays.
-- Uploaded files are confidential organization data. Keep the backend and
-  PostgreSQL region/access controls appropriate for your evaluator and company.
+`employee` / `employee123` is the login linked to `EMP-001`. The remaining
+seeded employees use the generated usernames shown in the Employees page and
+initial password `SkillSprint!<employee_code>`.

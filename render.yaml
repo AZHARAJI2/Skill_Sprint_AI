@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: skillsprint-ai
+    runtime: python
+    region: frankfurt        # اختر أقرب منطقة لك
+    plan: free
+    # `bash` avoids relying on an executable bit after a GitHub checkout.
+    buildCommand: "bash build.sh"
+    startCommand: "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: SKILLSPRINT_DATABASE_URL
+        fromDatabase:
+          name: skillsprint-db
+          property: connectionString
+      - key: SKILLSPRINT_SECRET_KEY
+        generateValue: true        # Render يولّد قيمة عشوائية آمنة تلقائياً
+      - key: SKILLSPRINT_COOKIE_SECURE
+        value: "true"
+      - key: SKILLSPRINT_GENAI_PROVIDER
+        value: "commandcode"
+      - key: CMD_API_KEY
+        sync: false                # أدخل هذا يدوياً من لوحة Render
+      - key: COMMAND_CODE_MODEL
+        value: "deepseek/deepseek-chat"
+      - key: SKILLSPRINT_COMMAND_CODE_TIMEOUT_SECONDS
+        value: "0"
+      - key: SKILLSPRINT_PLAN_TIMEOUT_SECONDS
+        value: "0"
+      - key: SKILLSPRINT_GENAI_MAX_RETRIES
+        value: "2"
+      - key: SKILLSPRINT_ENABLE_GENAI_ENRICHMENT
+        value: "false"
+      - key: SKILLSPRINT_GENAI_PARALLEL_WORKERS
+        value: "3"
+      - key: SKILLSPRINT_STAGE_OUTPUT_TOKENS
+        value: "5120"
+      - key: SKILLSPRINT_COMMAND_CODE_ZDR
+        value: "false"
+      # Free web services have no persistent disk. Parsed document content,
+      # employees, plans, reviews, and audit records are persisted in Postgres;
+      # the original uploaded binary is temporary on this free demo deployment.
+      - key: SKILLSPRINT_UPLOAD_DIR
+        value: "/tmp/skillsprint/uploads"
+      - key: SKILLSPRINT_LOG_DIR
+        value: "/tmp/skillsprint/logs"
+
+databases:
+  - name: skillsprint-db
+    databaseName: skillsprint
+    plan: free
+    region: frankfurt

@@ -253,7 +253,7 @@
     <div class="alert alert-light border small mb-3">
       <strong>Format rules:</strong> Use <code>YYYY-MM-DD</code> for <code>joining_date</code>. Use <code>Beginner</code>, <code>Intermediate</code>, or <code>Advanced</code> for <code>experience_level</code>. In CSV and XLSX, separate multiple <code>required_competencies</code> with semicolons. The full file is checked first. If any row has an error, no employee profiles are created.
     </div>
-    <p class="small text-muted mb-3">For CSV or XLSX, use a first-row header such as <code>employee_code,name,role_title,department</code>. For JSON, upload one employee object, an employee array, an object containing an <code>employees</code> array, or JSON Lines (one employee object per line).</p>
+    <p class="small text-muted mb-3">For CSV or XLSX, use a first-row header such as <code>employee_code,name,role_title,department</code>. For JSON, upload one employee object, an employee array, an object containing an <code>employees</code> array, JSON Lines (one employee object per line), or comma-separated employee objects.</p>
     {% if roles %}
     <form id="employee-import-form" novalidate>
       <div class="row align-items-end g-3">
@@ -528,6 +528,8 @@
       }
       
       const creds = body.credentials || [];
+      const created = Number(body.created || 0);
+      const updated = Number(body.updated || 0);
       let credRows = '';
       if (creds.length) {
         credRows = creds.map(c => `
@@ -560,14 +562,27 @@
             ` : ''}
           </div>
 
+          ${updated ? `
+            <div class="alert alert-info py-2 small mb-3" role="status">
+              <i class="bi bi-info-circle me-1"></i><strong>${updated} existing employee account(s) were updated.</strong>
+              Their passwords were kept unchanged and are not displayed again. Only newly created accounts receive a one-time temporary password below.
+            </div>
+          ` : ''}
+
+          ${created && !creds.length ? `
+            <div class="alert alert-warning py-2 small mb-3" role="alert">
+              <i class="bi bi-exclamation-triangle me-1"></i>New profiles were created, but no new account credentials were returned. Use the employee account action to provision any missing login before sharing access.
+            </div>
+          ` : ''}
+
           ${creds.length ? `
             <div class="table-responsive rounded border bg-white mb-3">
               <table class="table table-sm table-hover mb-0" style="font-size:0.83rem;">
                 <thead style="background:#F8FAFC;border-bottom:1px solid #E2E8F0;">
                   <tr>
                     <th class="ps-3 py-2 text-secondary">Employee Code</th>
-                    <th class="py-2 text-secondary">Auto-Generated Username</th>
-                    <th class="py-2 text-secondary">Temporary Password</th>
+                    <th class="py-2 text-secondary">New Username</th>
+                    <th class="py-2 text-secondary">One-Time Temporary Password</th>
                     <th class="pe-3 py-2 text-end text-secondary">Copy</th>
                   </tr>
                 </thead>
@@ -579,7 +594,7 @@
           ` : ''}
 
           <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center pt-2 border-top">
-            <span class="small text-muted"><i class="bi bi-info-circle me-1"></i>Credentials are active. Passwords can be changed by employees in My Account.</span>
+            <span class="small text-muted"><i class="bi bi-info-circle me-1"></i>New passwords are shown once. Employees can change them in My Account.</span>
             <a href="/dashboard" class="btn btn-primary btn-sm"><i class="bi bi-grid me-1"></i>Open Dashboard to Generate Plans</a>
           </div>
         </div>

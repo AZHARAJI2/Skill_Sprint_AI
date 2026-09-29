@@ -63,13 +63,18 @@ Without a key the API returns 503 rather than inventing a plan.
 
 ## Seed demo data
 
-Loads 10 job roles, 10 demo employees, 5 RBAC users, the 178-row matrix, all
-files under `sample_documents/`, and one **source-grounded demo draft** for
-each role. The ten drafts are computed from the committed document corpus and
-matrix at seed time; they are clearly marked for manual review and are never
-claimed to be a live GenAI response or an approved plan. This makes a fresh
-GitHub clone demonstrable without committing a mutable database file, secrets,
-or hard-coded onboarding output.
+Loads the committed current demonstration workforce (11 approved job roles and
+1,013 employee profiles), an Employee account for each profile, 5 RBAC users, the
+178-row matrix, and all files under `sample_documents/`. It also creates one
+**source-grounded demo draft** for each of the ten Project Map evidence roles.
+Those drafts are computed from the committed document corpus and matrix at seed
+time; they are clearly marked for manual review and are never claimed to be a
+live GenAI response or an approved plan. This makes a fresh GitHub clone
+demonstrable without committing a mutable database file, secrets, or hard-coded
+onboarding output.
+
+The reproducible 1,013-employee seed check is documented in
+[`reports/d10_scalability_seed_test.md`](reports/d10_scalability_seed_test.md).
 
 ```bash
 python -m database.seed
@@ -105,18 +110,56 @@ uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 
 Open http://127.0.0.1:8000/login
 
-The evaluator walkthrough, live-performance benchmark, safe D6 generation,
-and final checks are in [EXECUTION.md](EXECUTION.md).
+## Execution instructions
+
+Use the seeded evaluator credentials shown above to sign in as `admin`.
+
+1. Open **Documents** and upload an approved company document. Check that its
+   parsed sections and metadata are available. If a document contains
+   instruction-like content, view the persisted `Prompt Injection Detected`
+   finding in the Hallucination/Security report.
+2. Open **Roles** to create a role from an approved description, import the
+   approved Role Requirement Matrix CSV, or submit a requirement for review.
+3. Open **Employees** to create one employee or import CSV, XLSX, or JSON.
+   JSON may be one object, an array, an `employees` wrapper, JSON Lines, or
+   comma-separated employee objects. Each employee must use an existing role.
+4. Choose **Generate Plan** for that employee. Pipeline 1 calls the configured
+   GenAI provider; Pipeline 2 then validates coverage, traceability, source
+   references, hallucinations, contradictions, sequencing, and role relevance.
+5. Open the plan and Review Queue. An Admin, Training Manager, or Reviewer can
+   approve, reject, edit, comment on, or regenerate items; the original result
+   and the decision remain in the audit trail.
+6. Open **Reports** to review the GenAI/Python comparison, hallucination and
+   prompt-injection findings, contradictions, coverage, traceability, and
+   progress results. Generate D6 only after complete live plans exist for all
+   ten roles: `python -m scripts.generate_phase3_reports`.
+7. Sign in as an employee to take assigned quizzes and view assessments. A
+   trainer, manager, reviewer, or admin confirms practical-item completion and
+   records final progress; employees cannot confirm their own completion.
+8. Upload a newer policy version to run impact analysis. Use selective
+   regeneration to regenerate only items citing that document, then review the
+   refreshed validation result.
+9. Export reports as required and run the complete automated suite with
+   `python -m pytest -q`.
+
+For the performance benchmark, deployment steps, and final evidence details,
+see [EXECUTION.md](EXECUTION.md) and [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Deployment
 
-For the required public deployment, use Netlify as the public entry point and
-a FastAPI host with PostgreSQL as the persistent backend. See
-[DEPLOYMENT.md](DEPLOYMENT.md) for the exact environment variables and checks.
+For the required public deployment, use Render PostgreSQL as the persistent
+backend and deploy this FastAPI application as a Render Web Service. A fresh
+Render database automatically receives the reproducible 11-role/1,013-employee
+demo dataset and 10 review-only source-grounded drafts during `bash build.sh`.
+The local SQLite database, original import files, credentials, and plans are
+never pushed; only the reviewed profile-and-role snapshot is versioned for
+reproducible evaluation. See [DEPLOYMENT.md](DEPLOYMENT.md) for the exact
+environment variables, free-tier storage limits, and checks.
 
 ## Tests
 
 ```bash
+pip install -r requirements-dev.txt
 pytest
 ```
 

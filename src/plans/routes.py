@@ -185,7 +185,10 @@ def submit_plan_quiz(
         raise AppError("This review draft cannot be used for employee progress until a complete plan replaces it.", status_code=409)
     if user.app_role == "Employee" and plan.employee_id != user.employee_id:
         raise AppError("Forbidden", status_code=403)
-    return ProgressTrackingService(session).grade_quiz(plan_id, submission.answers, actor=user.username)
+    try:
+        return ProgressTrackingService(session).grade_quiz(plan_id, submission.answers, actor=user.username)
+    except ValueError as exc:
+        raise AppError(str(exc), status_code=422) from exc
 
 
 @router.post("/{plan_id}/quiz/check")
@@ -195,21 +198,13 @@ def check_quiz_answer(
     session: Session = Depends(get_session),
     user: User = Depends(get_current_user),
 ) -> dict:
-    """Validate a single quiz question and return correctness + explanation.
-
-    Powers the interactive per-question feedback in the employee dashboard.
-    The answer key is fetched from the DB on demand, never preloaded in the page.
-    """
-    plan = PlanGenerationService(session).get_plan(plan_id)
-    _assert_plan_access(plan, user)
-    if (plan.structured_json or {}).get("generation_status") == "failed_after_retries":
-        raise AppError("This review draft cannot be used for employee progress until a complete plan replaces it.", status_code=409)
-    try:
-        return ProgressTrackingService(session).check_single_answer(
-            plan_id, body.question_id, body.selected
-        )
-    except ValueError as exc:
-        raise AppError(str(exc), status_code=404) from exc
+    """Prevent answer disclosure before the complete quiz is submitted."""
+    # Retained temporarily for API compatibility; it must not reveal an answer
+    # key before a complete, auditable quiz submission.
+    raise AppError(
+        "Per-question checking is unavailable. Submit the complete quiz to receive results and explanations.",
+        status_code=409,
+    )
 
 
 @router.post("/{plan_id}/items/{item_type}/{item_id}/complete")

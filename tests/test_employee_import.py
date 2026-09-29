@@ -78,6 +78,32 @@ def test_json_import_accepts_utf8_bom_and_json_lines(session) -> None:
     assert [employee.employee_code for employee in employees] == ["EMP-401", "EMP-402"]
 
 
+def test_json_import_accepts_comma_separated_objects_without_array(session) -> None:
+    """Accept the common HR-export form ``{employee}, {employee}`` without brackets."""
+    role = RoleService(session).create("QA Engineer", "Quality Assurance")
+    raw = (
+        f'''{{
+  "employee_code": "EMP-QA-013",
+  "name": "Kevin Hakim",
+  "role_title": "QA Engineer",
+  "department": "Quality Assurance",
+  "required_competencies": ["Test Case Design", "Automated Testing"]
+}},
+{{
+  "employee_code": "EMP-QA-014",
+  "name": "Rakan Al-Malki",
+  "role_title": "QA Engineer",
+  "department": "Quality Assurance",
+  "required_competencies": ["Bug Tracking", "Regression Testing"]
+}}'''
+    ).encode("utf-8")
+
+    employees = EmployeeImportService(session).import_file("qa-employees.json", raw, actor="admin")
+
+    assert [employee.employee_code for employee in employees] == ["EMP-QA-013", "EMP-QA-014"]
+    assert employees[0].required_competencies == ["Test Case Design", "Automated Testing"]
+
+
 def test_json_import_reads_a_thousand_employee_rows_before_validation(session) -> None:
     """A 1,000-row JSON array is a supported bulk-import size under 20 MB."""
     service = EmployeeImportService(session)
@@ -98,6 +124,21 @@ def test_json_import_reads_a_thousand_employee_rows_before_validation(session) -
     assert len(rows) == 1000
     assert rows[0]["employee_code"] == "BULK-0001"
     assert rows[-1]["employee_code"] == "BULK-1000"
+
+
+def test_json_import_rejects_a_truncated_bulk_file_without_importing_prefix(session) -> None:
+    """A malformed tail must not turn a 1,000-row upload into a silent partial import."""
+    role = RoleService(session).create("QA Engineer", "Quality Assurance")
+    raw = (
+        f'{{"employee_code":"EMP-QA-001","name":"One","role_id":{role.id},"department":"Quality Assurance"}},\n'
+        f'{{"employee_code":"EMP-QA-002","name":"Two","role_id":{role.id},"department":"Quality Assurance"}},\n'
+        '{"employee_code":"EMP-QA-003","name":"Broken"'
+    ).encode("utf-8")
+
+    with pytest.raises(AppError, match="incomplete or invalid"):
+        EmployeeImportService(session).import_file("broken-bulk.json", raw, actor="admin")
+
+    assert EmployeeService(session).list_employees() == []
 
 
 def test_xlsx_import_accepts_first_worksheet(session) -> None:
@@ -157,6 +198,20 @@ def test_import_employees_endpoint_auto_provisions_logins(session) -> None:
         )
         assert login_res.status_code == 200
         assert "access_token" in login_res.json()
+
+        # Re-importing the same employee code updates the profile but never
+        # resets or re-discloses an existing employee's password.
+        repeat = client.post(
+            "/api/employees/import",
+            headers={"Authorization": f"Bearer {admin_token}"},
+            files={"file": ("import_test.csv", csv_content, "text/csv")},
+        )
+        assert repeat.status_code == 200
+        repeat_data = repeat.json()
+        assert repeat_data["processed"] == 1
+        assert repeat_data["created"] == 0
+        assert repeat_data["updated"] == 1
+        assert repeat_data["credentials"] == []
     finally:
         app.dependency_overrides.clear()
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import re
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -38,16 +39,28 @@ class EmployeeImportService:
         self.session = session
         self.employee_service = EmployeeService(session)
         self.role_service = RoleService(session)
+        self.last_created_codes: set[str] = set()
+        self.last_updated_codes: set[str] = set()
 
     def import_file(self, filename: str, raw: bytes, actor: str) -> list:
-        """Validate a supported file completely, then create every employee in it.
+        """Validate a supported file completely, then create or update every employee in it.
 
         The import is all-or-nothing: no profiles are created when any row has an
         error. This prevents a partially imported onboarding population.
         """
         extension = Path(filename).suffix.lower()
         if extension not in self._ALLOWED_EXTENSIONS:
-            raise AppError("Employee imports support CSV, XLSX, or JSON files only.", status_code=400)
+            # Sniff content if file has an unusual or missing extension
+            stripped = raw.lstrip()
+            if stripped.startswith((b"{", b"[", b"\xef\xbb\xbf{", b"\xef\xbb\xbf[")):
+                extension = ".json"
+            elif stripped.startswith(b"PK\x03\x04"):
+                extension = ".xlsx"
+            elif b"," in raw or b"\n" in raw:
+                extension = ".csv"
+            else:
+                raise AppError("Employee imports support CSV, XLSX, or JSON files only.", status_code=400)
+
         if not raw:
             raise AppError("The employee import file is empty.", status_code=400)
         if len(raw) > settings.max_upload_bytes:
@@ -68,7 +81,20 @@ class EmployeeImportService:
                 details={"rows": errors},
             )
 
-        return [self.employee_service.create(actor=actor, **profile) for profile in profiles]
+        self.last_created_codes = set()
+        self.last_updated_codes = set()
+        results = []
+        for profile in profiles:
+            existing = self.employee_service.employees.get_by_code(profile["employee_code"])
+            if existing:
+                updated = self.employee_service.update(existing.id, actor=actor, **profile)
+                self.last_updated_codes.add(updated.employee_code.casefold())
+                results.append(updated)
+            else:
+                created = self.employee_service.create(actor=actor, **profile)
+                self.last_created_codes.add(created.employee_code.casefold())
+                results.append(created)
+        return results
 
     def _parse_file(self, extension: str, raw: bytes) -> list[dict[str, Any]]:
         """Read supported tabular files into normalized row dictionaries."""
@@ -98,37 +124,82 @@ class EmployeeImportService:
         return [self._normalise_keys(row) for row in reader if any(self._value_present(value) for value in row.values())]
 
     def _rows_from_json(self, raw: bytes) -> list[dict[str, Any]]:
-        """Read a JSON object/array/wrapper, including UTF-8 BOM and JSON Lines.
-
-        HR exports commonly use UTF-8 with a BOM or newline-delimited JSON
-        (one employee object per line). Both carry the same structured data as
-        a standard employee array and are safe to normalize into the existing
-        all-or-nothing validation flow.
-        """
-        text = raw.decode("utf-8-sig")
+        """Read only complete JSON imports; never silently import a valid prefix."""
+        text = raw.decode("utf-8-sig", errors="replace").strip()
         try:
             payload = json.loads(text)
-        except json.JSONDecodeError as exc:
-            rows = self._rows_from_json_lines(text)
-            if rows is None:
-                raise AppError(
-                    "The JSON employee file is invalid. Upload one employee object, "
-                    "an employee array, an object with an employees array, or JSON Lines "
-                    "(one employee object per line).",
-                    status_code=400,
-                    details={"line": exc.lineno, "column": exc.colno, "reason": exc.msg},
-                ) from exc
-            return [self._normalise_keys(row) for row in rows]
-        if isinstance(payload, dict):
-            rows = payload["employees"] if "employees" in payload else [payload]
+        except json.JSONDecodeError as standard_error:
+            payload = None
+            parse_location = f"line {standard_error.lineno}, column {standard_error.colno}"
         else:
+            return [self._normalise_keys(row) for row in self._rows_from_json_payload(payload)]
+
+        # JSON Lines means one complete employee object per line.
+        lines_rows = self._rows_from_json_lines(text)
+        if lines_rows is not None:
+            return [self._normalise_keys(row) for row in lines_rows]
+
+        # Also accept the HR-export form ``{employee}, {employee}`` without
+        # brackets.  It must be a complete stream: malformed tails are an
+        # error, so a 1,000-row file can never be reported as a 203-row success.
+        stream_rows = self._rows_from_json_object_stream(text)
+        if stream_rows is not None:
+            return [self._normalise_keys(row) for row in stream_rows]
+
+        raise AppError(
+            "The JSON employee file is incomplete or invalid. Upload a complete employee object, "
+            "an array, an object with an employees array, JSON Lines, or complete comma-separated objects. "
+            f"JSON parsing stopped near {parse_location}.",
+            status_code=400,
+        )
+
+    @staticmethod
+    def _rows_from_json_payload(payload: Any) -> list[dict[str, Any]]:
+        """Extract employee dictionaries from a valid JSON value."""
+        if isinstance(payload, list):
             rows = payload
-        if not isinstance(rows, list) or not all(isinstance(row, dict) for row in rows):
-            raise AppError(
-                "JSON imports must be one employee object, an array of employees, or an object with an employees array.",
-                status_code=400,
+        elif isinstance(payload, dict):
+            rows = next(
+                (
+                    payload[key]
+                    for key in ("employees", "data", "items", "users", "profiles")
+                    if isinstance(payload.get(key), list)
+                ),
+                [payload],
             )
-        return [self._normalise_keys(row) for row in rows]
+        else:
+            raise AppError("JSON employee imports must contain employee objects.", status_code=400)
+        if not rows or any(not isinstance(row, dict) for row in rows):
+            raise AppError("Every JSON employee entry must be an object.", status_code=400)
+        return rows
+
+    @staticmethod
+    def _rows_from_json_object_stream(text: str) -> list[dict[str, Any]] | None:
+        """Parse only a complete comma-separated sequence of employee objects."""
+        decoder = json.JSONDecoder()
+        rows: list[dict[str, Any]] = []
+        pos = 0
+        length = len(text)
+
+        while True:
+            while pos < length and text[pos].isspace():
+                pos += 1
+            if pos >= length:
+                return rows if len(rows) >= 2 else None
+            try:
+                row, pos = decoder.raw_decode(text, pos)
+            except json.JSONDecodeError:
+                return None
+            if not isinstance(row, dict):
+                return None
+            rows.append(row)
+            while pos < length and text[pos].isspace():
+                pos += 1
+            if pos >= length:
+                return rows if len(rows) >= 2 else None
+            if text[pos] != ",":
+                return None
+            pos += 1
 
     @staticmethod
     def _rows_from_json_lines(text: str) -> list[dict[str, Any]] | None:
@@ -202,8 +273,6 @@ class EmployeeImportService:
         if code_key:
             if code_key in seen_codes:
                 errors.append("employee_code is duplicated in this file.")
-            elif self.employee_service.employees.get_by_code(profile["employee_code"]):
-                errors.append("employee_code already exists.")
             seen_codes.add(code_key)
 
         role = self._resolve_role(row, roles_by_id, roles_by_title, errors)
@@ -247,6 +316,25 @@ class EmployeeImportService:
             role = roles_by_title.get(supplied_title.casefold())
             if role:
                 return role
+
+            # Flexible punctuation/spacing matching (e.g. "DevOps / Infrastructure Engineer" vs "DevOps/Infrastructure Engineer")
+            clean_title = re.sub(r"[^a-z0-9]+", "", supplied_title.casefold())
+            for existing_title, existing_role in roles_by_title.items():
+                if re.sub(r"[^a-z0-9]+", "", existing_title) == clean_title:
+                    return existing_role
+
+            # Match NovaCart roles and auto-ensure if not yet seeded
+            from database.seed import NOVA_CART_ROLES
+            for std_title, std_dept in NOVA_CART_ROLES:
+                clean_std = re.sub(r"[^a-z0-9]+", "", std_title.casefold())
+                if clean_std == clean_title or (len(clean_title) >= 4 and (clean_title in clean_std or clean_std in clean_title)):
+                    created_role = self.role_service.ensure_role(
+                        std_title, department=self._text(row.get("department")) or std_dept
+                    )
+                    roles_by_title[std_title.casefold()] = created_role
+                    roles_by_id[created_role.id] = created_role
+                    return created_role
+
             errors.append("role_title does not match an existing job role.")
             return None
         errors.append("role_id or role_title is required.")

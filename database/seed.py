@@ -7,6 +7,7 @@ from datetime import date
 from config.logging_config import configure_logging, get_logger
 from config.settings import settings
 from database.base import SessionLocal
+from database.current_demo_snapshot import load_current_workforce
 from database.migrations import create_schema
 from role_matrix.load_matrix import load_matrix
 from src.auth.service import AuthService
@@ -18,6 +19,9 @@ from src.plans.validation_service import PlanValidationService
 from src.plans.models import OnboardingPlan
 from src.reviews.models import AuditEntry  # noqa: F401 — ensure mapper is registered
 
+# These baseline role labels are also used to select the one plan-evidence
+# employee for each Project Map role.  The full current workforce—including
+# additional approved roles—is loaded from the versioned snapshot below.
 NOVA_CART_ROLES = [
     ("Software Engineer", "Engineering"),
     ("DevOps/Infrastructure Engineer", "Engineering"),
@@ -48,29 +52,42 @@ def seed_all(ingest_documents: bool = True, seed_demo_plans: bool = True) -> dic
     session = SessionLocal()
     summary: dict = {}
     try:
+        workforce = load_current_workforce()
         role_service = RoleService(session)
-        roles = {title: role_service.ensure_role(title, department) for title, department in NOVA_CART_ROLES}
+        roles = {
+            profile["title"]: role_service.ensure_role(
+                profile["title"],
+                profile["department"],
+                profile.get("description"),
+                actor="seed",
+            )
+            for profile in workforce["roles"]
+        }
         employee_service = EmployeeService(session)
-        demo_employees = []
-        for index, (title, department) in enumerate(NOVA_CART_ROLES, start=1):
-            code = f"EMP-{index:03d}"
+        all_employees = []
+        for profile in workforce["employees"]:
+            code = profile["employee_code"]
             existing = employee_service.employees.get_by_code(code)
             if existing:
-                demo_employees.append(existing)
+                all_employees.append(existing)
                 continue
-            demo_employees.append(
+            role = roles.get(profile["role_title"])
+            if role is None:
+                raise RuntimeError(f"Seed employee {code} refers to an unknown role.")
+            joining_date = profile.get("joining_date")
+            all_employees.append(
                 employee_service.create(
                     employee_code=code,
-                    name=f"Demo {title}",
-                    role_id=roles[title].id,
-                    department=department,
-                    experience_level="Beginner",
-                    location="Remote",
-                    joining_date=date(2026, 9, 1),
-                    reporting_manager="Manager Demo",
-                    required_competencies=["Policy Awareness"],
-                    prior_experience="None",
-                    training_status="not_started",
+                    name=profile["name"],
+                    role_id=role.id,
+                    department=profile["department"],
+                    experience_level=profile["experience_level"],
+                    location=profile.get("location"),
+                    joining_date=date.fromisoformat(joining_date) if joining_date else None,
+                    reporting_manager=profile.get("reporting_manager"),
+                    required_competencies=profile.get("required_competencies"),
+                    prior_experience=profile.get("prior_experience"),
+                    training_status=profile.get("training_status", "not_started"),
                     actor="seed",
                 )
             )
@@ -79,9 +96,10 @@ def seed_all(ingest_documents: bool = True, seed_demo_plans: bool = True) -> dic
         auth.ensure_user("trainer", "trainer123", "Training Manager")
         auth.ensure_user("reviewer", "reviewer123", "Reviewer")
         auth.ensure_user("manager", "manager123", "Manager")
-        auth.ensure_user("employee", "employee123", "Employee", employee_id=demo_employees[0].id)
+        primary_employee = next(employee for employee in all_employees if employee.employee_code == "EMP-001")
+        auth.ensure_user("employee", "employee123", "Employee", employee_id=primary_employee.id)
         account_rows = []
-        for employee in demo_employees:
+        for employee in all_employees:
             account, initial_password = auth.provision_employee_account(employee, actor="seed")
             account_rows.append(
                 {
@@ -91,6 +109,7 @@ def seed_all(ingest_documents: bool = True, seed_demo_plans: bool = True) -> dic
                 }
             )
         summary["employee_accounts"] = account_rows
+        summary["employees_seeded"] = len(all_employees)
         matrix = load_matrix(session, settings.matrix_csv_path, replace_existing=True)
         summary["matrix_loaded"] = matrix.loaded
         summary["matrix_rejected"] = matrix.rejected
@@ -99,7 +118,11 @@ def seed_all(ingest_documents: bool = True, seed_demo_plans: bool = True) -> dic
             summary["files_ingested"] = len(stored)
             summary["metrics"] = CorpusMetricsService(session).compute()
         if seed_demo_plans:
-            summary["demo_plans"] = _seed_demo_plans(session, demo_employees)
+            demo_plan_codes = {f"EMP-{index:03d}" for index in range(1, 11)}
+            summary["demo_plans"] = _seed_demo_plans(
+                session,
+                [employee for employee in all_employees if employee.employee_code in demo_plan_codes],
+            )
         session.commit()
         logger.info("seed_complete summary=%s", summary)
         return summary

@@ -1,0 +1,601 @@
+﻿employee_code,name,department,role_title,experience_level,location,joining_date,reporting_manager,required_competencies,prior_experience,training_status
+BULK-201,Ahmed Al-Harbi,Engineering,Software Engineer,Beginner,Sanaa,2026-09-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-202,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-09-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-203,Mohammed Al-Najjar,Engineering,QA Engineer,Advanced,Remote,2026-09-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-204,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-09-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-205,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-09-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-206,Lina Al-Dubai,People & Culture,HR Generalist,Advanced,Sanaa,2026-09-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-207,Khaled Mashrah,People & Culture,Recruiter,Beginner,Aden,2026-09-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-208,Mona Al-Otaibi,Finance,Financial Analyst,Intermediate,Remote,2026-09-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-209,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-09-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-210,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-09-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-211,Yasser Al-Subaihi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-212,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-10-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-213,Adel Al-Hakimi,Engineering,QA Engineer,Beginner,Remote,2026-10-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-214,Nour Al-Amri,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-10-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-215,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Advanced,Taiz,2026-10-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-216,Dana Sharaf,People & Culture,HR Generalist,Beginner,Sanaa,2026-10-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-217,Faris Al-Jabri,People & Culture,Recruiter,Intermediate,Aden,2026-10-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-218,Reem Al-Basha,Finance,Financial Analyst,Advanced,Remote,2026-10-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-219,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-10-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-220,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-10-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-221,Bilal Al-Thawr,Engineering,Software Engineer,Advanced,Sanaa,2026-10-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-222,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-10-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-223,Nasser Al-Ansi,Engineering,QA Engineer,Intermediate,Remote,2026-10-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-224,Amal Al-Sayani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-10-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-225,Karim Al-Zaidi,Finance,Payments Operations Specialist,Beginner,Taiz,2026-10-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-226,Wafa Al-Bakri,People & Culture,HR Generalist,Intermediate,Sanaa,2026-10-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-227,Jamal Al-Hammadi,People & Culture,Recruiter,Advanced,Aden,2026-10-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-228,Ibrahim Al-Matari,Finance,Financial Analyst,Beginner,Remote,2026-10-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-229,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-10-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-230,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-10-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-231,Anas Al-Raimi,Engineering,Software Engineer,Beginner,Sanaa,2026-10-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-232,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-10-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-233,Majed Al-Aghbari,Engineering,QA Engineer,Advanced,Remote,2026-10-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-234,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-10-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-235,Raed Al-Omari,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-10-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-236,Basma Al-Huraibi,People & Culture,HR Generalist,Advanced,Sanaa,2026-10-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-237,Nabil Al-Tamimi,People & Culture,Recruiter,Beginner,Aden,2026-10-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-238,Rasha Al-Kibsi,Finance,Financial Analyst,Intermediate,Remote,2026-10-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-239,Emad Al-Sabri,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-10-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-240,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-10-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-241,Ahmed Al-Harbi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-31,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-242,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-11-01,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-243,Mohammed Al-Najjar,Engineering,QA Engineer,Beginner,Remote,2026-11-02,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-244,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-11-03,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-245,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Advanced,Taiz,2026-11-04,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-246,Lina Al-Dubai,People & Culture,HR Generalist,Beginner,Sanaa,2026-11-05,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-247,Khaled Mashrah,People & Culture,Recruiter,Intermediate,Aden,2026-11-06,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-248,Mona Al-Otaibi,Finance,Financial Analyst,Advanced,Remote,2026-11-07,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-249,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-11-08,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-250,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-11-09,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-251,Yasser Al-Subaihi,Engineering,Software Engineer,Advanced,Sanaa,2026-11-10,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-252,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-11-11,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-253,Adel Al-Hakimi,Engineering,QA Engineer,Intermediate,Remote,2026-11-12,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-254,Nour Al-Amri,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-11-13,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-255,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Beginner,Taiz,2026-11-14,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-256,Dana Sharaf,People & Culture,HR Generalist,Intermediate,Sanaa,2026-11-15,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-257,Faris Al-Jabri,People & Culture,Recruiter,Advanced,Aden,2026-11-16,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-258,Reem Al-Basha,Finance,Financial Analyst,Beginner,Remote,2026-11-17,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-259,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-11-18,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-260,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-11-19,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-261,Bilal Al-Thawr,Engineering,Software Engineer,Beginner,Sanaa,2026-11-20,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-262,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-11-21,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-263,Nasser Al-Ansi,Engineering,QA Engineer,Advanced,Remote,2026-11-22,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-264,Amal Al-Sayani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-11-23,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-265,Karim Al-Zaidi,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-11-24,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-266,Wafa Al-Bakri,People & Culture,HR Generalist,Advanced,Sanaa,2026-11-25,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-267,Jamal Al-Hammadi,People & Culture,Recruiter,Beginner,Aden,2026-11-26,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-268,Ibrahim Al-Matari,Finance,Financial Analyst,Intermediate,Remote,2026-11-27,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-269,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-11-28,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-270,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-11-29,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-271,Anas Al-Raimi,Engineering,Software Engineer,Intermediate,Sanaa,2026-09-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-272,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-09-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-273,Majed Al-Aghbari,Engineering,QA Engineer,Beginner,Remote,2026-09-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-274,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-09-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-275,Raed Al-Omari,Finance,Payments Operations Specialist,Advanced,Taiz,2026-09-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-276,Basma Al-Huraibi,People & Culture,HR Generalist,Beginner,Sanaa,2026-09-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-277,Nabil Al-Tamimi,People & Culture,Recruiter,Intermediate,Aden,2026-09-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-278,Rasha Al-Kibsi,Finance,Financial Analyst,Advanced,Remote,2026-09-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-279,Emad Al-Sabri,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-09-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-280,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-09-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-281,Ahmed Al-Harbi,Engineering,Software Engineer,Advanced,Sanaa,2026-09-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-282,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-09-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-283,Mohammed Al-Najjar,Engineering,QA Engineer,Intermediate,Remote,2026-09-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-284,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-09-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-285,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Beginner,Taiz,2026-09-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-286,Lina Al-Dubai,People & Culture,HR Generalist,Intermediate,Sanaa,2026-09-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-287,Khaled Mashrah,People & Culture,Recruiter,Advanced,Aden,2026-09-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-288,Mona Al-Otaibi,Finance,Financial Analyst,Beginner,Remote,2026-09-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-289,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-09-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-290,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-09-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-291,Yasser Al-Subaihi,Engineering,Software Engineer,Beginner,Sanaa,2026-09-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-292,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-09-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-293,Adel Al-Hakimi,Engineering,QA Engineer,Advanced,Remote,2026-09-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-294,Nour Al-Amri,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-09-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-295,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-09-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-296,Dana Sharaf,People & Culture,HR Generalist,Advanced,Sanaa,2026-09-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-297,Faris Al-Jabri,People & Culture,Recruiter,Beginner,Aden,2026-09-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-298,Reem Al-Basha,Finance,Financial Analyst,Intermediate,Remote,2026-09-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-299,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-09-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-300,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-09-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-301,Bilal Al-Thawr,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-302,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-10-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-303,Nasser Al-Ansi,Engineering,QA Engineer,Beginner,Remote,2026-10-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-304,Amal Al-Sayani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-10-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-305,Karim Al-Zaidi,Finance,Payments Operations Specialist,Advanced,Taiz,2026-10-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-306,Wafa Al-Bakri,People & Culture,HR Generalist,Beginner,Sanaa,2026-10-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-307,Jamal Al-Hammadi,People & Culture,Recruiter,Intermediate,Aden,2026-10-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-308,Ibrahim Al-Matari,Finance,Financial Analyst,Advanced,Remote,2026-10-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-309,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-10-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-310,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-10-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-311,Anas Al-Raimi,Engineering,Software Engineer,Advanced,Sanaa,2026-10-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-312,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-10-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-313,Majed Al-Aghbari,Engineering,QA Engineer,Intermediate,Remote,2026-10-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-314,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-10-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-315,Raed Al-Omari,Finance,Payments Operations Specialist,Beginner,Taiz,2026-10-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-316,Basma Al-Huraibi,People & Culture,HR Generalist,Intermediate,Sanaa,2026-10-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-317,Nabil Al-Tamimi,People & Culture,Recruiter,Advanced,Aden,2026-10-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-318,Rasha Al-Kibsi,Finance,Financial Analyst,Beginner,Remote,2026-10-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-319,Emad Al-Sabri,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-10-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-320,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-10-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-321,Ahmed Al-Harbi,Engineering,Software Engineer,Beginner,Sanaa,2026-10-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-322,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-10-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-323,Mohammed Al-Najjar,Engineering,QA Engineer,Advanced,Remote,2026-10-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-324,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-10-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-325,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-10-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-326,Lina Al-Dubai,People & Culture,HR Generalist,Advanced,Sanaa,2026-10-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-327,Khaled Mashrah,People & Culture,Recruiter,Beginner,Aden,2026-10-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-328,Mona Al-Otaibi,Finance,Financial Analyst,Intermediate,Remote,2026-10-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-329,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-10-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-330,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-10-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-331,Yasser Al-Subaihi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-31,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-332,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-11-01,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-333,Adel Al-Hakimi,Engineering,QA Engineer,Beginner,Remote,2026-11-02,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-334,Nour Al-Amri,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-11-03,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-335,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Advanced,Taiz,2026-11-04,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-336,Dana Sharaf,People & Culture,HR Generalist,Beginner,Sanaa,2026-11-05,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-337,Faris Al-Jabri,People & Culture,Recruiter,Intermediate,Aden,2026-11-06,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-338,Reem Al-Basha,Finance,Financial Analyst,Advanced,Remote,2026-11-07,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-339,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-11-08,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-340,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-11-09,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-341,Bilal Al-Thawr,Engineering,Software Engineer,Advanced,Sanaa,2026-11-10,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-342,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-11-11,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-343,Nasser Al-Ansi,Engineering,QA Engineer,Intermediate,Remote,2026-11-12,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-344,Amal Al-Sayani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-11-13,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-345,Karim Al-Zaidi,Finance,Payments Operations Specialist,Beginner,Taiz,2026-11-14,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-346,Wafa Al-Bakri,People & Culture,HR Generalist,Intermediate,Sanaa,2026-11-15,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-347,Jamal Al-Hammadi,People & Culture,Recruiter,Advanced,Aden,2026-11-16,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-348,Ibrahim Al-Matari,Finance,Financial Analyst,Beginner,Remote,2026-11-17,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-349,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-11-18,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-350,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-11-19,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-351,Anas Al-Raimi,Engineering,Software Engineer,Beginner,Sanaa,2026-11-20,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-352,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-11-21,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-353,Majed Al-Aghbari,Engineering,QA Engineer,Advanced,Remote,2026-11-22,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-354,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-11-23,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-355,Raed Al-Omari,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-11-24,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-356,Basma Al-Huraibi,People & Culture,HR Generalist,Advanced,Sanaa,2026-11-25,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-357,Nabil Al-Tamimi,People & Culture,Recruiter,Beginner,Aden,2026-11-26,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-358,Rasha Al-Kibsi,Finance,Financial Analyst,Intermediate,Remote,2026-11-27,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-359,Emad Al-Sabri,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-11-28,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-360,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-11-29,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-361,Ahmed Al-Harbi,Engineering,Software Engineer,Intermediate,Sanaa,2026-09-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-362,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-09-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-363,Mohammed Al-Najjar,Engineering,QA Engineer,Beginner,Remote,2026-09-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-364,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-09-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-365,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Advanced,Taiz,2026-09-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-366,Lina Al-Dubai,People & Culture,HR Generalist,Beginner,Sanaa,2026-09-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-367,Khaled Mashrah,People & Culture,Recruiter,Intermediate,Aden,2026-09-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-368,Mona Al-Otaibi,Finance,Financial Analyst,Advanced,Remote,2026-09-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-369,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-09-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-370,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-09-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-371,Yasser Al-Subaihi,Engineering,Software Engineer,Advanced,Sanaa,2026-09-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-372,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-09-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-373,Adel Al-Hakimi,Engineering,QA Engineer,Intermediate,Remote,2026-09-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-374,Nour Al-Amri,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-09-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-375,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Beginner,Taiz,2026-09-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-376,Dana Sharaf,People & Culture,HR Generalist,Intermediate,Sanaa,2026-09-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-377,Faris Al-Jabri,People & Culture,Recruiter,Advanced,Aden,2026-09-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-378,Reem Al-Basha,Finance,Financial Analyst,Beginner,Remote,2026-09-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-379,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-09-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-380,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-09-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-381,Bilal Al-Thawr,Engineering,Software Engineer,Beginner,Sanaa,2026-09-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-382,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-09-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-383,Nasser Al-Ansi,Engineering,QA Engineer,Advanced,Remote,2026-09-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-384,Amal Al-Sayani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-09-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-385,Karim Al-Zaidi,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-09-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-386,Wafa Al-Bakri,People & Culture,HR Generalist,Advanced,Sanaa,2026-09-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-387,Jamal Al-Hammadi,People & Culture,Recruiter,Beginner,Aden,2026-09-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-388,Ibrahim Al-Matari,Finance,Financial Analyst,Intermediate,Remote,2026-09-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-389,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-09-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-390,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-09-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-391,Anas Al-Raimi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-392,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-10-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-393,Majed Al-Aghbari,Engineering,QA Engineer,Beginner,Remote,2026-10-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-394,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-10-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-395,Raed Al-Omari,Finance,Payments Operations Specialist,Advanced,Taiz,2026-10-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-396,Basma Al-Huraibi,People & Culture,HR Generalist,Beginner,Sanaa,2026-10-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-397,Nabil Al-Tamimi,People & Culture,Recruiter,Intermediate,Aden,2026-10-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-398,Rasha Al-Kibsi,Finance,Financial Analyst,Advanced,Remote,2026-10-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-399,Emad Al-Sabri,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-10-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-400,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-10-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-401,Ahmed Al-Harbi,Engineering,Software Engineer,Advanced,Sanaa,2026-10-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-402,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-10-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-403,Mohammed Al-Najjar,Engineering,QA Engineer,Intermediate,Remote,2026-10-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-404,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-10-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-405,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Beginner,Taiz,2026-10-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-406,Lina Al-Dubai,People & Culture,HR Generalist,Intermediate,Sanaa,2026-10-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-407,Khaled Mashrah,People & Culture,Recruiter,Advanced,Aden,2026-10-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-408,Mona Al-Otaibi,Finance,Financial Analyst,Beginner,Remote,2026-10-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-409,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-10-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-410,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-10-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-411,Yasser Al-Subaihi,Engineering,Software Engineer,Beginner,Sanaa,2026-10-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-412,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-10-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-413,Adel Al-Hakimi,Engineering,QA Engineer,Advanced,Remote,2026-10-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-414,Nour Al-Amri,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-10-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-415,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-10-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-416,Dana Sharaf,People & Culture,HR Generalist,Advanced,Sanaa,2026-10-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-417,Faris Al-Jabri,People & Culture,Recruiter,Beginner,Aden,2026-10-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-418,Reem Al-Basha,Finance,Financial Analyst,Intermediate,Remote,2026-10-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-419,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-10-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-420,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-10-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-421,Bilal Al-Thawr,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-31,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-422,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-11-01,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-423,Nasser Al-Ansi,Engineering,QA Engineer,Beginner,Remote,2026-11-02,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-424,Amal Al-Sayani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-11-03,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-425,Karim Al-Zaidi,Finance,Payments Operations Specialist,Advanced,Taiz,2026-11-04,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-426,Wafa Al-Bakri,People & Culture,HR Generalist,Beginner,Sanaa,2026-11-05,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-427,Jamal Al-Hammadi,People & Culture,Recruiter,Intermediate,Aden,2026-11-06,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-428,Ibrahim Al-Matari,Finance,Financial Analyst,Advanced,Remote,2026-11-07,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-429,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-11-08,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-430,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-11-09,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-431,Anas Al-Raimi,Engineering,Software Engineer,Advanced,Sanaa,2026-11-10,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-432,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-11-11,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-433,Majed Al-Aghbari,Engineering,QA Engineer,Intermediate,Remote,2026-11-12,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-434,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-11-13,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-435,Raed Al-Omari,Finance,Payments Operations Specialist,Beginner,Taiz,2026-11-14,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-436,Basma Al-Huraibi,People & Culture,HR Generalist,Intermediate,Sanaa,2026-11-15,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-437,Nabil Al-Tamimi,People & Culture,Recruiter,Advanced,Aden,2026-11-16,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-438,Rasha Al-Kibsi,Finance,Financial Analyst,Beginner,Remote,2026-11-17,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-439,Emad Al-Sabri,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-11-18,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-440,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-11-19,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-441,Ahmed Al-Harbi,Engineering,Software Engineer,Beginner,Sanaa,2026-11-20,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-442,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-11-21,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-443,Mohammed Al-Najjar,Engineering,QA Engineer,Advanced,Remote,2026-11-22,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-444,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-11-23,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-445,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-11-24,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-446,Lina Al-Dubai,People & Culture,HR Generalist,Advanced,Sanaa,2026-11-25,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-447,Khaled Mashrah,People & Culture,Recruiter,Beginner,Aden,2026-11-26,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-448,Mona Al-Otaibi,Finance,Financial Analyst,Intermediate,Remote,2026-11-27,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-449,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-11-28,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-450,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-11-29,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-451,Yasser Al-Subaihi,Engineering,Software Engineer,Intermediate,Sanaa,2026-09-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-452,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-09-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-453,Adel Al-Hakimi,Engineering,QA Engineer,Beginner,Remote,2026-09-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-454,Nour Al-Amri,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-09-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-455,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Advanced,Taiz,2026-09-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-456,Dana Sharaf,People & Culture,HR Generalist,Beginner,Sanaa,2026-09-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-457,Faris Al-Jabri,People & Culture,Recruiter,Intermediate,Aden,2026-09-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-458,Reem Al-Basha,Finance,Financial Analyst,Advanced,Remote,2026-09-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-459,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-09-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-460,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-09-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-461,Bilal Al-Thawr,Engineering,Software Engineer,Advanced,Sanaa,2026-09-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-462,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-09-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-463,Nasser Al-Ansi,Engineering,QA Engineer,Intermediate,Remote,2026-09-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-464,Amal Al-Sayani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-09-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-465,Karim Al-Zaidi,Finance,Payments Operations Specialist,Beginner,Taiz,2026-09-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-466,Wafa Al-Bakri,People & Culture,HR Generalist,Intermediate,Sanaa,2026-09-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-467,Jamal Al-Hammadi,People & Culture,Recruiter,Advanced,Aden,2026-09-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-468,Ibrahim Al-Matari,Finance,Financial Analyst,Beginner,Remote,2026-09-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-469,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-09-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-470,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-09-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-471,Anas Al-Raimi,Engineering,Software Engineer,Beginner,Sanaa,2026-09-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-472,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-09-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-473,Majed Al-Aghbari,Engineering,QA Engineer,Advanced,Remote,2026-09-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-474,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-09-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-475,Raed Al-Omari,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-09-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-476,Basma Al-Huraibi,People & Culture,HR Generalist,Advanced,Sanaa,2026-09-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-477,Nabil Al-Tamimi,People & Culture,Recruiter,Beginner,Aden,2026-09-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-478,Rasha Al-Kibsi,Finance,Financial Analyst,Intermediate,Remote,2026-09-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-479,Emad Al-Sabri,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-09-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-480,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-09-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-481,Ahmed Al-Harbi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-482,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-10-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-483,Mohammed Al-Najjar,Engineering,QA Engineer,Beginner,Remote,2026-10-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-484,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-10-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-485,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Advanced,Taiz,2026-10-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-486,Lina Al-Dubai,People & Culture,HR Generalist,Beginner,Sanaa,2026-10-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-487,Khaled Mashrah,People & Culture,Recruiter,Intermediate,Aden,2026-10-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-488,Mona Al-Otaibi,Finance,Financial Analyst,Advanced,Remote,2026-10-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-489,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-10-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-490,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-10-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-491,Yasser Al-Subaihi,Engineering,Software Engineer,Advanced,Sanaa,2026-10-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-492,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-10-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-493,Adel Al-Hakimi,Engineering,QA Engineer,Intermediate,Remote,2026-10-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-494,Nour Al-Amri,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-10-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-495,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Beginner,Taiz,2026-10-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-496,Dana Sharaf,People & Culture,HR Generalist,Intermediate,Sanaa,2026-10-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-497,Faris Al-Jabri,People & Culture,Recruiter,Advanced,Aden,2026-10-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-498,Reem Al-Basha,Finance,Financial Analyst,Beginner,Remote,2026-10-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-499,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-10-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-500,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-10-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-501,Bilal Al-Thawr,Engineering,Software Engineer,Beginner,Sanaa,2026-10-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-502,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-10-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-503,Nasser Al-Ansi,Engineering,QA Engineer,Advanced,Remote,2026-10-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-504,Amal Al-Sayani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-10-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-505,Karim Al-Zaidi,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-10-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-506,Wafa Al-Bakri,People & Culture,HR Generalist,Advanced,Sanaa,2026-10-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-507,Jamal Al-Hammadi,People & Culture,Recruiter,Beginner,Aden,2026-10-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-508,Ibrahim Al-Matari,Finance,Financial Analyst,Intermediate,Remote,2026-10-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-509,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-10-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-510,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-10-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-511,Anas Al-Raimi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-31,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-512,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-11-01,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-513,Majed Al-Aghbari,Engineering,QA Engineer,Beginner,Remote,2026-11-02,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-514,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-11-03,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-515,Raed Al-Omari,Finance,Payments Operations Specialist,Advanced,Taiz,2026-11-04,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-516,Basma Al-Huraibi,People & Culture,HR Generalist,Beginner,Sanaa,2026-11-05,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-517,Nabil Al-Tamimi,People & Culture,Recruiter,Intermediate,Aden,2026-11-06,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-518,Rasha Al-Kibsi,Finance,Financial Analyst,Advanced,Remote,2026-11-07,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-519,Emad Al-Sabri,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-11-08,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-520,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-11-09,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-521,Ahmed Al-Harbi,Engineering,Software Engineer,Advanced,Sanaa,2026-11-10,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-522,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-11-11,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-523,Mohammed Al-Najjar,Engineering,QA Engineer,Intermediate,Remote,2026-11-12,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-524,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-11-13,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-525,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Beginner,Taiz,2026-11-14,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-526,Lina Al-Dubai,People & Culture,HR Generalist,Intermediate,Sanaa,2026-11-15,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-527,Khaled Mashrah,People & Culture,Recruiter,Advanced,Aden,2026-11-16,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-528,Mona Al-Otaibi,Finance,Financial Analyst,Beginner,Remote,2026-11-17,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-529,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-11-18,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-530,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-11-19,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-531,Yasser Al-Subaihi,Engineering,Software Engineer,Beginner,Sanaa,2026-11-20,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-532,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-11-21,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-533,Adel Al-Hakimi,Engineering,QA Engineer,Advanced,Remote,2026-11-22,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-534,Nour Al-Amri,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-11-23,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-535,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-11-24,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-536,Dana Sharaf,People & Culture,HR Generalist,Advanced,Sanaa,2026-11-25,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-537,Faris Al-Jabri,People & Culture,Recruiter,Beginner,Aden,2026-11-26,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-538,Reem Al-Basha,Finance,Financial Analyst,Intermediate,Remote,2026-11-27,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-539,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-11-28,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-540,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-11-29,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-541,Bilal Al-Thawr,Engineering,Software Engineer,Intermediate,Sanaa,2026-09-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-542,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-09-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-543,Nasser Al-Ansi,Engineering,QA Engineer,Beginner,Remote,2026-09-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-544,Amal Al-Sayani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-09-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-545,Karim Al-Zaidi,Finance,Payments Operations Specialist,Advanced,Taiz,2026-09-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-546,Wafa Al-Bakri,People & Culture,HR Generalist,Beginner,Sanaa,2026-09-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-547,Jamal Al-Hammadi,People & Culture,Recruiter,Intermediate,Aden,2026-09-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-548,Ibrahim Al-Matari,Finance,Financial Analyst,Advanced,Remote,2026-09-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-549,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-09-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-550,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-09-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-551,Anas Al-Raimi,Engineering,Software Engineer,Advanced,Sanaa,2026-09-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-552,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-09-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-553,Majed Al-Aghbari,Engineering,QA Engineer,Intermediate,Remote,2026-09-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-554,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-09-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-555,Raed Al-Omari,Finance,Payments Operations Specialist,Beginner,Taiz,2026-09-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-556,Basma Al-Huraibi,People & Culture,HR Generalist,Intermediate,Sanaa,2026-09-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-557,Nabil Al-Tamimi,People & Culture,Recruiter,Advanced,Aden,2026-09-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-558,Rasha Al-Kibsi,Finance,Financial Analyst,Beginner,Remote,2026-09-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-559,Emad Al-Sabri,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-09-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-560,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-09-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-561,Ahmed Al-Harbi,Engineering,Software Engineer,Beginner,Sanaa,2026-09-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-562,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-09-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-563,Mohammed Al-Najjar,Engineering,QA Engineer,Advanced,Remote,2026-09-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-564,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-09-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-565,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-09-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-566,Lina Al-Dubai,People & Culture,HR Generalist,Advanced,Sanaa,2026-09-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-567,Khaled Mashrah,People & Culture,Recruiter,Beginner,Aden,2026-09-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-568,Mona Al-Otaibi,Finance,Financial Analyst,Intermediate,Remote,2026-09-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-569,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-09-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-570,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-09-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-571,Yasser Al-Subaihi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-572,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-10-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-573,Adel Al-Hakimi,Engineering,QA Engineer,Beginner,Remote,2026-10-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-574,Nour Al-Amri,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-10-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-575,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Advanced,Taiz,2026-10-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-576,Dana Sharaf,People & Culture,HR Generalist,Beginner,Sanaa,2026-10-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-577,Faris Al-Jabri,People & Culture,Recruiter,Intermediate,Aden,2026-10-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-578,Reem Al-Basha,Finance,Financial Analyst,Advanced,Remote,2026-10-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-579,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-10-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-580,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-10-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-581,Bilal Al-Thawr,Engineering,Software Engineer,Advanced,Sanaa,2026-10-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-582,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-10-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-583,Nasser Al-Ansi,Engineering,QA Engineer,Intermediate,Remote,2026-10-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-584,Amal Al-Sayani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-10-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-585,Karim Al-Zaidi,Finance,Payments Operations Specialist,Beginner,Taiz,2026-10-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-586,Wafa Al-Bakri,People & Culture,HR Generalist,Intermediate,Sanaa,2026-10-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-587,Jamal Al-Hammadi,People & Culture,Recruiter,Advanced,Aden,2026-10-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-588,Ibrahim Al-Matari,Finance,Financial Analyst,Beginner,Remote,2026-10-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-589,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-10-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-590,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-10-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-591,Anas Al-Raimi,Engineering,Software Engineer,Beginner,Sanaa,2026-10-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-592,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-10-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-593,Majed Al-Aghbari,Engineering,QA Engineer,Advanced,Remote,2026-10-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-594,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-10-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-595,Raed Al-Omari,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-10-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-596,Basma Al-Huraibi,People & Culture,HR Generalist,Advanced,Sanaa,2026-10-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-597,Nabil Al-Tamimi,People & Culture,Recruiter,Beginner,Aden,2026-10-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-598,Rasha Al-Kibsi,Finance,Financial Analyst,Intermediate,Remote,2026-10-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-599,Emad Al-Sabri,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-10-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-600,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-10-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-601,Ahmed Al-Harbi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-31,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-602,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-11-01,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-603,Mohammed Al-Najjar,Engineering,QA Engineer,Beginner,Remote,2026-11-02,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-604,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-11-03,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-605,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Advanced,Taiz,2026-11-04,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-606,Lina Al-Dubai,People & Culture,HR Generalist,Beginner,Sanaa,2026-11-05,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-607,Khaled Mashrah,People & Culture,Recruiter,Intermediate,Aden,2026-11-06,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-608,Mona Al-Otaibi,Finance,Financial Analyst,Advanced,Remote,2026-11-07,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-609,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-11-08,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-610,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-11-09,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-611,Yasser Al-Subaihi,Engineering,Software Engineer,Advanced,Sanaa,2026-11-10,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-612,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-11-11,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-613,Adel Al-Hakimi,Engineering,QA Engineer,Intermediate,Remote,2026-11-12,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-614,Nour Al-Amri,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-11-13,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-615,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Beginner,Taiz,2026-11-14,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-616,Dana Sharaf,People & Culture,HR Generalist,Intermediate,Sanaa,2026-11-15,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-617,Faris Al-Jabri,People & Culture,Recruiter,Advanced,Aden,2026-11-16,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-618,Reem Al-Basha,Finance,Financial Analyst,Beginner,Remote,2026-11-17,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-619,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-11-18,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-620,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-11-19,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-621,Bilal Al-Thawr,Engineering,Software Engineer,Beginner,Sanaa,2026-11-20,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-622,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-11-21,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-623,Nasser Al-Ansi,Engineering,QA Engineer,Advanced,Remote,2026-11-22,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-624,Amal Al-Sayani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-11-23,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-625,Karim Al-Zaidi,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-11-24,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-626,Wafa Al-Bakri,People & Culture,HR Generalist,Advanced,Sanaa,2026-11-25,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-627,Jamal Al-Hammadi,People & Culture,Recruiter,Beginner,Aden,2026-11-26,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-628,Ibrahim Al-Matari,Finance,Financial Analyst,Intermediate,Remote,2026-11-27,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-629,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-11-28,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-630,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-11-29,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-631,Anas Al-Raimi,Engineering,Software Engineer,Intermediate,Sanaa,2026-09-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-632,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-09-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-633,Majed Al-Aghbari,Engineering,QA Engineer,Beginner,Remote,2026-09-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-634,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-09-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-635,Raed Al-Omari,Finance,Payments Operations Specialist,Advanced,Taiz,2026-09-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-636,Basma Al-Huraibi,People & Culture,HR Generalist,Beginner,Sanaa,2026-09-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-637,Nabil Al-Tamimi,People & Culture,Recruiter,Intermediate,Aden,2026-09-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-638,Rasha Al-Kibsi,Finance,Financial Analyst,Advanced,Remote,2026-09-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-639,Emad Al-Sabri,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-09-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-640,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-09-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-641,Ahmed Al-Harbi,Engineering,Software Engineer,Advanced,Sanaa,2026-09-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-642,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-09-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-643,Mohammed Al-Najjar,Engineering,QA Engineer,Intermediate,Remote,2026-09-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-644,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-09-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-645,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Beginner,Taiz,2026-09-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-646,Lina Al-Dubai,People & Culture,HR Generalist,Intermediate,Sanaa,2026-09-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-647,Khaled Mashrah,People & Culture,Recruiter,Advanced,Aden,2026-09-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-648,Mona Al-Otaibi,Finance,Financial Analyst,Beginner,Remote,2026-09-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-649,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-09-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-650,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-09-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-651,Yasser Al-Subaihi,Engineering,Software Engineer,Beginner,Sanaa,2026-09-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-652,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-09-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-653,Adel Al-Hakimi,Engineering,QA Engineer,Advanced,Remote,2026-09-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-654,Nour Al-Amri,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-09-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-655,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-09-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-656,Dana Sharaf,People & Culture,HR Generalist,Advanced,Sanaa,2026-09-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-657,Faris Al-Jabri,People & Culture,Recruiter,Beginner,Aden,2026-09-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-658,Reem Al-Basha,Finance,Financial Analyst,Intermediate,Remote,2026-09-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-659,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-09-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-660,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-09-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-661,Bilal Al-Thawr,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-662,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-10-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-663,Nasser Al-Ansi,Engineering,QA Engineer,Beginner,Remote,2026-10-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-664,Amal Al-Sayani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-10-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-665,Karim Al-Zaidi,Finance,Payments Operations Specialist,Advanced,Taiz,2026-10-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-666,Wafa Al-Bakri,People & Culture,HR Generalist,Beginner,Sanaa,2026-10-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-667,Jamal Al-Hammadi,People & Culture,Recruiter,Intermediate,Aden,2026-10-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-668,Ibrahim Al-Matari,Finance,Financial Analyst,Advanced,Remote,2026-10-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-669,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-10-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-670,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-10-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-671,Anas Al-Raimi,Engineering,Software Engineer,Advanced,Sanaa,2026-10-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-672,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-10-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-673,Majed Al-Aghbari,Engineering,QA Engineer,Intermediate,Remote,2026-10-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-674,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-10-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-675,Raed Al-Omari,Finance,Payments Operations Specialist,Beginner,Taiz,2026-10-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-676,Basma Al-Huraibi,People & Culture,HR Generalist,Intermediate,Sanaa,2026-10-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-677,Nabil Al-Tamimi,People & Culture,Recruiter,Advanced,Aden,2026-10-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-678,Rasha Al-Kibsi,Finance,Financial Analyst,Beginner,Remote,2026-10-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-679,Emad Al-Sabri,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-10-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-680,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-10-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-681,Ahmed Al-Harbi,Engineering,Software Engineer,Beginner,Sanaa,2026-10-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-682,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-10-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-683,Mohammed Al-Najjar,Engineering,QA Engineer,Advanced,Remote,2026-10-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-684,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-10-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-685,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-10-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-686,Lina Al-Dubai,People & Culture,HR Generalist,Advanced,Sanaa,2026-10-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-687,Khaled Mashrah,People & Culture,Recruiter,Beginner,Aden,2026-10-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-688,Mona Al-Otaibi,Finance,Financial Analyst,Intermediate,Remote,2026-10-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-689,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-10-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-690,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-10-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-691,Yasser Al-Subaihi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-31,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-692,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-11-01,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-693,Adel Al-Hakimi,Engineering,QA Engineer,Beginner,Remote,2026-11-02,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-694,Nour Al-Amri,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-11-03,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-695,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Advanced,Taiz,2026-11-04,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-696,Dana Sharaf,People & Culture,HR Generalist,Beginner,Sanaa,2026-11-05,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-697,Faris Al-Jabri,People & Culture,Recruiter,Intermediate,Aden,2026-11-06,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-698,Reem Al-Basha,Finance,Financial Analyst,Advanced,Remote,2026-11-07,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-699,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-11-08,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-700,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-11-09,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-701,Bilal Al-Thawr,Engineering,Software Engineer,Advanced,Sanaa,2026-11-10,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-702,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-11-11,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-703,Nasser Al-Ansi,Engineering,QA Engineer,Intermediate,Remote,2026-11-12,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-704,Amal Al-Sayani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-11-13,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-705,Karim Al-Zaidi,Finance,Payments Operations Specialist,Beginner,Taiz,2026-11-14,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-706,Wafa Al-Bakri,People & Culture,HR Generalist,Intermediate,Sanaa,2026-11-15,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-707,Jamal Al-Hammadi,People & Culture,Recruiter,Advanced,Aden,2026-11-16,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-708,Ibrahim Al-Matari,Finance,Financial Analyst,Beginner,Remote,2026-11-17,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-709,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-11-18,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-710,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-11-19,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-711,Anas Al-Raimi,Engineering,Software Engineer,Beginner,Sanaa,2026-11-20,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-712,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-11-21,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-713,Majed Al-Aghbari,Engineering,QA Engineer,Advanced,Remote,2026-11-22,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-714,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-11-23,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-715,Raed Al-Omari,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-11-24,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-716,Basma Al-Huraibi,People & Culture,HR Generalist,Advanced,Sanaa,2026-11-25,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-717,Nabil Al-Tamimi,People & Culture,Recruiter,Beginner,Aden,2026-11-26,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-718,Rasha Al-Kibsi,Finance,Financial Analyst,Intermediate,Remote,2026-11-27,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-719,Emad Al-Sabri,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-11-28,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-720,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-11-29,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-721,Ahmed Al-Harbi,Engineering,Software Engineer,Intermediate,Sanaa,2026-09-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-722,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-09-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-723,Mohammed Al-Najjar,Engineering,QA Engineer,Beginner,Remote,2026-09-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-724,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-09-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-725,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Advanced,Taiz,2026-09-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-726,Lina Al-Dubai,People & Culture,HR Generalist,Beginner,Sanaa,2026-09-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-727,Khaled Mashrah,People & Culture,Recruiter,Intermediate,Aden,2026-09-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-728,Mona Al-Otaibi,Finance,Financial Analyst,Advanced,Remote,2026-09-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-729,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-09-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-730,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-09-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-731,Yasser Al-Subaihi,Engineering,Software Engineer,Advanced,Sanaa,2026-09-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-732,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-09-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-733,Adel Al-Hakimi,Engineering,QA Engineer,Intermediate,Remote,2026-09-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-734,Nour Al-Amri,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-09-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-735,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Beginner,Taiz,2026-09-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-736,Dana Sharaf,People & Culture,HR Generalist,Intermediate,Sanaa,2026-09-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-737,Faris Al-Jabri,People & Culture,Recruiter,Advanced,Aden,2026-09-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-738,Reem Al-Basha,Finance,Financial Analyst,Beginner,Remote,2026-09-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-739,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-09-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-740,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-09-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-741,Bilal Al-Thawr,Engineering,Software Engineer,Beginner,Sanaa,2026-09-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-742,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-09-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-743,Nasser Al-Ansi,Engineering,QA Engineer,Advanced,Remote,2026-09-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-744,Amal Al-Sayani,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-09-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-745,Karim Al-Zaidi,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-09-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-746,Wafa Al-Bakri,People & Culture,HR Generalist,Advanced,Sanaa,2026-09-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-747,Jamal Al-Hammadi,People & Culture,Recruiter,Beginner,Aden,2026-09-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-748,Ibrahim Al-Matari,Finance,Financial Analyst,Intermediate,Remote,2026-09-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-749,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-09-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-750,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-09-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-751,Anas Al-Raimi,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-01,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-752,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-10-02,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-753,Majed Al-Aghbari,Engineering,QA Engineer,Beginner,Remote,2026-10-03,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-754,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-10-04,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-755,Raed Al-Omari,Finance,Payments Operations Specialist,Advanced,Taiz,2026-10-05,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-756,Basma Al-Huraibi,People & Culture,HR Generalist,Beginner,Sanaa,2026-10-06,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-757,Nabil Al-Tamimi,People & Culture,Recruiter,Intermediate,Aden,2026-10-07,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-758,Rasha Al-Kibsi,Finance,Financial Analyst,Advanced,Remote,2026-10-08,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-759,Emad Al-Sabri,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-10-09,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-760,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-10-10,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-761,Ahmed Al-Harbi,Engineering,Software Engineer,Advanced,Sanaa,2026-10-11,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-762,Sara Al-Wasabi,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-10-12,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-763,Mohammed Al-Najjar,Engineering,QA Engineer,Intermediate,Remote,2026-10-13,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-764,Fatima Al-Sanabani,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-10-14,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-765,Omar Al-Saqqaf,Finance,Payments Operations Specialist,Beginner,Taiz,2026-10-15,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-766,Lina Al-Dubai,People & Culture,HR Generalist,Intermediate,Sanaa,2026-10-16,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-767,Khaled Mashrah,People & Culture,Recruiter,Advanced,Aden,2026-10-17,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-768,Mona Al-Otaibi,Finance,Financial Analyst,Beginner,Remote,2026-10-18,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-769,Tariq Al-Ashwal,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-10-19,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-770,Huda Qassem,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-10-20,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started
+BULK-771,Yasser Al-Subaihi,Engineering,Software Engineer,Beginner,Sanaa,2026-10-21,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-772,Rania Hassan,Engineering,DevOps/Infrastructure Engineer,Intermediate,Aden,2026-10-22,Lina Hassan,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started
+BULK-773,Adel Al-Hakimi,Engineering,QA Engineer,Advanced,Remote,2026-10-23,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-774,Nour Al-Amri,Customer Support,Customer Support Representative,Beginner,Hodeidah,2026-10-24,Manager Demo,Policy Awareness;Customer Focus;Communication,2 years in logistics,not_started
+BULK-775,Salem Al-Maqaleh,Finance,Payments Operations Specialist,Intermediate,Taiz,2026-10-25,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-776,Dana Sharaf,People & Culture,HR Generalist,Advanced,Sanaa,2026-10-26,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,Internship completed,not_started
+BULK-777,Faris Al-Jabri,People & Culture,Recruiter,Beginner,Aden,2026-10-27,Manager Demo,Policy Awareness;Communication;Confidentiality,None,not_started
+BULK-778,Reem Al-Basha,Finance,Financial Analyst,Intermediate,Remote,2026-10-28,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,Fresh graduate,not_started
+BULK-779,Hassan Al-Sharabi,Finance,Accounts Payable Clerk,Advanced,Hodeidah,2026-10-29,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-780,Maha Al-Shami,Warehouse,Warehouse Operations Coordinator,Beginner,Taiz,2026-10-30,Manager Demo,Policy Awareness;Safety Compliance;Teamwork,2 years in logistics,not_started
+BULK-781,Bilal Al-Thawr,Engineering,Software Engineer,Intermediate,Sanaa,2026-10-31,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-782,Sahar Al-Yazidi,Engineering,DevOps/Infrastructure Engineer,Advanced,Aden,2026-11-01,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,Internship completed,not_started
+BULK-783,Nasser Al-Ansi,Engineering,QA Engineer,Beginner,Remote,2026-11-02,Manager Demo,Policy Awareness;Code Quality;Teamwork,None,not_started
+BULK-784,Amal Al-Sayani,Customer Support,Customer Support Representative,Intermediate,Hodeidah,2026-11-03,Lina Hassan,Policy Awareness;Customer Focus;Communication,Fresh graduate,not_started
+BULK-785,Karim Al-Zaidi,Finance,Payments Operations Specialist,Advanced,Taiz,2026-11-04,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,1 year in retail,not_started
+BULK-786,Wafa Al-Bakri,People & Culture,HR Generalist,Beginner,Sanaa,2026-11-05,Manager Demo,Policy Awareness;Communication;Confidentiality,2 years in logistics,not_started
+BULK-787,Jamal Al-Hammadi,People & Culture,Recruiter,Intermediate,Aden,2026-11-06,Lina Hassan,Policy Awareness;Communication;Confidentiality,3 years in finance,not_started
+BULK-788,Ibrahim Al-Matari,Finance,Financial Analyst,Advanced,Remote,2026-11-07,Omar Al-Harbi,Policy Awareness;Compliance;Attention to Detail,Internship completed,not_started
+BULK-789,Sawsan Al-Ghamdi,Finance,Accounts Payable Clerk,Beginner,Hodeidah,2026-11-08,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-790,Alaa Al-Qadhi,Warehouse,Warehouse Operations Coordinator,Intermediate,Taiz,2026-11-09,Lina Hassan,Policy Awareness;Safety Compliance;Teamwork,Fresh graduate,not_started
+BULK-791,Anas Al-Raimi,Engineering,Software Engineer,Advanced,Sanaa,2026-11-10,Omar Al-Harbi,Policy Awareness;Code Quality;Teamwork,1 year in retail,not_started
+BULK-792,Hanan Al-Khamiri,Engineering,DevOps/Infrastructure Engineer,Beginner,Aden,2026-11-11,Manager Demo,Policy Awareness;Code Quality;Teamwork,2 years in logistics,not_started
+BULK-793,Majed Al-Aghbari,Engineering,QA Engineer,Intermediate,Remote,2026-11-12,Lina Hassan,Policy Awareness;Code Quality;Teamwork,3 years in finance,not_started
+BULK-794,Shatha Al-Mutawakel,Customer Support,Customer Support Representative,Advanced,Hodeidah,2026-11-13,Omar Al-Harbi,Policy Awareness;Customer Focus;Communication,Internship completed,not_started
+BULK-795,Raed Al-Omari,Finance,Payments Operations Specialist,Beginner,Taiz,2026-11-14,Manager Demo,Policy Awareness;Compliance;Attention to Detail,None,not_started
+BULK-796,Basma Al-Huraibi,People & Culture,HR Generalist,Intermediate,Sanaa,2026-11-15,Lina Hassan,Policy Awareness;Communication;Confidentiality,Fresh graduate,not_started
+BULK-797,Nabil Al-Tamimi,People & Culture,Recruiter,Advanced,Aden,2026-11-16,Omar Al-Harbi,Policy Awareness;Communication;Confidentiality,1 year in retail,not_started
+BULK-798,Rasha Al-Kibsi,Finance,Financial Analyst,Beginner,Remote,2026-11-17,Manager Demo,Policy Awareness;Compliance;Attention to Detail,2 years in logistics,not_started
+BULK-799,Emad Al-Sabri,Finance,Accounts Payable Clerk,Intermediate,Hodeidah,2026-11-18,Lina Hassan,Policy Awareness;Compliance;Attention to Detail,3 years in finance,not_started
+BULK-800,Sami Hayel,Warehouse,Warehouse Operations Coordinator,Advanced,Taiz,2026-11-19,Omar Al-Harbi,Policy Awareness;Safety Compliance;Teamwork,Internship completed,not_started

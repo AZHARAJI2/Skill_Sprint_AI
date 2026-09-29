@@ -691,7 +691,7 @@ def test_command_code_provider_uses_documented_openai_endpoint(monkeypatch) -> N
 
         def json(self):
             return {
-                "model": "deepseek/deepseek-v4-flash-fast",
+                "model": "deepseek/deepseek-chat",
                 "choices": [{"message": {"content": '{"result": "ok"}'}}],
                 "usage": {"prompt_tokens": 10, "completion_tokens": 2},
             }
@@ -713,11 +713,11 @@ def test_command_code_provider_uses_documented_openai_endpoint(monkeypatch) -> N
     monkeypatch.setattr("genai_pipeline.deepseek_provider.httpx.Client", FakeClient)
     response = CommandCodeProvider(api_key="not-a-real-command-code-key").generate("trusted prompt")
 
-    assert response.model_name == "deepseek/deepseek-v4-flash-fast"
+    assert response.model_name == "deepseek/deepseek-chat"
     assert response.metadata["api_version"] == "commandcode-chat-completions"
     assert captured["url"] == "https://api.commandcode.ai/provider/v1/chat/completions"
     assert captured["headers"]["Authorization"] == "Bearer not-a-real-command-code-key"
-    assert captured["body"]["model"] == "deepseek/deepseek-v4-flash-fast"
+    assert captured["body"]["model"] == "deepseek/deepseek-chat"
 
 
 def test_no_plan_with_generation_failures_can_reach_verified_status() -> None:

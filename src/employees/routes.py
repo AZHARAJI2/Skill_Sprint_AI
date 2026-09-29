@@ -145,7 +145,8 @@ async def import_employees(
     user: User = Depends(require_role("Admin", "Training Manager")),
 ) -> dict:
     """Create one or more employee profiles from a CSV, XLSX, or JSON file."""
-    employees = EmployeeImportService(session).import_file(
+    importer = EmployeeImportService(session)
+    employees = importer.import_file(
         file.filename or "employee-import",
         await file.read(),
         actor=user.username,
@@ -154,12 +155,25 @@ async def import_employees(
     credentials = []
     for employee in employees:
         account, initial_password = auth.provision_employee_account(employee, actor=user.username)
-        credentials.append({"employee_code": employee.employee_code, "username": account.username, "initial_password": initial_password})
+        # This can also be a pre-existing employee profile that had no login
+        # yet.  Show a secret only when this request actually set one.
+        if initial_password:
+            credentials.append(
+                {
+                    "employee_code": employee.employee_code,
+                    "username": account.username,
+                    "initial_password": initial_password,
+                }
+            )
+    created = len(importer.last_created_codes)
+    updated = len(importer.last_updated_codes)
     return {
-        "created": len(employees),
+        "created": created,
+        "updated": updated,
+        "processed": len(employees),
         "employees": [_employee_payload(employee) for employee in employees],
         "credentials": credentials,
-        "message": f"Created {len(employees)} employee profile(s).",
+        "message": f"Created {created} new employee profile(s) and updated {updated} existing profile(s).",
     }
 
 

@@ -612,6 +612,15 @@ class ProgressTrackingService:
             .all()
         )
 
+        expected_question_ids = {
+            (q.payload or {}).get("question_id", str(q.id)) for q in quizzes
+        }
+        submitted_question_ids = set(answers)
+        if expected_question_ids != submitted_question_ids:
+            raise ValueError(
+                "Submit exactly one answer for every quiz question before grading."
+            )
+
         details: dict[str, dict] = {}
         correct_count = 0
         total_graded = 0
