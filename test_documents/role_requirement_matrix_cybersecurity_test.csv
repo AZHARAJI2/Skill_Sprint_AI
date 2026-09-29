@@ -1,3 +1,0 @@
-requirement_id,role,department,requirement_text,mandatory,priority,due_stage,source_document_id,source_section_id,competency,assessment_requirement
-R900,Cybersecurity Analyst,Security,Complete threat monitoring orientation and demonstrate how to identify a security alert,TRUE,High,Week 1,ROLE-11,2.1,Threat Monitoring,Manager observes the employee triage a sample security alert
-R901,Cybersecurity Analyst,Security,Review the required cybersecurity competencies and confirm the individual learning goals with the manager,TRUE,High,Week 1,ROLE-11,5.1,Cybersecurity Fundamentals,Manager-approved learning goals

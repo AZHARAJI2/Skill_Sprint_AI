@@ -35,10 +35,10 @@
     </form>
     <select id="filter-type" class="form-select form-select-sm" style="width:auto;min-width:130px;">
       <option value="">All item types</option>
-      <option value="module">Module</option>
-      <option value="task">Task</option>
+      <option value="learning_module">Module</option>
+      <option value="task_item">Task</option>
       <option value="quiz_question">Quiz Question</option>
-      <option value="checklist">Checklist</option>
+      <option value="checklist_item">Checklist</option>
       <option value="assessment">Assessment</option>
     </select>
     <select id="filter-status" class="form-select form-select-sm" style="width:auto;min-width:180px;">
@@ -77,16 +77,16 @@
           <td><code>{{ item.item_id }}</code></td>
           <td>
             <span class="badge
-              {% if item.item_type == 'module' %}badge-navy
-              {% elif item.item_type == 'task' %}badge-teal
+              {% if item.item_type in ('module', 'learning_module') %}badge-navy
+              {% elif item.item_type in ('task', 'task_item') %}badge-teal
               {% elif item.item_type == 'quiz_question' %}badge-info
-              {% elif item.item_type == 'checklist' %}badge-warning
+              {% elif item.item_type in ('checklist', 'checklist_item') %}badge-warning
               {% else %}badge-muted{% endif %}">
               <i class="bi bi-
-                {% if item.item_type == 'module' %}collection
-                {% elif item.item_type == 'task' %}check2-square
+                {% if item.item_type in ('module', 'learning_module') %}collection
+                {% elif item.item_type in ('task', 'task_item') %}check2-square
                 {% elif item.item_type == 'quiz_question' %}patch-question
-                {% elif item.item_type == 'checklist' %}list-check
+                {% elif item.item_type in ('checklist', 'checklist_item') %}list-check
                 {% else %}file{% endif %} me-1"></i>
               {{ item.item_type.replace('_',' ').title() }}
             </span>
@@ -476,9 +476,13 @@ function showResult(type, msg) {
 function filterQueue() {
   const type   = document.getElementById('filter-type')?.value  || '';
   const status = document.getElementById('filter-status')?.value || '';
+  // Legacy short type names (module/task/checklist) map to the pipeline's
+  // canonical values so older rows keep matching the dropdown.
+  const legacy = {module: 'learning_module', task: 'task_item', checklist: 'checklist_item'};
+  const norm = v => legacy[v] || v;
   let visible = 0;
   document.querySelectorAll('.queue-row').forEach(row => {
-    const match = (!type || row.dataset.type === type) && (!status || row.dataset.status === status);
+    const match = (!type || norm(row.dataset.type) === type) && (!status || row.dataset.status === status);
     row.style.display = match ? '' : 'none';
     if (match) visible++;
   });

@@ -1,0 +1,11 @@
+employee_code,name,department,role_title,experience_level,location,joining_date,reporting_manager,required_competencies,prior_experience,training_status
+DEMO-001,Lina Mansour,Engineering,Software Engineer,Intermediate,Aden,2026-09-15,Engineering Manager,Code Quality;Version Control (Git);Debugging,3 years building backend services,in_progress
+DEMO-002,Yousef Al-Amrani,Infrastructure,DevOps/Infrastructure Engineer,Advanced,Taiz,2026-08-01,Infrastructure Manager,Cloud Infrastructure;CI/CD Pipelines;Monitoring & Alerting,6 years managing production infrastructure,completed
+DEMO-003,Rana Qassem,Quality Assurance,QA Engineer,Beginner,Sanaa,2026-10-10,QA Lead,Test Case Design;Bug Tracking;Teamwork,Recent bootcamp graduate,not_started
+DEMO-004,Karim Dagher,Customer Support,Customer Support Representative,Beginner,Ibb,2026-09-01,Customer Support Manager,Customer Communication;Ticketing Systems;Conflict Resolution,1 year in a retail customer service role,in_progress
+DEMO-005,Noura Al-Sabri,Finance,Payments Operations Specialist,Intermediate,Hodeidah,2026-07-20,Payments Operations Manager,PCI Compliance;Fraud Detection;Dispute Resolution,4 years in a banking back-office role,completed
+DEMO-006,Faten Al-Kamali,People & Culture,HR Generalist,Advanced,Sanaa,2026-06-05,People & Culture Director,HRIS Management;Employee Relations;Confidentiality,7 years in HR operations,completed
+DEMO-007,Anas Ghaleb,People & Culture,Recruiter,Beginner,Aden,2026-10-05,People & Culture Director,Candidate Sourcing;Interviewing;Communication,Fresh graduate,not_started
+DEMO-008,Samira Othman,Finance,Financial Analyst,Intermediate,Taiz,2026-08-18,Finance Director,Financial Modeling;Budget Forecasting;Attention to Detail,3 years in financial planning and analysis,in_progress
+DEMO-009,Bilal Nasser,Finance,Accounts Payable Clerk,Beginner,Sanaa,2026-09-22,Finance Director,Invoice Processing;Vendor Management;Attention to Detail,1 year in general bookkeeping,not_started
+DEMO-010,Mariam Fadel,Warehouse,Warehouse Operations Coordinator,Advanced,Ibb,2026-05-11,Operations Manager,Logistics Coordination;Safety Compliance;Shipment Scheduling,8 years in warehouse and logistics operations,completed

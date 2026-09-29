@@ -1,0 +1,2 @@
+employee_code,name,department,role_title,experience_level,location,joining_date,reporting_manager,required_competencies,prior_experience,training_status
+DEMO-001,Salem Al-Hakimi,Engineering,Software Engineer,Beginner,Sanaa,2026-10-01,Manager Demo,Policy Awareness;Code Quality;Teamwork,Fresh graduate,not_started

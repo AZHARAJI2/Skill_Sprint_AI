@@ -32,7 +32,7 @@ def search_page(
     results = {"employees": [], "documents": [], "modules": [], "plans": [], "requirements": []}
     total = 0
 
-    if q:
+    if q or entity or department:
         results = service.search(q, entity=entity, department=department)
         total = sum(len(v) for v in results.values())
 

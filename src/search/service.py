@@ -48,10 +48,13 @@ class SearchService:
             Dict with keys: employees, documents, modules, plans, requirements.
             Each value is a list of dicts serialisable to JSON.
         """
-        if not query or not query.strip():
+        text = query.strip() if query else ""
+        if not text and not entity and not department:
             return {"employees": [], "documents": [], "modules": [], "plans": [], "requirements": []}
 
-        q = f"%{query.strip()}%"
+        # Filter-only search (no text): match everything, then narrow by
+        # entity/department so the dropdowns work standalone.
+        q = f"%{text}%" if text else "%"
         results: dict[str, list[dict]] = {
             "employees": [], "documents": [], "modules": [], "plans": [], "requirements": [],
         }

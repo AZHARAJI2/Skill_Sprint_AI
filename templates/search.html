@@ -40,12 +40,13 @@
   </div>
 </form>
 
-{% if query %}
+{% if query or entity or department %}
 <!-- Result counts -->
 <div class="d-flex align-items-center gap-3 mb-3 animate-fade">
   <span class="text-muted" style="font-size:0.85rem">
-    Found <strong>{{ total_results }}</strong> results for "<em>{{ query }}</em>"
+    Found <strong>{{ total_results }}</strong> results{% if query %} for "<em>{{ query }}</em>"{% endif %}
     {% if entity %} in <strong>{{ entity }}s</strong>{% endif %}
+    {% if department %} in <strong>{{ department }}</strong>{% endif %}
   </span>
 </div>
 
@@ -163,7 +164,7 @@
 {% if total_results == 0 %}
 <div class="empty-state animate-fade">
   <div class="empty-icon"><i class="bi bi-search"></i></div>
-  <p>No results found for "<em>{{ query }}</em>". Try a different keyword or entity filter.</p>
+  <p>No results found{% if query %} for "<em>{{ query }}</em>"{% endif %}. Try a different keyword or entity filter.</p>
 </div>
 {% endif %}
 
