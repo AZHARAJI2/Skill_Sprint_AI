@@ -32,15 +32,16 @@ SKILLSPRINT_SECRET_KEY=<long random value>
 SKILLSPRINT_COOKIE_SECURE=true
 SKILLSPRINT_GENAI_PROVIDER=commandcode
 CMD_API_KEY=<your Command Code key>
-COMMAND_CODE_MODEL=deepseek/deepseek-v4-flash
-# Optional: leave unset (or set 0) to wait for Command Code without an application deadline.
-# Set positive values only if you intentionally want a timeout.
+COMMAND_CODE_MODEL=deepseek/deepseek-v4-flash-fast
+# Use 0 to let a valid full response complete; set a positive hosting policy
+# only after benchmarking the selected model.
 SKILLSPRINT_COMMAND_CODE_TIMEOUT_SECONDS=0
 SKILLSPRINT_PLAN_TIMEOUT_SECONDS=0
 SKILLSPRINT_GENAI_MAX_RETRIES=3
 SKILLSPRINT_GENAI_RETRY_BACKOFF_SECONDS=2
 SKILLSPRINT_ENABLE_GENAI_ENRICHMENT=false
 SKILLSPRINT_GENAI_PARALLEL_WORKERS=3
+SKILLSPRINT_STAGE_OUTPUT_TOKENS=5120
 # Set true only after confirming the selected Command Code model supports ZDR.
 SKILLSPRINT_COMMAND_CODE_ZDR=false
 ```

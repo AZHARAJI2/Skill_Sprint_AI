@@ -1,0 +1,6 @@
+[build]
+  command = "python scripts/build_netlify_proxy.py"
+  publish = "netlify_proxy_public"
+
+[build.environment]
+  PYTHON_VERSION = "3.12"

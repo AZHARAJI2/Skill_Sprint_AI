@@ -31,13 +31,15 @@ pip install -r requirements.txt
 ```
 
 Set `CMD_API_KEY` (or `COMMAND_CODE_API_KEY`) in the environment before live
-generation. The default Command Code model is `deepseek/deepseek-v4-flash`.
+generation. The default Command Code model is `deepseek/deepseek-v4-flash-fast`.
 Override it with `COMMAND_CODE_MODEL` only after confirming that model is
 available to your Command Code account. The complete plan is divided into
 three independent stage groups and generated concurrently, then merged and
-validated by Python. By default it waits for Command Code to finish; set
-`SKILLSPRINT_PLAN_TIMEOUT_SECONDS` to a positive number only when an intentional
-end-to-end deadline is required.
+validated by Python. The default waits for a complete provider response rather
+than replacing it with an incomplete fallback at an arbitrary local deadline;
+the model receives a compact wording-overlay request while Python retains the
+complete source-grounded structure. Set
+`SKILLSPRINT_PLAN_TIMEOUT_SECONDS=0` only while diagnosing a slow provider.
 
 In PowerShell, set the server-side values in the same terminal before starting
 the application (replace the placeholder with your real key):
@@ -45,10 +47,12 @@ the application (replace the placeholder with your real key):
 ```powershell
 $env:SKILLSPRINT_GENAI_PROVIDER = "commandcode"
 $env:CMD_API_KEY = "your-command-code-key"
-$env:COMMAND_CODE_MODEL = "deepseek/deepseek-v4-flash"
+$env:COMMAND_CODE_MODEL = "deepseek/deepseek-v4-flash-fast"
 $env:SKILLSPRINT_GENAI_PARALLEL_WORKERS = "3"
 uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+The full reproducible D11 instructions are in [INSTALLATION.md](INSTALLATION.md).
 
 Never put `CMD_API_KEY` in a frontend file, Netlify environment variable,
 or Git commit. It belongs only in the FastAPI backend environment.
@@ -59,8 +63,13 @@ Without a key the API returns 503 rather than inventing a plan.
 
 ## Seed demo data
 
-Loads 10 job roles, 10 demo employees, 5 RBAC users, the 178-row matrix, and
-ingests all files under `sample_documents/`.
+Loads 10 job roles, 10 demo employees, 5 RBAC users, the 178-row matrix, all
+files under `sample_documents/`, and one **source-grounded demo draft** for
+each role. The ten drafts are computed from the committed document corpus and
+matrix at seed time; they are clearly marked for manual review and are never
+claimed to be a live GenAI response or an approved plan. This makes a fresh
+GitHub clone demonstrable without committing a mutable database file, secrets,
+or hard-coded onboarding output.
 
 ```bash
 python -m database.seed
@@ -95,6 +104,9 @@ uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Open http://127.0.0.1:8000/login
+
+The evaluator walkthrough, live-performance benchmark, safe D6 generation,
+and final checks are in [EXECUTION.md](EXECUTION.md).
 
 ## Deployment
 

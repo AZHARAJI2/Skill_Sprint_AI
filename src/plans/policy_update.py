@@ -248,49 +248,35 @@ class PolicyUpdateService:
         self,
         document_id: str,
         actor: str = "system",
-    ) -> PolicyUpdateImpact:
-        """Mark affected items for selective regeneration and record audit entries.
+        provider=None,
+    ) -> tuple[PolicyUpdateImpact, list[int]]:
+        """Run Pipeline 1 only for the affected source requirements.
 
-        This method records the regeneration request in the audit log.
-        Actual regeneration must be triggered by the caller through
-        PlanGenerationService.generate_for_employee (Pipeline 1).
-
-        Selective = only the affected modules/tasks/quizzes are marked;
-        unaffected items are NOT re-generated.
-
-        Args:
-            document_id: Document whose update triggered the change.
-            actor: Username of the person who triggered this (for audit).
-
-        Returns:
-            PolicyUpdateImpact with the full affected-item list.
+        The previous implementation merely marked plans as stale.  This
+        implementation invokes ``PlanGenerationService`` with only the matrix
+        entries that cite the updated document, replaces only those persisted
+        items, and leaves every unrelated item untouched.  It then re-runs the
+        independent Python validation before returning the result.
         """
         impact = self.analyse_impact(document_id)
+        if not impact.affected_plan_ids:
+            return impact, []
 
+        # Imports are local to keep this detection-only module independent
+        # until regeneration is explicitly requested.
+        from src.plans.service import PlanGenerationService
+        from src.plans.validation_service import PlanValidationService
+
+        generation = PlanGenerationService(self._session, provider=provider)
+        validation = PlanValidationService(self._session)
+        regenerated_plan_ids: list[int] = []
         for plan_id in impact.affected_plan_ids:
-            plan: OnboardingPlan | None = self._session.query(OnboardingPlan).get(plan_id)
-            if plan:
-                plan.verification_status = "Policy Update — Selective Regeneration Required"
-                plan.status = "stale"
-
-        for item in impact.affected_items:
-            self._audit.record(
-                actor=actor,
-                action="selective_regeneration_requested",
-                entity_type=item.item_type,
-                entity_id=item.item_id,
-                details={
-                    "document_id": document_id,
-                    "plan_id": item.plan_id,
-                    "source_section_id": item.source_section_id,
-                    "reason": "policy_document_updated",
-                },
-            )
-
-        self._session.flush()
+            generation.regenerate_affected_items(plan_id, document_id, actor=actor)
+            validation.validate(plan_id, actor=actor)
+            regenerated_plan_ids.append(plan_id)
 
         logger.info(
-            "selective_regeneration_requested doc=%s actor=%s plans=%d items=%d",
-            document_id, actor, len(impact.affected_plan_ids), impact.total_affected,
+            "selective_regeneration_completed doc=%s actor=%s plans=%d items=%d",
+            document_id, actor, len(regenerated_plan_ids), impact.total_affected,
         )
-        return impact
+        return impact, regenerated_plan_ids

@@ -47,14 +47,14 @@ class Settings:
         # spelling is accepted as a clearer backend-host secret name.
         self.command_code_api_key: str | None = os.getenv("CMD_API_KEY") or os.getenv("COMMAND_CODE_API_KEY")
         self.command_code_model: str = os.getenv(
-            "COMMAND_CODE_MODEL", "deepseek/deepseek-v4-flash"
-        ).strip() or "deepseek/deepseek-v4-flash"
+            "COMMAND_CODE_MODEL", "deepseek/deepseek-v4-flash-fast"
+        ).strip() or "deepseek/deepseek-v4-flash-fast"
         self.command_code_base_url: str = os.getenv(
             "COMMAND_CODE_BASE_URL", "https://api.commandcode.ai/provider/v1"
         ).strip()
-        # A complete source-grounded plan can legitimately exceed a short
-        # provider deadline. Keep this unlimited by default; operators may set
-        # a positive value when their hosting platform needs one.
+        # Command Code may need longer than a short request budget for a full,
+        # source-grounded plan. Operators can set a positive timeout for a
+        # hosting policy; zero keeps the provider response uncut.
         configured_command_code_timeout = float(os.getenv("SKILLSPRINT_COMMAND_CODE_TIMEOUT_SECONDS", "0"))
         self.command_code_request_timeout_seconds: float | None = (
             configured_command_code_timeout if configured_command_code_timeout > 0 else None
@@ -65,8 +65,8 @@ class Settings:
         self.deepseek_api_key: str | None = os.getenv("DEEPSEEK_API_KEY")
         self.deepseek_model: str = os.getenv("DEEPSEEK_MODEL", "deepseek-flash").strip() or "deepseek-flash"
         self.deepseek_base_url: str = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com").strip()
-        # 45 s per call: generous enough for a full stage-group response while
-        # still preventing a hung TCP connection from stalling all 3 workers.
+        # Prevent a hung TCP connection while allowing a complete stage-group
+        # response from the direct-provider compatibility path.
         configured_deepseek_timeout = float(os.getenv("SKILLSPRINT_DEEPSEEK_TIMEOUT_SECONDS", "45"))
         self.deepseek_request_timeout_seconds: float | None = (
             configured_deepseek_timeout if configured_deepseek_timeout > 0 else None
@@ -82,15 +82,15 @@ class Settings:
             else configured_model
         )
         self.gemini_thinking_budget: int = int(os.getenv("GEMINI_THINKING_BUDGET", "0"))
-        # 45 s per stage-group call.  Three run in parallel so the wall-clock
-        # budget is ~45 s, not 135 s.  A zero value waits indefinitely.
+        # Three stage groups run in parallel; zero explicitly permits an
+        # unrestricted diagnostic/live-evidence run.
         configured_gemini_timeout = float(os.getenv("SKILLSPRINT_GEMINI_TIMEOUT_SECONDS", "45"))
         self.gemini_request_timeout_seconds: float | None = (
             configured_gemini_timeout if configured_gemini_timeout > 0 else None
         )
-        # 0 = no end-to-end cap: the pipeline waits as long as the provider
-        # needs.  Set SKILLSPRINT_PLAN_TIMEOUT_SECONDS to a positive value
-        # only when you explicitly want a hard deadline with assembler fallback.
+        # Do not replace a slow but valid GenAI plan with an incomplete review
+        # draft merely because a local deadline elapsed. Set a positive value
+        # only when an operator intentionally wants that behavior.
         configured_plan_timeout = float(os.getenv("SKILLSPRINT_PLAN_TIMEOUT_SECONDS", "0"))
         self.plan_generation_timeout_seconds: float | None = (
             configured_plan_timeout if configured_plan_timeout > 0 else None
@@ -123,9 +123,8 @@ class Settings:
         self.genai_excerpt_char_limit: int = max(
             160, min(1000, int(os.getenv("SKILLSPRINT_SOURCE_EXCERPT_CHARS", "260")))
         )
-        # 5 120 output tokens per stage is enough for 4-6 modules with full
-        # rubrics while cutting Gemini generation time by ~40 % vs the old
-        # 8 192 cap.  Raise SKILLSPRINT_STAGE_OUTPUT_TOKENS for large roles.
+        # Allow the provider enough room for detailed, complete learning
+        # language across all three stage groups.
         self.genai_stage_output_tokens: int = max(
             4096, min(8192, int(os.getenv("SKILLSPRINT_STAGE_OUTPUT_TOKENS", "5120")))
         )

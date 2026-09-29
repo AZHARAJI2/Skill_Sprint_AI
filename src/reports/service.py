@@ -26,6 +26,7 @@ from sqlalchemy.orm import Session
 from config.settings import settings
 from role_matrix.repository import RoleMatrixRepository
 from src.employees.service import EmployeeService
+from src.documents.repository import DocumentRepository
 from src.plans.models import OnboardingPlan
 from src.plans.repository import PlanRepository
 from src.reviews.models import AuditEntry, ValidationReportRecord
@@ -42,6 +43,7 @@ class ReportService:
         self._plans = PlanRepository(session)
         self._matrix = RoleMatrixRepository(session)
         self._reports = ValidationReportRepository(session)
+        self._documents = DocumentRepository(session)
 
     # ------------------------------------------------------------------
     # Report data
@@ -153,7 +155,11 @@ class ReportService:
         """Hallucination / unsupported content flags report."""
         all_reports = self._reports.list_all()
         rows = []
-        flagged_statuses = {"Source Support Missing", "Unsupported Requirement"}
+        flagged_statuses = {
+            "Source Support Missing",
+            "Unsupported Requirement",
+            "Manual Review Required",
+        }
         for report in all_reports:
             payload = report.payload or {}
             for item in payload.get("per_item_results", []):
@@ -167,6 +173,30 @@ class ReportService:
                         "Details": (item.get("details") or "")[:150],
                         "Source References": ", ".join(item.get("source_references", []))[:100],
                     })
+
+        # Upload-time detection must be visible even when the adversarial
+        # document was never selected by a role matrix and therefore cannot
+        # appear in a particular plan's validation output.
+        for document in self._documents.list_all():
+            scan = (document.extra_metadata or {}).get("prompt_injection_scan") or {}
+            if not scan.get("detected"):
+                continue
+            findings = scan.get("section_findings") or scan.get("findings") or []
+            for finding in findings:
+                section_id = finding.get("section_id") or "BODY"
+                rows.append(
+                    {
+                        "Plan ID": "—",
+                        "Item ID": document.document_id,
+                        "Item Type": "uploaded_document",
+                        "Status": "Prompt Injection Detected",
+                        "Details": (
+                            f"{finding.get('signature', 'suspicious instruction')}: "
+                            f"{finding.get('snippet', '')}"
+                        )[:150],
+                        "Source References": f"{document.document_id}§{section_id}",
+                    }
+                )
 
         status_counts: dict[str, int] = {}
         for r in rows:
@@ -219,14 +249,10 @@ class ReportService:
         return {"title": "Source Traceability Report", "columns": list(rows[0].keys()) if rows else [], "rows": rows, "chart_json": chart}
 
     def _report_comparison(self) -> dict[str, Any]:
-        """GenAI/Python comparison — pulls the D6 report file if available."""
-        d6_path = settings.project_root / "reports" / "d6_genai_python_comparison_report.md"
-        rows = []
-        if d6_path.exists():
-            rows = self._parse_d6_markdown(d6_path)
-        if not rows:
-            # Fallback: generate from matrix + latest reports
-            rows = self._generate_comparison_rows()
+        """Live GenAI/Python comparison built from persisted plans and matrix rows."""
+        # The database is the source of truth.  Do not let a stale Markdown
+        # artifact override real validation results in the evaluator UI.
+        rows = self._generate_comparison_rows()
 
         match_counts: dict[str, int] = {}
         for r in rows:
@@ -492,31 +518,48 @@ class ReportService:
             return []
 
     def _generate_comparison_rows(self) -> list[dict]:
-        """Generate comparison rows from matrix + plans when D6 file is absent."""
+        """Compare each role only with its newest complete plan.
+
+        Comparing a single plan with every role's requirements creates false
+        mismatches.  This method mirrors the D6 generator: choose the latest
+        complete plan for each role and deduplicate shared All Roles rows.
+        """
         entries = self._matrix.list_all()
-        all_plans = self._session.query(OnboardingPlan).all()
+        from comparison_engine import ComparisonEngine
 
-        # Build set of covered requirement IDs from plans
-        covered_ids: set[str] = set()
-        for plan in all_plans:
-            sj = plan.structured_json or {}
-            for task in sj.get("tasks", []):
-                req_id = task.get("source_requirement_id")
-                if req_id:
-                    covered_ids.add(req_id)
+        plans = (
+            self._session.query(OnboardingPlan)
+            .order_by(OnboardingPlan.id.desc())
+            .all()
+        )
+        plan_by_role: dict[str, OnboardingPlan] = {}
+        for plan in plans:
+            payload = plan.structured_json or {}
+            role = payload.get("role_title")
+            if not role or payload.get("generation_status") == "failed_after_retries":
+                continue
+            if (plan.model_used or "").startswith("seed-"):
+                continue
+            plan_by_role.setdefault(role, plan)
 
-        rows = []
-        for entry in entries:
-            matched = entry.requirement_id in covered_ids
-            rows.append({
-                "Requirement ID": entry.requirement_id,
-                "Python Expected": "Covered" if entry.mandatory else "Optional",
-                "GenAI Result": "Covered" if matched else "Missing",
-                "Match": "Match" if (entry.mandatory == matched or not entry.mandatory) else "Mismatch",
-                "Source": entry.source_document_id or "—",
-                "Status": "Verified" if matched else ("Source Support Missing" if entry.mandatory else "Partially Verified"),
-            })
-        return rows
+        rows_by_requirement: dict[str, dict] = {}
+        comparator = ComparisonEngine()
+        roles = sorted({entry.role for entry in entries if entry.role != "All Roles"})
+        for role in roles:
+            plan = plan_by_role.get(role)
+            if plan is None:
+                continue
+            role_entries = [entry for entry in entries if entry.role in {"All Roles", role}]
+            for result in comparator.compare_requirements(role_entries, plan.structured_json or {}):
+                rows_by_requirement[result["requirement_id"]] = {
+                    "Requirement ID": result["requirement_id"],
+                    "Python Expected": result["python_expected"],
+                    "GenAI Result": result["genai_result"],
+                    "Match": result["match_status"],
+                    "Source": result["source"],
+                    "Status": result["status"],
+                }
+        return [rows_by_requirement[key] for key in sorted(rows_by_requirement)]
     
     def _fallback_pdf(self, report_type: str) -> bytes:
         """Return a minimal text PDF when ReportLab is not installed."""

@@ -365,10 +365,14 @@ class PlanGenerator:
         matched_items = 0
         for collection, identifier in collections:
             incoming = response.get(collection, [])
+            # OpenAI-compatible providers occasionally normalize a requested
+            # ``module_id``/``task_id`` field to a generic ``id`` key. Accept
+            # that equivalent only when it matches a server-created item; it
+            # can never introduce a new item, source, or requirement.
             incoming_by_id = {
-                item.get(identifier): item
+                item.get(identifier) or item.get("id"): item
                 for item in incoming
-                if isinstance(item, dict) and item.get(identifier)
+                if isinstance(item, dict) and (item.get(identifier) or item.get("id"))
             } if isinstance(incoming, list) else {}
             repaired_items = []
             for original in getattr(assembled, collection):

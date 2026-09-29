@@ -230,6 +230,54 @@ def test_prompt_templates_are_versioned_files() -> None:
     assert (settings.project_root / "prompt_templates" / "onboarding_plan_v1.json").is_file()
 
 
+def test_compact_overlay_accepts_provider_generic_id_alias() -> None:
+    """A provider's harmless ``id`` normalization must not turn a full plan into a fallback."""
+    from schemas.module_schema import LearningModule
+    from schemas.plan_schema import GeneratedPlan
+
+    assembled = GeneratedPlan(
+        role_title="Software Engineer",
+        employee_code="P2-001",
+        experience_level="Beginner",
+        modules=[
+            LearningModule(
+                module_id="MOD-001",
+                title="Security basics",
+                purpose="Review baseline security practices.",
+                objectives=["Recognize policy obligations."],
+                key_concepts=["Security"],
+                source_docs=["POL-03"],
+                source_document_id="POL-03",
+                source_section_id="1.1",
+                duration_minutes=30,
+                activities=["Read the approved policy."],
+                assessment_method="Quiz",
+                completion_criteria="Score 70%.",
+                stage="Day 1",
+                difficulty=DifficultyLevel.BEGINNER,
+                requirement_ids=["R001"],
+            )
+        ],
+    )
+
+    repaired = PlanGenerator._repair_partial_group_response(
+        assembled,
+        {"modules": [{"id": "MOD-001", "purpose": "Apply security practices in daily work."}]},
+    )
+    assert repaired.modules[0].module_id == "MOD-001"
+    assert repaired.modules[0].purpose == "Apply security practices in daily work."
+
+
+def test_live_benchmark_treats_null_generation_status_as_complete() -> None:
+    """A successful GeneratedPlan stores generation_status as null, not a success string."""
+    from scripts.benchmark_live_plan import assess_run
+
+    result = assess_run(elapsed_ms=41_475.8, generation_status=None, recovered=False)
+    assert result["complete_live_genai_plan"] is True
+    assert result["within_30_seconds"] is False
+    assert result["passed"] is False
+
+
 def test_retry_recovers_then_caps() -> None:
     """VG-2.6: retry is capped at 3 attempts, logged via AppError details, then fails closed."""
     from schemas.plan_schema import GeneratedPlan
@@ -643,7 +691,7 @@ def test_command_code_provider_uses_documented_openai_endpoint(monkeypatch) -> N
 
         def json(self):
             return {
-                "model": "deepseek/deepseek-v4-flash",
+                "model": "deepseek/deepseek-v4-flash-fast",
                 "choices": [{"message": {"content": '{"result": "ok"}'}}],
                 "usage": {"prompt_tokens": 10, "completion_tokens": 2},
             }
@@ -665,11 +713,11 @@ def test_command_code_provider_uses_documented_openai_endpoint(monkeypatch) -> N
     monkeypatch.setattr("genai_pipeline.deepseek_provider.httpx.Client", FakeClient)
     response = CommandCodeProvider(api_key="not-a-real-command-code-key").generate("trusted prompt")
 
-    assert response.model_name == "deepseek/deepseek-v4-flash"
+    assert response.model_name == "deepseek/deepseek-v4-flash-fast"
     assert response.metadata["api_version"] == "commandcode-chat-completions"
     assert captured["url"] == "https://api.commandcode.ai/provider/v1/chat/completions"
     assert captured["headers"]["Authorization"] == "Bearer not-a-real-command-code-key"
-    assert captured["body"]["model"] == "deepseek/deepseek-v4-flash"
+    assert captured["body"]["model"] == "deepseek/deepseek-v4-flash-fast"
 
 
 def test_no_plan_with_generation_failures_can_reach_verified_status() -> None:

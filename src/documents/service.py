@@ -19,6 +19,7 @@ from src.documents.repository import ChunkRepository, DocumentRepository
 from src.employees.service import RoleService
 from src.errors import AppError
 from src.reviews.repository import AuditRepository
+from security.injection_guard import InjectionGuard
 
 logger = get_logger("document_service")
 
@@ -35,6 +36,7 @@ class DocumentService:
         self.uploader = DocumentUploader()
         self.versions = DocumentVersionController()
         self.audit = AuditRepository(session)
+        self.injection_guard = InjectionGuard()
 
     def ingest_file(self, path: Path, actor: str = "system") -> Document:
         """Read a file from disk and run the full ingest pipeline."""
@@ -56,6 +58,34 @@ class DocumentService:
         if not (parsed.full_text or "").strip():
             raise AppError("Empty document (no extractable text)", status_code=400, details=filename)
 
+        # Every upload is untrusted input.  Scan the full extracted text before
+        # persistence so a payload cannot disappear merely because it is not
+        # part of a numbered section.  Section findings are retained on the
+        # corresponding chunk for traceability and reporting.
+        document_scan = self.injection_guard.scan(parsed.full_text, document_id=parsed.document_id)
+        section_findings: list[dict] = []
+        for section in parsed.sections:
+            section_scan = self.injection_guard.scan(
+                section.content,
+                document_id=parsed.document_id,
+                section_id=section.section_id,
+            )
+            section.flags = dict(section.flags or {})
+            section.flags["prompt_injection_detected"] = section_scan.is_injection
+            if section_scan.findings:
+                section.flags["prompt_injection_findings"] = [
+                    {"signature": finding.signature, "snippet": finding.snippet}
+                    for finding in section_scan.findings
+                ]
+                section_findings.extend(
+                    {
+                        "section_id": section.section_id,
+                        "signature": finding.signature,
+                        "snippet": finding.snippet,
+                    }
+                    for finding in section_scan.findings
+                )
+
         stored_path = self.uploader.save(parsed.document_id, filename, raw_bytes)
         document = Document(
             document_id=parsed.document_id,
@@ -75,6 +105,14 @@ class DocumentService:
                 "upload_scope": category_override,
                 "superseded_versions": parsed.superseded_versions,
                 "section_count": len(parsed.sections),
+                "prompt_injection_scan": {
+                    "detected": document_scan.is_injection,
+                    "findings": [
+                        {"signature": finding.signature, "snippet": finding.snippet}
+                        for finding in document_scan.findings
+                    ],
+                    "section_findings": section_findings,
+                },
             },
         )
         try:
@@ -104,6 +142,19 @@ class DocumentService:
                 "hash": check.file_hash,
             },
         )
+        if document_scan.is_injection:
+            self.audit.record(
+                actor=actor,
+                action="prompt_injection_detected",
+                entity_type="document",
+                entity_id=parsed.document_id,
+                details={
+                    "filename": filename,
+                    "finding_count": len(document_scan.findings),
+                    "section_findings": section_findings,
+                    "handling": "stored_as_untrusted_data_and_redacted_from_generation_context",
+                },
+            )
         logger.info(
             "document_ingested document_id=%s version=%s type=%s sections=%s",
             parsed.document_id,

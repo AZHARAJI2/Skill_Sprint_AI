@@ -253,7 +253,7 @@
     <div class="alert alert-light border small mb-3">
       <strong>Format rules:</strong> Use <code>YYYY-MM-DD</code> for <code>joining_date</code>. Use <code>Beginner</code>, <code>Intermediate</code>, or <code>Advanced</code> for <code>experience_level</code>. In CSV and XLSX, separate multiple <code>required_competencies</code> with semicolons. The full file is checked first. If any row has an error, no employee profiles are created.
     </div>
-    <p class="small text-muted mb-3">For CSV or XLSX, use a first-row header such as <code>employee_code,name,role_title,department</code>. For JSON, upload one employee object, an employee array, or an object containing an <code>employees</code> array.</p>
+    <p class="small text-muted mb-3">For CSV or XLSX, use a first-row header such as <code>employee_code,name,role_title,department</code>. For JSON, upload one employee object, an employee array, an object containing an <code>employees</code> array, or JSON Lines (one employee object per line).</p>
     {% if roles %}
     <form id="employee-import-form" novalidate>
       <div class="row align-items-end g-3">
@@ -522,7 +522,8 @@
           const label = item.employee_code ? `Row ${item.row} (${item.employee_code})` : `Row ${item.row}`;
           return `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(item.errors.join(' '))}</li>`;
         }).join('');
-        const detail = issues ? `<ul class="mb-0 mt-2">${issues}</ul>` : '';
+        const parseDetail = typeof body.details === 'string' ? `<p class="mb-0 mt-2">${escapeHtml(body.details)}</p>` : '';
+        const detail = issues ? `<ul class="mb-0 mt-2">${issues}</ul>` : parseDetail;
         throw new Error(`${escapeHtml(body.error || 'Could not import the employee file.')}${detail}`);
       }
       

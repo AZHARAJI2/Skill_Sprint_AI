@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import pytest
 import httpx
 from httpx import AsyncClient, ASGITransport
@@ -208,15 +207,27 @@ async def test_policy_impact_endpoint():
 
 
 @pytest.mark.asyncio
-async def test_selective_regeneration_endpoint():
-    """VG-4.7/4.8: Selective regeneration marks affected items without a full plan re-gen."""
+async def test_selective_regeneration_endpoint(monkeypatch):
+    """VG-4.7/4.8: endpoint reports an actual selective-generation result."""
+    from src.plans.policy_update import PolicyUpdateImpact, PolicyUpdateService
+
+    def fake_regeneration(self, document_id, actor="system", provider=None):
+        del self, actor, provider
+        return PolicyUpdateImpact(
+            document_id=document_id,
+            old_version="v1",
+            new_version="v2",
+            total_affected=3,
+        ), [7]
+
+    monkeypatch.setattr(PolicyUpdateService, "request_selective_regeneration", fake_regeneration)
     async with AsyncClient(transport=_transport(), base_url="http://test") as client:
         headers = await _admin_headers(client)
         resp = await client.post("/api/plans/selective-regenerate/POL-01", headers=headers)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.text
         data = resp.json()
-        assert "message" in data
-        assert "total_affected" in data
+        assert "Regenerated 3 affected item(s)" in data["message"]
+        assert data["regenerated_plan_ids"] == [7]
 
 
 # ---------------------------------------------------------------------------

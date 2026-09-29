@@ -294,18 +294,21 @@ def selective_regenerate(
     document_id: str,
     session: Session = Depends(get_session),
     user: User = Depends(require_role("Admin", "Training Manager")),
+    provider: BaseGenAIProvider = Depends(get_genai_provider),
 ) -> dict:
-    """Mark only affected items for regeneration when a source document changes (Task 59)."""
+    """Regenerate only affected items and then re-run Python validation (Task 59)."""
     from src.plans.policy_update import PolicyUpdateService
-    impact = PolicyUpdateService(session).request_selective_regeneration(
-        document_id, actor=user.username
+    impact, regenerated_plan_ids = PolicyUpdateService(session).request_selective_regeneration(
+        document_id, actor=user.username, provider=provider
     )
     return {
         "document_id": impact.document_id,
         "affected_plan_ids": impact.affected_plan_ids,
         "total_affected": impact.total_affected,
         "message": (
-            f"{impact.total_affected} items marked for selective regeneration "
-            f"across {len(impact.affected_plan_ids)} plan(s)."
+            f"Regenerated {impact.total_affected} affected item(s) across "
+            f"{len(regenerated_plan_ids)} plan(s); unrelated items were preserved "
+            "and Python validation was rerun."
         ),
+        "regenerated_plan_ids": regenerated_plan_ids,
     }

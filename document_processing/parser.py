@@ -185,8 +185,18 @@ class DocumentParser:
     def _extract_sections(
         self, body_text: str, page_map: dict[int, str], paragraph_mode: bool
     ) -> list[ParsedSection]:
+        """Extract numbered sections without losing their following paragraphs.
+
+        Company documents commonly put a short numbered heading on one line
+        and the requirement text in the paragraphs that follow.  Earlier
+        parsing retained only the heading line, which weakened traceability
+        and could hide an adversarial instruction placed in the body.  This
+        parser treats every non-heading paragraph as part of the most recent
+        numbered section until the next section begins.
+        """
         sections: list[ParsedSection] = []
         current_heading: str | None = None
+        current_section: ParsedSection | None = None
         paragraph_index = 0
         for raw_para in body_text.split("\n"):
             paragraph_index += 1
@@ -203,6 +213,10 @@ class DocumentParser:
             for piece in pieces:
                 head = SECTION_HEAD_RE.match(piece)
                 if not head:
+                    if current_section is not None:
+                        current_section.content = "\n".join(
+                            value for value in (current_section.content, piece) if value
+                        )
                     continue
                 section_id = head.group("sid")
                 flag = head.group("flag")
@@ -213,19 +227,32 @@ class DocumentParser:
                     "conflict_mentioned": bool(CONFLICT_RE.search(content)),
                     "version_change": bool(SUPERSEDED_RE.search(content) or V_EFFECTIVE_RE.search(content)),
                 }
-                sections.append(
-                    ParsedSection(
-                        section_id=section_id,
-                        heading=current_heading,
-                        content=content,
-                        page_number=page_number,
-                        paragraph_ref=f"p{paragraph_index}" if paragraph_mode else None,
-                        is_mandatory=flag == "M",
-                        is_optional=flag == "O",
-                        is_role_specific=bool(ROLE_SPECIFIC_RE.search(content)),
-                        flags=flags,
-                    )
+                current_section = ParsedSection(
+                    section_id=section_id,
+                    heading=current_heading,
+                    content=content,
+                    page_number=page_number,
+                    paragraph_ref=f"p{paragraph_index}" if paragraph_mode else None,
+                    is_mandatory=flag == "M",
+                    is_optional=flag == "O",
+                    is_role_specific=bool(ROLE_SPECIFIC_RE.search(content)),
+                    flags=flags,
                 )
+                sections.append(current_section)
+
+        # Flags must reflect the final accumulated paragraph content, not just
+        # the short section heading that opened the section.
+        for section in sections:
+            section.flags.update(
+                {
+                    "adversarial": bool(ADVERSARIAL_RE.search(section.content)),
+                    "conflict_mentioned": bool(CONFLICT_RE.search(section.content)),
+                    "version_change": bool(
+                        SUPERSEDED_RE.search(section.content)
+                        or V_EFFECTIVE_RE.search(section.content)
+                    ),
+                }
+            )
         return sections
 
     def _extract_superseded(self, full_text: str) -> list[dict]:

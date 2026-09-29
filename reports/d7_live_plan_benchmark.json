@@ -1,0 +1,33 @@
+{
+  "benchmark_version": "1.0",
+  "started_at_utc": "2026-09-29T00:10:04.353680+00:00",
+  "employee_code": "EMP-001",
+  "provider": "commandcode",
+  "configured_model": "deepseek/deepseek-v4-flash-fast",
+  "api_key_persisted": false,
+  "finished_at_utc": "2026-09-29T00:10:45.851360+00:00",
+  "status": "failed",
+  "plan": {
+    "id": 29,
+    "role_id": 1,
+    "model_used": "deepseek/deepseek-v4-flash-fast",
+    "generation_status": null,
+    "retry_count": 0,
+    "provider_response_time_ms": 84606.70889999892,
+    "recovered_from_assembler": false
+  },
+  "validation": {
+    "overall_status": "Contradiction Detected",
+    "coverage_score": 100.0,
+    "traceability_score": 100.0,
+    "missing_count": 0,
+    "unsupported_count": 0
+  },
+  "result": {
+    "srs_limit_ms": 30000,
+    "elapsed_ms": 41475.8,
+    "within_30_seconds": false,
+    "complete_live_genai_plan": false,
+    "passed": false
+  }
+}

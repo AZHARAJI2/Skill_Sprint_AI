@@ -98,8 +98,27 @@ class EmployeeImportService:
         return [self._normalise_keys(row) for row in reader if any(self._value_present(value) for value in row.values())]
 
     def _rows_from_json(self, raw: bytes) -> list[dict[str, Any]]:
-        """Read one employee object, an employee list, or an employees wrapper."""
-        payload = json.loads(raw.decode("utf-8"))
+        """Read a JSON object/array/wrapper, including UTF-8 BOM and JSON Lines.
+
+        HR exports commonly use UTF-8 with a BOM or newline-delimited JSON
+        (one employee object per line). Both carry the same structured data as
+        a standard employee array and are safe to normalize into the existing
+        all-or-nothing validation flow.
+        """
+        text = raw.decode("utf-8-sig")
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError as exc:
+            rows = self._rows_from_json_lines(text)
+            if rows is None:
+                raise AppError(
+                    "The JSON employee file is invalid. Upload one employee object, "
+                    "an employee array, an object with an employees array, or JSON Lines "
+                    "(one employee object per line).",
+                    status_code=400,
+                    details={"line": exc.lineno, "column": exc.colno, "reason": exc.msg},
+                ) from exc
+            return [self._normalise_keys(row) for row in rows]
         if isinstance(payload, dict):
             rows = payload["employees"] if "employees" in payload else [payload]
         else:
@@ -110,6 +129,23 @@ class EmployeeImportService:
                 status_code=400,
             )
         return [self._normalise_keys(row) for row in rows]
+
+    @staticmethod
+    def _rows_from_json_lines(text: str) -> list[dict[str, Any]] | None:
+        """Parse strict JSON Lines only; return None when the file is malformed."""
+        lines = [(number, line.strip()) for number, line in enumerate(text.splitlines(), start=1) if line.strip()]
+        if len(lines) < 2:
+            return None
+        rows: list[dict[str, Any]] = []
+        for _number, line in lines:
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                return None
+            if not isinstance(row, dict):
+                return None
+            rows.append(row)
+        return rows
 
     def _rows_from_xlsx(self, raw: bytes) -> list[dict[str, Any]]:
         """Read the first worksheet of a standard XLSX workbook."""

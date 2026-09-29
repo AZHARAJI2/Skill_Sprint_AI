@@ -13,6 +13,9 @@ from src.auth.service import AuthService
 from src.documents.metrics import CorpusMetricsService
 from src.documents.service import DocumentService
 from src.employees.service import EmployeeService, RoleService
+from src.plans.service import PlanGenerationService
+from src.plans.validation_service import PlanValidationService
+from src.plans.models import OnboardingPlan
 from src.reviews.models import AuditEntry  # noqa: F401 — ensure mapper is registered
 
 NOVA_CART_ROLES = [
@@ -29,8 +32,15 @@ NOVA_CART_ROLES = [
 ]
 
 
-def seed_all(ingest_documents: bool = True) -> dict:
-    """Create schema, seed roles/users, load the matrix, and ingest sample_documents."""
+def seed_all(ingest_documents: bool = True, seed_demo_plans: bool = True) -> dict:
+    """Create the reproducible evaluator dataset, including ten transparent demo plans.
+
+    Demo plans are calculated from the committed document corpus and role
+    matrix at seed time.  They are explicitly marked as source-grounded draft
+    data, never presented as a live GenAI result or an approved training plan.
+    This keeps a public GitHub clone evaluable without committing a mutable
+    database file or fabricated GenAI output.
+    """
     configure_logging()
     logger = get_logger("seed")
     settings.ensure_runtime_dirs()
@@ -88,6 +98,8 @@ def seed_all(ingest_documents: bool = True) -> dict:
             stored = DocumentService(session).ingest_directory(settings.sample_documents_dir, actor="seed")
             summary["files_ingested"] = len(stored)
             summary["metrics"] = CorpusMetricsService(session).compute()
+        if seed_demo_plans:
+            summary["demo_plans"] = _seed_demo_plans(session, demo_employees)
         session.commit()
         logger.info("seed_complete summary=%s", summary)
         return summary
@@ -96,6 +108,60 @@ def seed_all(ingest_documents: bool = True) -> dict:
         raise
     finally:
         session.close()
+
+
+def _seed_demo_plans(session, employees) -> dict:
+    """Create one reproducible, source-grounded draft plan for every demo role.
+
+    The ten plans are derived from the same live matrix and parsed sources used
+    by production. They are intentionally review-only until a real GenAI run
+    and the independent Python validation complete; no plan text, score or API
+    response is hard-coded in the repository.
+    """
+    generation = PlanGenerationService(session)
+    validation = PlanValidationService(session)
+    created: list[int] = []
+    existing_employee_ids = {
+        row[0]
+        for row in session.query(OnboardingPlan.employee_id)
+        .filter(OnboardingPlan.model_used == "seed-source-grounded-draft")
+        .all()
+    }
+    for employee in employees:
+        if employee.id in existing_employee_ids:
+            continue
+        role = employee.role
+        if role is None:
+            continue
+        inputs = generation._build_generation_inputs(
+            employee,
+            role,
+            generation.matrix.get_by_role(role.title),
+        )
+        draft = inputs["assembled"].model_copy(update={"generation_status": "seed_source_grounded_draft"})
+        generation._record_prompt_templates()
+        plan = generation._persist(
+            employee.id,
+            role.id,
+            draft,
+            {
+                "prompt_version": "onboarding_plan_v3",
+                "model_used": "seed-source-grounded-draft",
+                "api_version": "not-a-live-genai-response",
+                "retry_count": 0,
+                "response_time_ms": 0.0,
+                "recovered_from_assembler": False,
+                "stage_failures": [],
+            },
+            actor="seed",
+        )
+        validation.validate(plan.id, actor="seed")
+        # Never let a deterministic demonstration draft become an approved
+        # GenAI plan merely because its matrix coverage happens to be complete.
+        plan.status = "manual_review_required"
+        plan.verification_status = "Manual Review Required — demo source-grounded draft"
+        created.append(plan.id)
+    return {"created": len(created), "plan_ids": created, "source": "matrix-and-documents"}
 
 
 if __name__ == "__main__":

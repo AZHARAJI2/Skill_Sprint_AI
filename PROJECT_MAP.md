@@ -519,12 +519,12 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | 54 | Progress assessment (On Track/Requires Attention/Behind Schedule/Assessment Required/Completed) | PENDING |
 | 55 | Adaptive recommendation (revision, additional quiz/task, advanced module, manager review) based on real performance | PENDING |
 | 56 | Weak-area identification from quiz performance, assessment results, incomplete tasks, repeated errors | PENDING |
-| 57 | Policy update detection — identify all affected items when a policy changes | PENDING |
-| 58 | Impact analysis of source-document update on existing plans | PENDING |
-| 59 | Selective regeneration — only affected modules regenerate, not entire plan | PENDING |
+| 57 | Policy update detection — identify all affected items when a policy changes | ✅ IMPLEMENTED — document version/traceability impact is calculated before any regeneration |
+| 58 | Impact analysis of source-document update on existing plans | ✅ IMPLEMENTED — affected plan IDs, items, employees, and roles are returned for the uploaded document |
+| 59 | Selective regeneration — only affected modules regenerate, not entire plan | ✅ IMPLEMENTED — only items citing the changed document are replaced; unaffected plan content is retained and the result is revalidated |
 | 60 | Training plan comparison across roles/departments/levels/doc versions | PENDING |
 | 61 | Search and filtering (employee, role, department, module, policy, status, progress, verification result) | PENDING |
-| 62 | Reports (employee progress, role coverage, mandatory training, assessment results, source traceability, hallucination flags, policy coverage, GenAI/Python comparison) | PENDING |
+| 62 | Reports (employee progress, role coverage, mandatory training, assessment results, source traceability, hallucination flags, policy coverage, GenAI/Python comparison) | ✅ IMPLEMENTED — report data includes persisted upload-time prompt-injection findings and excludes invalid cross-role D6 claims |
 | 63 | Export to CSV, PDF, and Excel-compatible format | PENDING |
 
 #### Functional Requirements Owned (from Section C)
@@ -568,8 +568,8 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 - [ ] VG-4.4: Admin dashboard shows compliance coverage, flagged content, pending reviews
 - [ ] VG-4.5: Role dashboard shows per-role requirement completion stats
 - [ ] VG-4.6: Progress assessment correctly categorizes (On Track/Attention/Behind/etc.)
-- [ ] VG-4.7: Policy update → system identifies affected modules/quizzes/employees automatically
-- [ ] VG-4.8: Selective regeneration only regenerates affected items, not entire plan
+- [x] VG-4.7: Policy update → system identifies affected modules/quizzes/employees automatically
+- [x] VG-4.8: Selective regeneration only regenerates affected items, not entire plan
 - [ ] VG-4.9: Search works across all entities with combined filters
 - [ ] VG-4.10: Export produces valid CSV, PDF, and Excel files
 - [ ] VG-4.11: hidden_test_ready/ contains working demo data + evaluator logins
@@ -587,19 +587,19 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | D3 | Company Document Dataset — 24 documents, 38 files (profile, scenario, policies, role descriptions, etc.) | ✅ DONE (Prompt A0 + Addendum) | COMPLETE |
 | D4 | GenAI Pipeline Evidence (API/model, prompts, config, samples, failures, retries) | Phase 2 | ✅ DONE — `reports/d4_genai_pipeline_evidence.md` + `reports/d4_live_genai_run.json`: real `gemini-3.5-flash-lite` run (1 Gemini-backed plan, 0 retries after `response_json_schema` fix; 1 honest assembler fallback; unedited raw response captured). Remaining 8 roles await quota reset — rerun `python -m scripts.live_genai_run` |
 | D5 | Python Validation Pipeline Evidence | Phase 3 | ✅ DONE — `reports/d5_python_validation_evidence.md`: 100% coverage & traceability scores, 9 concrete validators executed |
-| D6 | GenAI/Python Comparison Report (≥100 comparisons) | Phase 3 | ✅ DONE — `reports/d6_genai_python_comparison_report.md`: 178 requirement-level comparisons |
-| D7 | Onboarding Plan Evidence for ≥10 roles | Phase 4 (assembly) | PENDING |
+| D6 | GenAI/Python Comparison Report (≥100 comparisons) | Phase 3 | BLOCKED FOR LIVE EVIDENCE — legacy report is explicitly marked invalid because it mixed one role plan with cross-role requirements. Generator now refuses to claim a result until a complete non-seed live GenAI plan exists for every evaluated role. |
+| D7 | Onboarding Plan Evidence for ≥10 roles | Phase 4 (assembly) | IN PROGRESS — `python -m database.seed` now creates 10 source-grounded, review-only demo drafts for ten roles on every fresh clone. They are not presented as live GenAI evidence; generate and approve ten live plans before submission. |
 | D8 | Validation Report | Phase 3 | ✅ DONE — `reports/d8_validation_report.md`: comprehensive scoring & per-item audit summary |
-| D9 | Security Testing Report | Phase 4 | PENDING |
+| D9 | Security Testing Report | Phase 4 | ✅ READY — `reports/d9_security_testing_report.md` records repeatable injection, RBAC, input-validation, audit, and pipeline-separation tests; public deployment checks remain required |
 | D10 | Test Cases (all categories) | Phase 4 (integration) + all phases (unit) | IN PROGRESS — Phase 1 (15) + Phase 2 (16) + Phase 3 (8 tests in `tests/test_phase3_validation.py`); full suite 39 passing |
-| D11 | Installation Instructions | Phase 4 | PENDING |
-| D12 | Execution Instructions (full walkthrough) | Phase 4 | PENDING |
+| D11 | Installation Instructions | Phase 4 | ✅ COMPLETE — `INSTALLATION.md` |
+| D12 | Execution Instructions (full walkthrough) | Phase 4 | ✅ COMPLETE — `EXECUTION.md` |
 | D13 | Public GitHub Repository (daily commits from all members) | All phases | PENDING |
 | D14 | Deployed Application (public URL + evaluator logins) | Phase 4 | PENDING |
 | D15 | Demonstration Video (.mp4) | Phase 4 | PENDING |
 | D16 | Technical Blog (2,000+ words) | Phase 4 | PENDING |
-| D17 | AI Tool Usage Declaration (AI_USAGE.md) | All phases (human-filled) | IN PROGRESS — Phase 1, Phase 2, and Phase 3 entries updated |
-| D18 | Final Submission Checklist | Phase 4 | PENDING |
+| D17 | AI Tool Usage Declaration (AI_USAGE.md) | All phases (human-filled) | IN PROGRESS — entries are maintained through the current security/performance/remediation work; each entry still requires a named human verifier |
+| D18 | Final Submission Checklist | Phase 4 | ✅ READY — `reports/d18_final_submission_checklist.md` preserves outstanding live/deployment evidence rather than marking it complete |
 
 ### Unresolved Architectural Questions
 - **Q1**: ~~4 roles had no dedicated ROLE-XX documents.~~ **RESOLVED (Addendum v1.1, 2026-09-25)**: ROLE-07 (Recruiter), ROLE-08 (Financial Analyst), ROLE-09 (Accounts Payable Clerk), ROLE-10 (Warehouse Operations Coordinator) added. All 10 roles now have dedicated role description documents with both DOCX and PDF. Matrix expanded to 178 rows (R155–R178).
@@ -618,7 +618,7 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 
 | NFR | Target | Implementation Approach | Verification |
 |---|---|---|---|
-| Performance | Plan generation + validation ≤30s | Three concurrent stage-group GenAI calls; compact skeleton + per-group excerpts; compact generation-only requirement fields; configurable excerpt/output budgets; Pipeline 2 validators stay Python-only and sequential. A configurable generation limit can be used by hosting operators, but defaults to uncapped so a complete source-grounded plan is never discarded solely because a provider is slow. | Time the end-to-end `/api/plans/generate/{id}` flow for a standard role (Phase 3 validators benchmarked at ~0.08s) |
+| Performance | Plan generation + validation ≤30s | Three concurrent stage-group GenAI calls; compact source-grounded overlays rather than a repeated full plan skeleton; limited excerpts/output; Python-only validation. Default production configuration waits for a valid complete provider result; a positive operator timeout may be set after benchmarking the selected model. A fallback is never employee-progress-ready content. | Run and retain an end-to-end live-provider benchmark for a standard role. A measured run over 30 seconds remains an NFR exception until the selected provider/model is improved. |
 | Scalability | ≥1000 employees, ≥100 roles, ≥1000 docs | Repository pattern + indexed DB queries; no in-memory full-corpus loads | Load test with synthetic profiles |
 | Usability | Intuitive for 5 user types | Bootstrap 5.3 responsive layout; role-specific dashboards; clear navigation | Manual UX walkthrough per role |
 | Accuracy | 100% mandatory coverage before approval | ValidationPipeline enforces; "Verified" status requires 100% coverage + valid sources + zero contradictions | VG-3.1 through VG-3.10 ✅ |
@@ -633,15 +633,15 @@ class PromptTemplateRepository(BaseRepository[PromptTemplate]): ...
 | F1 | Unique company pack (NovaCart) | Prompt A0 | ✅ DONE |
 | F2 | Correctly ingest hidden unseen documents without code modification | Phase 1 (upload pipeline must be generic) | PHASE 1 READY — ingest is filename/content-driven, not a hardcoded 24-doc list; hidden-eval proof still requires live upload of unseen files |
 | F3 | Correctly onboard a hidden new role without code modification | Phase 1 (role CRUD) + Phase 2 (generic prompts) + Phase 3 (generic validators) | ✅ PHASE 1–3 READY — Generic validators in `python_validation/` evaluate any dynamic role matrix rows and parsed documents |
-| F4 | Policy Update Challenge readiness | Phase 4 (steps 57-59) | PENDING |
-| F5 | Prompt Injection Challenge readiness | Phase 2 (step 42-43) + Phase 3 (hallucination detection) | ✅ PHASE 2+3 READY — `InjectionGuard` + `HallucinationDetector` flags all adversarial injections |
+| F4 | Policy Update Challenge readiness | Phase 4 (steps 57-59) | ✅ IMPLEMENTED — impact analysis regenerates only document-citing items and validates the updated plan |
+| F5 | Prompt Injection Challenge readiness | Phase 2 (step 42-43) + Phase 3 (hallucination detection) | ✅ IMPLEMENTED — every uploaded document is scanned before persistence, untrusted text remains fenced for GenAI, and detected findings are surfaced in the hallucination/security report |
 | F6 | Contradiction Challenge readiness | Phase 3 (steps 33-34) | ✅ DONE — `ContradictionValidator` identifies 10 conflict pairs and applies precedence hierarchy |
 | F7 | Source Traceability Challenge readiness | Phase 1 (metadata) + Phase 2 (citations) + Phase 3 (traceability score) | ✅ DONE — `TraceabilityValidator` computes score (100% target) and enforces valid document/section mapping |
 | F8 | Hallucination Challenge readiness | Phase 2 (source grounding) + Phase 3 (hallucination detection) | ✅ DONE — `HallucinationDetector` independently audits factual claims with zero GenAI calls |
 | F9 | Live Code Modification readiness | All phases (OOP design enables single-class changes) | PENDING |
 | F10 | Deliberate Defect readiness (debug planted errors) | All phases (clean code, docstrings, SRP) | PENDING |
 | F11 | Meaningful GitHub commits across all 5 days from all members | All phases | IN PROGRESS |
-| F12 | ABSOLUTE PROHIBITION on hard-coded plans/answers/scores/fakes | Phase 2 + Phase 3 (everything computed live) | ✅ DONE — All Phase 3 scores (coverage, traceability, consistency) computed live from real plan and matrix data |
+| F12 | ABSOLUTE PROHIBITION on hard-coded plans/answers/scores/fakes | Phase 2 + Phase 3 (everything computed live) | ✅ IMPLEMENTED — production plans come from live GenAI or a source-grounded review-only fallback. Seed drafts are generated dynamically from the corpus/matrix, explicitly labelled non-live, and cannot represent approval/progress evidence. |
 | F14 | GenAI never replaces Python validation/business rules/security | Phase 2 + Phase 3 (strict pipeline separation) | ✅ DONE — Pipeline 2 contains ZERO GenAI calls, pure Python only |
 | F15 | AI-assisted code must be reviewed/understood/explainable by team | All phases | PENDING |
 | F16 | AI_USAGE.md maintained by every team member | All phases (human responsibility) | PENDING |

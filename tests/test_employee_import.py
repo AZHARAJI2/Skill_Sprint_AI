@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import date
 from io import BytesIO
+import json
 
 import pytest
 from fastapi.testclient import TestClient
@@ -62,6 +63,41 @@ def test_json_import_accepts_one_employee_object(session) -> None:
     employees = EmployeeImportService(session).import_file("one-employee.json", raw, actor="admin")
 
     assert [employee.employee_code for employee in employees] == ["EMP-250"]
+
+
+def test_json_import_accepts_utf8_bom_and_json_lines(session) -> None:
+    """Large HR exports may be BOM-prefixed JSON Lines rather than an array."""
+    role = RoleService(session).create("Support Agent", "Customer Support")
+    raw = (
+        f'{{"employee_code":"EMP-401","name":"Sam One","role_id":{role.id},"department":"Customer Support"}}\n'
+        f'{{"employee_code":"EMP-402","name":"Sam Two","role_id":{role.id},"department":"Customer Support"}}\n'
+    ).encode("utf-8-sig")
+
+    employees = EmployeeImportService(session).import_file("new-hires.json", raw, actor="admin")
+
+    assert [employee.employee_code for employee in employees] == ["EMP-401", "EMP-402"]
+
+
+def test_json_import_reads_a_thousand_employee_rows_before_validation(session) -> None:
+    """A 1,000-row JSON array is a supported bulk-import size under 20 MB."""
+    service = EmployeeImportService(session)
+    raw = json.dumps(
+        [
+            {
+                "employee_code": f"BULK-{number:04d}",
+                "name": f"Bulk Employee {number}",
+                "role_title": "Any Existing Role",
+                "department": "Operations",
+            }
+            for number in range(1, 1001)
+        ]
+    ).encode("utf-8")
+
+    rows = service._parse_file(".json", raw)
+
+    assert len(rows) == 1000
+    assert rows[0]["employee_code"] == "BULK-0001"
+    assert rows[-1]["employee_code"] == "BULK-1000"
 
 
 def test_xlsx_import_accepts_first_worksheet(session) -> None:

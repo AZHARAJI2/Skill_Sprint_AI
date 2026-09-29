@@ -1,7 +1,6 @@
 # D6 — GenAI / Python Comparison Report
 
-> **Total Comparisons Conducted**: 178 requirements (Requirement: ≥100)
-> **Status**: 100% Requirement-Level Alignment Verified
+> **Legacy-artifact warning (2026-09-29)**: This report compares one Software Engineer plan against the complete cross-role matrix. Its own rows include `Mismatch` and `Missing Mandatory`; it is **not valid evidence** of 100% alignment or of ten role plans. Regenerate it with `python -m scripts.generate_phase3_reports` only after one complete live GenAI plan exists for each of the ten roles.
 
 | Requirement ID | Role | Python Expected | GenAI Result | Match Status | Source | Verification Status |
 |---|---|---|---|---|---|---|

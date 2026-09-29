@@ -17,6 +17,9 @@ from python_validation import (
     TraceabilityValidator,
     ValidationPipeline,
 )
+from database.base import SessionLocal
+from src.employees.models import Employee, EmployeeRole
+from src.plans.models import OnboardingPlan
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 REPORTS_DIR = BASE_DIR / "reports"
@@ -75,17 +78,67 @@ The following 9 concrete validators were executed in strict sequence:
 9. **`SchemaValidator`**: Validated top-level JSON fields and internal ID uniqueness.
 """
 
+# Generate D6: GenAI / Python Comparison Report (≥100 requirement-level comparisons)
+#
+# D6 must never compare one role's plan with every role's matrix rows; that
+# produces artificial Missing Mandatory results while claiming 100% alignment.
+# Use one complete live GenAI plan per role and compare it only with that role's
+# requirements plus All Roles. Seed demonstration drafts are deliberately
+# excluded because they are not evidence of a live GenAI response.
+session = SessionLocal()
+try:
+    live_plans = (
+        session.query(OnboardingPlan, Employee, EmployeeRole)
+        .join(Employee, OnboardingPlan.employee_id == Employee.id)
+        .join(EmployeeRole, Employee.role_id == EmployeeRole.id)
+        .order_by(OnboardingPlan.id.desc())
+        .all()
+    )
+finally:
+    session.close()
+
+plans_by_role = {}
+for plan, employee, role in live_plans:
+    payload = plan.structured_json or {}
+    if payload.get("generation_status") == "failed_after_retries":
+        continue
+    if (plan.model_used or "").startswith("seed-"):
+        continue
+    plans_by_role.setdefault(role.title, plan)
+
+required_roles = sorted({row["role"] for row in matrix_rows if row["role"] != "All Roles"})
+missing_roles = [role for role in required_roles if role not in plans_by_role]
+if missing_roles:
+    raise SystemExit(
+        "D6 was not written: complete live GenAI plans are missing for "
+        + ", ".join(missing_roles)
+        + ". Generate and validate one complete plan per role first."
+    )
+
+# Do not overwrite any evidence files until the live-evidence precondition for
+# the three-report bundle has passed.  This preserves the last reviewed D5/D8
+# artifacts when an operator tries to generate D6 prematurely.
 (REPORTS_DIR / "d5_python_validation_evidence.md").write_text(d5_content, encoding="utf-8")
 
-# Generate D6: GenAI / Python Comparison Report (≥100 requirement-level comparisons)
 engine = ComparisonEngine()
-comparisons = engine.compare_requirements(matrix_rows, sample_plan)
+comparisons_by_id = {}
+for role in required_roles:
+    role_rows = [row for row in matrix_rows if row["role"] in {"All Roles", role}]
+    for comparison in engine.compare_requirements(role_rows, plans_by_role[role].structured_json):
+        comparisons_by_id[comparison["requirement_id"]] = comparison
+comparisons = [comparisons_by_id[key] for key in sorted(comparisons_by_id)]
+match_count = sum(1 for comparison in comparisons if comparison["match_status"] == "Match")
+status_line = (
+    "100% Requirement-Level Alignment Verified"
+    if match_count == len(comparisons)
+    else f"{match_count}/{len(comparisons)} requirement-level matches; mismatches require review"
+)
 
 d6_lines = [
     "# D6 — GenAI / Python Comparison Report",
     "",
     f"> **Total Comparisons Conducted**: {len(comparisons)} requirements (Requirement: ≥100)",
-    "> **Status**: 100% Requirement-Level Alignment Verified",
+    f"> **Status**: {status_line}",
     "",
     "| Requirement ID | Role | Python Expected | GenAI Result | Match Status | Source | Verification Status |",
     "|---|---|---|---|---|---|---|",
