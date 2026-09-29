@@ -22,7 +22,7 @@ services:
       - key: CMD_API_KEY
         sync: false                # أدخل هذا يدوياً من لوحة Render
       - key: COMMAND_CODE_MODEL
-        value: "deepseek/deepseek-chat"
+        value: "deepseek/deepseek-v4.1-flash"
       - key: SKILLSPRINT_COMMAND_CODE_TIMEOUT_SECONDS
         value: "0"
       - key: SKILLSPRINT_PLAN_TIMEOUT_SECONDS
